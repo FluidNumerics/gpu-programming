@@ -1,49 +1,21 @@
-
-#FC=gfortran
-FFLAGS=-O0 -g
-LFLAGS=
-
-ifeq ("$(wildcard $(AOMP))","")
-  ifneq ($(AOMP),)
-    $(warning AOMP not found at $(AOMP))
-  endif
-  AOMP = $(HOME)/rocm/aomp
-  ifeq ("$(wildcard $(AOMP))","")
-    $(warning AOMP not found at $(AOMP))
-    AOMP = /usr/lib/aomp
-    ifeq ("$(wildcard $(AOMP))","")
-      $(warning AOMP not found at $(AOMP))
-      $(error Please install AOMP or correctly set env-var AOMP)
-    endif
-  endif
-endif
-
-FC = $(AOMP)/bin/flang
-
-FFLAGS += -I$(AOMP)/include
+ROCM ?= /opt/rocm
+CUDA ?= /usr/local/cuda
+FC ?= $(ROCM)/bin/amdflang
+FFLAGS ?= -O0 -g
+LFLAGS ?= ""
 
 # Detect the GPU architecture
-INSTALLED_GPU  = $(shell $(AOMP)/bin/mygpu -d gfx900)# Default AOMP_GPU is gfx900 which is vega
-AOMP_GPU       ?= $(INSTALLED_GPU)
-ifeq (sm_,$(findstring sm_,$(AOMP_GPU)))
-  AOMP_GPUTARGET = nvptx64-nvidia-cuda
+INSTALLED_GPU = $(shell $(ROCM)/bin/mygpu -d gfx908)
+GPU_ARCH ?= $(INSTALLED_GPU)
+
+ifeq (sm_,$(findstring sm_,$(GPU_ARCH)))
+  GPU_TARGET = nvptx64-nvidia-cuda
+  LFLAGS += -L$(CUDA)/targets/x86_64-linux/lib -lcudart
 else
-  AOMP_GPUTARGET = amdgcn-amd-amdhsa
+  GPU_TARGET = amdgcn-amd-amdhsa
 endif
 
-# Detect the CPU architecture
-UNAMEP = $(shell uname -p)
-AOMP_CPUTARGET = $(UNAMEP)-pc-linux-gnu
-ifeq ($(UNAMEP),ppc64le)
-  AOMP_CPUTARGET = ppc64le-linux-gnu
-endif
-
-FFLAGS += -target $(AOMP_CPUTARGET) -fopenmp -fopenmp-targets=$(AOMP_GPUTARGET) -Xopenmp-target=$(AOMP_GPUTARGET) -march=$(AOMP_GPU)
-
-ifeq (sm_,$(findstring sm_,$(AOMP_GPU)))
-  CUDA   ?= /usr/local/cuda
-  LFLAGS += -L$(CUDA)/targets/$(UNAMEP)-linux/lib -lcudart
-endif
+FFLAGS += -fopenmp -fopenmp-targets=$(GPU_TARGET) -Xopenmp-target=$(GPU_TARGET) -march=$(GPU_ARCH)
 
 .PHONY: clean
 
