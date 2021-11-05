@@ -14,4 +14,4 @@ smoother.o : smoother.cpp
 	$(CC) $(CFLAGS) -c smoother.cpp  -o $@
 
 clean :
-	rm *.o smoother2d
+	rm *.o smoother
