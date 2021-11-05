@@ -1,7 +1,6 @@
-
-CC=gcc
 CFLAGS=-O0 -g
 LFLAGS=-lm
+CC=gcc
 
 .PHONY: clean
 
