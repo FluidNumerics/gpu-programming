@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-11-05T20:20:19Z",
+  "id": "build-a-gpu-app-openmp-c",
+  "duration": 75,
+  "title": "Building a basic GPU accelerated application with OpenMP in C/C++",
+  "authors": "Joseph Schoonover",
+  "summary": "This codelab will walk you through the basics of CPU and GPU memory management and GPU kernel launching with OpenMP in C/C++ for both AMD and Nvidia GPUs.",
+  "source": "15W_7Z1BMyMXmqjXYZ2flVmm1evvTA4fEzkihFBZ3jEc",
+  "theme": "hpc",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "HPC"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "TO DO",
+  "ga": "TO DO",
+  "url": "build-a-gpu-app-openmp-c"
+}
