@@ -13,7 +13,7 @@ with open(binpath+'../codelabs.yaml','r') as f:
     codelabs = yaml.safe_load(f)
 
 # Generate the documents
-os.chdir(binpath+'../docs')
+os.chdir(binpath+'../docs/codelabs')
 for cl in codelabs['codelabs']:
     cmd = binpath+"claat export "+cl['gdoc']
     subprocess.run(shlex.split(cmd))
