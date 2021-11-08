@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-11-08T21:53:49Z",
+  "id": "build-a-gpu-app-hip-fortran",
+  "duration": 85,
+  "title": "Building a basic GPU accelerated application with HIP in Fortran",
+  "authors": "Joseph Schoonover",
+  "summary": "This codelab will walk you through the basics of CPU and GPU memory management and GPU kernel launching with HIP/hipfort in Fortran.",
+  "source": "1Iy-qrSqMFH-SFhwkFcd_SDzXbajunm3lozHTs2nc9RA",
+  "theme": "hpc",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "HPC"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://octoskelo.atlassian.net/servicedesk/customer/portals",
+  "ga": "TO DO",
+  "url": "build-a-gpu-app-hip-fortran"
+}

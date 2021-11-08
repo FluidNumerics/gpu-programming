@@ -1,0 +1,12 @@
+codelabs:
+  - title: "Codelab tutorial : Building a basic GPU accelerated application with HIP in Fortran"
+    gdoc: "1Iy-qrSqMFH-SFhwkFcd_SDzXbajunm3lozHTs2nc9RA"
+
+  - title: "Codelab tutorial : Building a GPU accelerated application with OpenMP in Fortran"
+    gdoc: "1Fz77DoUmUzUCOh1QWU42OPyv-cey38rpjpcGDV7D-48"
+
+  - title: "Codelab tutorial : Building a basic GPU accelerated application with OpenMP in C++"
+    gdoc: "15W_7Z1BMyMXmqjXYZ2flVmm1evvTA4fEzkihFBZ3jEc"
+
+  - title: "Codelab tutorial : Building a basic GPU accelerated application with HIP in C++"
+    gdoc: "1GYt1m-GJx1M9VFVIeOT90XbXKACoUhT1wu94jGc_9NY"

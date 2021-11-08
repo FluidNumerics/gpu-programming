@@ -1,0 +1,547 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building a basic GPU accelerated application with OpenMP in C/C&#43;&#43;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="TO DO"
+                  id="build-a-gpu-app-openmp-c"
+                  title="Building a basic GPU accelerated application with OpenMP in C/C&#43;&#43;"
+                  environment="web"
+                  feedback-link="https://octoskelo.atlassian.net/servicedesk/customer/portals">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p><strong>Last Updated:</strong> 2021-11-03</p>
+<h2 is-upgraded><strong>What you will build</strong></h2>
+<p>In this codelab, you will port a small C++ application to GPU hardware using OpenMP. You will transition a serial CPU-only mini-application to a portable GPU accelerated application, using OpenMP provided through the AOMP compiler. </p>
+<p>The goal of this codelab is to introduce you to using a few basic OpenMP directives and a development practice that can be applied to porting other applications.</p>
+<h2 is-upgraded><strong>What you will learn</strong></h2>
+<ul>
+<li>How to develop a GPU porting strategy using application profiles and call graphs.</li>
+<li>How to manage GPU memory with OpenMP.</li>
+<li>How to launch GPU accelerated kernels with OpenMP.</li>
+<li>How to build GPU accelerated Fortran applications for AMD and Nvidia platforms.</li>
+<li>How to verify GPU memory allocation and kernel execution with the rocprof profiler.</li>
+</ul>
+<h2 is-upgraded><strong>What you will need</strong></h2>
+<ul>
+<li>A compute platform with AMD or Nvidia GPU(s)</li>
+<li>CUDA Toolkit 10 or greater (Nvidia platforms only)</li>
+<li>ROCm (v4.2 or greater)</li>
+<li>Fortran compiler</li>
+</ul>
+<aside class="special"><p><strong>Note :</strong> If you are attending a Lunch &amp; Learn or other training activity with AMD &amp; Fluid Numerics, you are encouraged to use the AMD Accelerator Cloud to run on AMD MI100 GPUs. The amdclang installation on the OCEAN cluster does not have bitcodes for Nvidia GPUs currently and you may encounter errors at compile time.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="(Recommended) Start an Interactive Session on the AMD Accelerator Cloud" duration="5">
+        <p>If you plan on using the AMD Accelerator Cloud for a portion of this tutorial, you will need to start an interactive session on a compute node to complete this codelab.</p>
+<p>The AMD Accelerator Cloud comes with the Slurm job scheduler and a set of compute partitions that provide you access to a variety compute platforms. This section will walk you through how to log in to the AMD Accelerator Cloud and start an interactive session on a compute node with a MI100 GPU. </p>
+<aside class="warning"><p><strong>NOTE : </strong>Prior to completing these steps, make sure that you have completed the onboarding process for the AMD Accelerator Cloud. Instructions to login to the cluster should have been provided to you during onboarding.</p>
+</aside>
+<ol type="1" start="1">
+<li>Once you are connected to the AMD Accelerator Cloud login node, you can use srun to start an interactive session on a node with MI100 GPUs. We recommend that you set a time limit for interactive jobs so that you don&#39;t accidentally leave a reserved node idle.</li>
+</ol>
+<pre>srun -n1 --partition=MI100 --time=1:00:00 --pty /bin/bash</pre>
+<ol type="1" start="2">
+<li>Once your interactive session starts, you can use the rocm-smi command to verify that GPUs are available</li>
+</ol>
+<pre>rocm-smi
+
+
+======================= ROCm System Management Interface =======================
+================================= Concise Info =================================
+GPU  Temp   AvgPwr  SCLK    MCLK     Fan   Perf  PwrCap  VRAM%  GPU%  
+0    33.0c  35.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
+1    33.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
+2    34.0c  34.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
+3    33.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
+4    33.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
+5    32.0c  38.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
+6    33.0c  34.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
+7    31.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
+================================================================================
+============================= End of ROCm SMI Log ==============================</pre>
+<ol type="1" start="3">
+<li>Since the compute nodes on the AMD Accelerator Cloud have multiple GPUs per node, and Slurm&#39;s GRES is not configured, it is recommended that you set the HIP_VISIBLE_DEVICES variable to specify which GPU you will run on. The value for HIP_VISIBLE_DEVICES is an integer between 0 and 7 (inclusive); e.g.</li>
+</ol>
+<pre>export HIP_VISIBLE_DEVICES=3</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="(Optional) Start an Interactive Session on the OCEAN Cluster" duration="5">
+        <aside class="warning"><p><strong>CAUTION :</strong> The amdflang installation on the OCEAN cluster does not have bitcodes for Nvidia GPUs currently and you may encounter errors at compile time. We recommend using the AMD Accelerator Cloud for this codelab at this time.</p>
+</aside>
+<p>If you plan on using the OCEAN cluster for a portion of this tutorial, you will need to start an interactive session on a compute node to complete this codelab.</p>
+<p>The OCEAN cluster comes with the Slurm job scheduler and a set of compute partitions that provide you access to a variety compute platforms. This section will walk you through how to log in to the OCEAN cluster and start an interactive session on a compute node with a GPU.</p>
+<ol type="1" start="1">
+<li>Open your web browser and navigate to <a href="https://shell.cloud.google.com?show=terminal" target="_blank">https://shell.cloud.google.com?show=terminal</a> . This opens up Google Cloud shell and will be your primary access point to get onto the OCEAN cluster.</li>
+</ol>
+<aside class="warning"><p><strong>CAUTION: </strong>You must log in with your amd-user*@ocean.waterchange.org account to access the cluster. See <a href="https://www.oshackathon.org/resources/os-hpc-cluster/onboarding" target="_blank">https://www.oshackathon.org/resources/os-hpc-cluster/onboarding</a> for more details.</p>
+</aside>
+<ol type="1" start="2">
+<li>If you have not aligned an ssh key with your account already, you will need to create an SSH key in the Cloud Shell and attach it to your account. This is easily done using ssh-keygen and the gcloud SDK provided for you in the Cloud Shell. <br><br>Run the commands below; at the prompts, accept the default path to store the ssh key pair and set a password to protect the private key.</li>
+</ol>
+<pre>ssh-keygen -t rsa
+gcloud compute os-login ssh-keys add --key-file=${HOME}/.ssh/id_rsa.pub</pre>
+<ol type="1" start="3">
+<li>Now, ssh to the OCEAN cluster&#39;s login node</li>
+</ol>
+<pre>ssh ocean.waterchange.org</pre>
+<ol type="1" start="4">
+<li>Now that you are in the login node, you can start an interactive session on a compute node. When submitting the job, you are required to specify the Quality of Service (QOS) as &#34;amd&#34;.</li>
+</ol>
+<pre>srun -N1 --gres=gpu:1 --partition=v100 --qos=amd --pty /bin/bash</pre>
+<aside class="warning"><p><strong>NOTE : </strong>The OCEAN cluster is a cloud-native cluster hosted on Google Cloud Platform. If a compute node is not currently active (denoted by the idle~ state from sinfo), a node will be provisioned automatically on Google Cloud. It may take up to 3 minutes for a node to become active and your interactive session to start.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clone and Run the Demo Application (CPU-Only)" duration="15">
+        <p>The demo application provided for this tutorial performs 2-D smoothing operations using a 3x3 gaussian stencil.</p>
+<p>In this section, we introduce the demo application and walk through building and verifying the example. It&#39;s important to make sure that the code produces the expected result as we will be using the CPU generated model output to ensure that the solution does not change when we port to the GPU. </p>
+<aside class="special"><p><strong>Tip:</strong> In practice, it&#39;s ideal to define tests for all of your routines as standalone (unit-tests) and/or in concert together (integration-tests). These tests would ideally be run regularly during development and with every commit to your code&#39;s repository.</p>
+</aside>
+<p>This application executes a 2-D smoothing operation on a square grid of points. The program proceeds as follows</p>
+<ol type="1" start="1">
+<li>Process command line arguments</li>
+<li>Allocate memory for smoother class - 5x5 stencil with Gaussian weights</li>
+<li>Allocate memory for function and smoothed function</li>
+<li>Initialize function on CPU and report function to file</li>
+<li>Call smoothing function</li>
+<li>Report smoothed function to file</li>
+<li>Clear memory</li>
+</ol>
+<h2 is-upgraded><strong>Code Structure</strong></h2>
+<p>This application&#39;s src directory contains the following files</p>
+<ol type="1" start="1">
+<li><code>smoother.cpp</code> : Defines a simple data structure that stores the smoothing operators weights and the routines for allocating memory, deallocating memory, and executing the smoothing operation.</li>
+<li><code>main.cpp</code> : Defines the main program that sets up the 2-D field to be smoothed and managed file IO.</li>
+<li><code>Makefile</code> : A simple makefile is to build the application binary <code>smoother</code>.</li>
+<li><code>viz.py</code> : A python script for creating plots of the smoother output</li>
+</ol>
+<h2 is-upgraded><strong>Install and Verify the Application</strong></h2>
+<p>To get started, we want to make sure that the application builds and runs on your system using the gcc compiler. </p>
+<ol type="1" start="1">
+<li>Clone the repository</li>
+</ol>
+<pre><code>$ git clone https://github.com/fluidnumerics/scientific-computing-edu ~/scientific-computing-edu</code></pre>
+<ol type="1" start="2">
+<li>Build the smoother application. Keep in mind, the compiler is set to gcc by default in the provided makefile.</li>
+</ol>
+<aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, we recommend that you load the gcc@10.3.0 compiler into your path using <code>spack load gcc@10.3.0</code> before running the make command.</p>
+</aside>
+<pre><code>$ cd samples/c++/smoother/src
+$ make</code></pre>
+<ol type="1" start="3">
+<li>Test run the example. The application takes two arguments. The first argument is the number of grid cells, and the second argument is the number of times the smoothing operator is applied.</li>
+</ol>
+<p>$ ./smoother 1000 100</p>
+<h2 is-upgraded><strong>Profile the Application</strong></h2>
+<p>Before starting any GPU porting exercise, it is important to profile your application to find hotspots where your application spends most of its time. Further, it is helpful to keep track of the runtime of the routines in your application so that you can later assess whether or not the GPU porting has resulted in improved performance. Ideally, your GPU-Accelerated application should outperform CPU-Only versions of your application when fully subscribed to available CPUs on a compute node.</p>
+<aside class="special"><p><strong>Tip:</strong> To obtain a fair comparison between CPU-Only and GPU-Accelerated versions of your application,  you will want to compare the run-time between fully-subscribed CPU-only routines and the GPU-ported routines. </p>
+<p>If your application is not parallelized on the CPU, you can estimate the idealized runtime on the CPU by dividing the serial runtime by the number of cores available on your target hardware.</p>
+</aside>
+<h3 is-upgraded><strong>Create the profile</strong></h3>
+<p>In this tutorial, we are going to generate a profile and call graph using gprof. The provided makefile was already configured to create profile output. From here, you just need to use gprof to create the application profile.</p>
+<pre><code>$ gprof ./smoother gmon.out</code></pre>
+<h3 is-upgraded><strong>Interpret the profile and call tree</strong></h3>
+<p><code>gprof</code> provides a flat profile and a summary of your application&#39;s call structure indicating dependencies within your source code as a call tree. A <strong><em>call tree</em></strong> depicts the relationships between routines in your source code. Combining timing information with a call tree will help you plan the order in which you port routines to the GPU.</p>
+<p>The first section of the gprof output is the flat-profile. An example flat-profile for the <code>smoother</code> application is given below. The flat-profile provides a list of routines in your application, ordered by the percent time your program spends within those routines from greatest to least. Beneath the flat-profile, gprof provides documentation of each of the columns for your convenience.</p>
+<pre><code>  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 95.24      1.16     1.16       10   116.19   116.19  smoothField
+  2.46      1.19     0.03       10     3.00     3.00  resetF
+  2.46      1.22     0.03                             main
+  0.00      1.22     0.00        1     0.00     0.00  smootherFree
+  0.00      1.22     0.00        1     0.00     0.00  smootherInit</code></pre>
+<p>Let&#39;s now take a look at at the call tree. This call tree has five entries, one for each routine in our program. The right-most field for each entry indicates the routines that called each routine and that are called by each routine. </p>
+<p>For <code>smoother</code>, the first entry shows that main calls <code>smoothField</code>, <code>resetF</code>, <code>smootherInit</code>, and <code>smootherFree</code>. Further, the called column indicates that smoothField and resetF routines are shown to be called 10 times (in this case) by main. The self and children columns indicate that main spends 0.03s executing instructions in main and 1.19s in calling other routines. Further, of those 1.19s, 1.16s are spent in <code>smoothField</code> and 0.03 are spent in <code>resetF</code>. </p>
+<pre><code>index % time    self  children    called     name
+                                                 &lt;spontaneous&gt;
+[1]    100.0    0.03    1.19                 main [1]
+                1.16    0.00      10/10          smoothField [2]
+                0.03    0.00      10/10          resetF [3]
+                0.00    0.00       1/1           smootherInit [5]
+                0.00    0.00       1/1           smootherFree [4]
+-----------------------------------------------
+                1.16    0.00      10/10          main [1]
+[2]     95.1    1.16    0.00      10         smoothField [2]
+-----------------------------------------------
+                0.03    0.00      10/10          main [1]
+[3]      2.5    0.03    0.00      10         resetF [3]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[4]      0.0    0.00    0.00       1         smootherFree [4]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[5]      0.0    0.00    0.00       1         smootherInit [5]
+-----------------------------------------------</code></pre>
+<aside class="special"><p><strong>Tip:</strong> You can use the open-source <a href="https://github.com/jrfonseca/gprof2dot" target="_blank">gprof2dot</a> to create visualizations of gprof output to help interpret the profile and call-graph for more complex applications.</p>
+</aside>
+<h3 is-upgraded><strong>Next steps</strong></h3>
+<p>Now that we have a profile and an understanding of the call structure of the application, we can now plan our port to GPUs. Since we will use the AOMP compiler for offloading to GPUs, we want to first modify the Makefile to use the AOMP compiler. Then, we will focus on porting the smoothField routine and the necessary data to the GPU, since smoothField takes up the majority of the run time. </p>
+<p>When we port this routine, we will introduce data allocation on the GPU and data copies between CPU and GPU. This data movement may potentially increase the overall application runtime, even if the smoothField routine performs better. In this event, we will then work on minimizing data movements between CPU and GPU. </p>
+<aside class="special"><p class="image-container"><img style="width: 231.82px" src="img/ee2462ec9f6dcf9b.png"></p>
+<p><strong>Tip:</strong> As a general strategy, it is recommended that you approach GPU porting in small incremental steps. Each step should consist of (1) profiling, (2) planning, (3) implementing planned changes &amp; verifying the application output, and (4) committing the changes to your repository.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Update the Makefile to use the AOMP compiler" duration="15">
+        <p>Before jumping straight into GPU offloading with OpenMP, you will take an incremental step to change the compiler and verify the application can be compiled and executed with the <code>amdflang</code> compiler. Once this is verified, you will then start the GPU offloading process.</p>
+<p>ROCm comes with compilers ( <code>amdflang</code>, <code>amdclang</code>, and <code>amdclang++</code> ) that support OpenMP 5.0. To enable GPU offloading at compile time, there are a few flags that you need to pass to the compiler.</p>
+<pre>amdclang -fopenmp \
+         -fopenmp-targets=&lt;target&gt; \
+         -Xopenmp-target=&lt;target&gt; \
+         -march=&lt;gpu-arch&gt;
+         [other options]
+         &lt;source-code&gt;</pre>
+<p>In this example, </p>
+<ul>
+<li><code><target></code> is one of <code>amdgcn-amd-amdhsa</code> or <code>nvptx64-nvidia-cuda</code></li>
+<li><code><gpu-arch></code> is the GPU architecture code. For MI100 GPUs, <code><march>=gfx908</code> and for V100 GPUs, <code><march>=sm_72</code>.</li>
+</ul>
+<p>ROCm also comes with a helpful tool (<code>mygpu</code>) that can be used to detect the GPU architecture. This is particularly useful if you are building the code on a machine that has the GPU you want to build for. </p>
+<p>In this section, you will make the following changes to the Makefile</p>
+<ul>
+<li>Change the default Fortran compiler to amdflang</li>
+<li>Use the <code>mygpu</code> binary to set the GPU architecture and target</li>
+<li>Append the required OpenMP flags to FFLAGS</li>
+<li>Starting from the <code>smoother</code> makefile (<code>samples/fortran/smoother/src/Makefile</code>), Let&#39;s first add variables for the paths to ROCm and CUDA at the top of the file. These will be needed to reference full paths to the compiler and <code>mygpu</code> binary. <br><br>When setting these variables, we use the ?= relation to allow a user&#39;s environment variables to override these values if desired.</li>
+</ul>
+<pre><code>ROCM ?= /opt/rocm
+CUDA ?= /usr/local/cuda</code></pre>
+<ul>
+<li>Next, change the specification for the C compiler, by setting CC ?= $(ROCM)/bin/amdclang . The first three lines of your Makefile should look like this : </li>
+</ul>
+<pre><code>ROCM ?= /opt/rocm
+CUDA ?= /usr/local/cuda
+CC ?= $(ROCM)/bin/amdclang</code></pre>
+<ul>
+<li>Let&#39;s now work on a section for detecting the GPU architecture. The mygpu utility can be used to detect a GPU, if one is present. The -d flag is used to set the default architecture to fall back to in case a GPU is not present. <br><br>For example,  <code>mygpu -d gfx908</code> will check for a GPU and return gfx908 if one is not found. In the make system, we want to also allow for someone building the code to specify the target architecture, in case they are on a system that does not have a GPU equipped.<br><br>Add the following section of code to your Makefile just beneath the definition of <code>FC</code>. This section sets INSTALLED_GPU to the output of <code>mygpu -d gfx908</code>, and sets <code>GPU_ARCH</code> to <code>INSTALLED_GPU</code> if it is not set in the user&#39;s environment.</li>
+</ul>
+<pre><code># Detect the GPU architecture
+INSTALLED_GPU = $(shell $(ROCM)/bin/mygpu -d gfx908)
+GPU_ARCH ?= $(INSTALLED_GPU)</code></pre>
+<ul>
+<li>Now that we have the GPU architecture, we can set the GPU target. Nvidia GPU architectures are all defined with a prefix of sm_ . We can use this with the <code>findstring</code> function to set the GPU target accordingly.<br><br>Add the following section of code to your Makefile just beneath the definition of <code>GPU_ARCH</code>. This section sets the <code>GPU_TARGET</code> variable to <code>nvptx64-nvidia-cuda</code> when an Nvidia GPU is detected and <code>amdgcn-amd-amdhsa</code> otherwise. Additionally, this appends the CUDA runtime library to <code>LFLAGS</code> in the event that you are building for an Nvidia platform.</li>
+</ul>
+<pre><code>ifeq (sm_,$(findstring sm_,$(GPU_TARGET)))
+  GPU_TARGET = nvptx64-nvidia-cuda
+  LFLAGS += -L$(CUDA)/targets/x86_64-linux/lib -lcudart
+else
+  GPU_TARGET = amdgcn-amd-amdhsa
+endif</code></pre>
+<ul>
+<li>Now you can append the OpenMP offload flags to the <code>CFLAGS</code> variable. Just beneath the <code>GPU_TARGET</code> definition, add the following code to append to the <code>CFLAGS</code> variable.</li>
+</ul>
+<pre><code>CFLAGS += -fopenmp -fopenmp-targets=$(GPU_TARGET) -Xopenmp-target=$(GPU_TARGET) -march=$(GPU_ARCH)</code></pre>
+<h2 is-upgraded><strong>Verify the application compiles and runs</strong></h2>
+<p>Now that you have made the necessary modifications to the Makefile, it is time to re-compile and test the application. You also want to make sure that the application output is unchanged.</p>
+<ol type="1" start="1">
+<li>Copy the existing output from your previous run to a reference directory.</li>
+</ol>
+<pre><code>$ mkdir reference
+$ cp function.txt smooth-function.txt reference/</code></pre>
+<ol type="1" start="2">
+<li>Re-compile the <code>smoother</code> application.</li>
+</ol>
+<pre><code>$ make clean
+$ make --no-builtin-variables</code></pre>
+<ol type="1" start="3">
+<li>Run the <code>smoother</code> application with the same input parameters as before and compare the output with the reference output. You can use the diff command line tool to compare the new output with the reference output. If the files are identical, no output will be printed to screen.</li>
+</ol>
+<pre><code>$ ./smoother 1000 10
+$ diff function.txt reference/function.txt
+$ diff smooth-function.txt reference/function.txt</code></pre>
+<h2 is-upgraded><strong>Next Steps</strong></h2>
+<p>Now that you&#39;ve switched to using the <code>amdclang</code> compiler and have verified the application successfully compiles and runs and produces the correct output, you are ready to begin offloading to GPUs with OpenMP. In the next step, you will offload the <code>smoothField</code> and <code>resetF</code> routines using OpenMP directives.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Offload Routines to the GPU with OpenMP" duration="20">
+        <p>In the <code>smoother</code> application, we have seen that the <code>smoothField</code> routine, called by <code>main</code>, takes up the most time. Within the main iteration loop in <code>main.cpp</code>, the <code>resetF</code> function is called to update the input for <code>smoother</code> for the next iteration.</p>
+<p>You will start by offloading both the <code>smoothField</code> and <code>resetF</code> routines to the GPU using OpenMP directives (also called &#34;pragmas&#34;). In this section you will learn how to offload sections of code to the GPU and how to manage GPU data using OpenMP pragmas. </p>
+<h2 is-upgraded><strong>OMP Target Basics</strong></h2>
+<p>With OpenMP, you can use the <code>omp target</code> directive to mark regions of code that you want the compiler to offload to the GPU. When you open an OpenMP target region, you can use the <strong><code>map</code></strong> directive to indicate variables that you want to copy <strong><code>to</code></strong> the GPU and <strong><code>from</code></strong> the GPU. </p>
+<p>The example below shows how to open and close a target region that will be offloaded to the GPU. Pointers are created for variables <code>arrayIn</code> and <code>arrayOut</code> on the host. The map directives indicates that <code>arrayIn</code> will be copied to the GPU and <code>arrayOut</code> will be copied from the GPU to the CPU at the end of the target region. Note that, since <code>arrayIn</code> and <code>arrayOut</code> are pointers, we must use array section notation to properly map the arrays.</p>
+<pre><code>int N = 1000;
+float *arrayIn;
+float *arrayOut;
+arrayIn = (float*)malloc( N*sizeof(float) );
+arrayOut = (float*)malloc( N*sizeof(float) );
+
+// Initialization routines ... //
+.
+.
+// End Initialization routines
+#omp pragma target map (to: arrayIn[0:N]) map (from: arrayOut[0:N])
+{
+.
+.
+}</code></pre>
+<h2 is-upgraded><strong>OMP Teams &amp; Parallel</strong></h2>
+<p>Within a target region, with no other specifications, a single thread of execution is launched on the GPU. However, GPUs are capable of running thousands of threads simultaneously. Threads on GPUs are scheduled to run on multiple Compute Units (AMD) or Streaming Multiprocessors (Nvidia) in groups of 64 (AMD) or 32 (Nvidia) called Wavefronts (AMD) or Warps (Nvidia). Modern GPUs are capable of executing many Wavefronts/Warps at any given time. </p>
+<p>Before the teams directive was introduced in OpenMP 4.0, parallelization was limited to parallelizing with a single group of threads. Since OpenMP 4.0, the teams directive can be used to express another dimension of parallelism that is appropriate for GPUs.</p>
+<p>The teams directive creates a &#34;league&#34; of teams that have, by default, a single thread. Each team executes instructions concurrently. The parallel directive creates multiple threads within each team. The number of threads can be set with the optional <code>num_threads</code> clause after the parallel directive. On a GPU, the number of threads per team is ideally a multiple of the Wavefront/Warp size (64 or 32 threads).</p>
+<p>This example shows how to parallelize a for-loop with parallel teams, where each team has 256 threads.</p>
+<pre><code>int N = 1000;
+float *arrayIn;
+float *arrayOut;
+arrayIn = (float*)malloc( N*sizeof(float) );
+arrayOut = (float*)malloc( N*sizeof(float) );
+
+
+#omp pragma target map (to: arrayIn[0:N]) map (from: arrayOut[0:N])
+{
+  #pragma omp teams parallel for num_threads(256)
+  for( int i = 0; i&lt;N; i++){
+    arrayOut[i] = 2.0*arrayIn[i];
+  }
+}</code></pre>
+<h2 is-upgraded>Offload smoothField</h2>
+<ol type="1" start="1">
+<li>Open <code>smoother.c</code> and navigate to the <code>smoothField</code> routine. Open an OpenMP target region before the start of the first loop in <code>smoothField</code> and map the necessary map directives to copy <code>smoother->weights</code> and <code>f</code> to the GPU and <code>smoothF</code> to and from the GPU.</li>
+</ol>
+<pre><code>  #pragma omp target  map(to:smoothOperator-&gt;weights[0:N*N], f[0:nX*nY]) map(smoothF[0:nX*nY])</code></pre>
+<ol type="1" start="2">
+<li>Use a <code>teams parallel for</code> directive with a <code>collapse(2)</code> clause to parallelize the outer two loops. </li>
+</ol>
+<pre><code>  #pragma omp target  map(to:smoothOperator-&gt;weights[0:N*N], f[0:nX*nY]) map(smoothF[0:nX*nY])
+  {
+    #pragma omp teams distribute parallel for collapse(2) num_threads(256)
+    for( int j=buf; j &lt; nY-buf; j++ ){
+      for( int i=buf; i &lt; nX-buf; i++ ){
+        smLocal = 0.0;
+        for( int jj=-buf; jj &lt;= buf; jj++ ){
+          for( int ii=-buf; ii &lt;= buf; ii++ ){
+            iloc = (i+ii)+(j+jj)*nX;
+            ism = (ii+buf) + (jj+buf)*N;
+            smLocal += f[iloc]*smoothOperator-&gt;weights[ism];
+          }
+        }
+        iel = i+j*nX;
+        smoothF[iel] = smLocal;
+      }
+    }
+  }</code></pre>
+<ol type="1" start="3">
+<li>Re-compile the <code>smoother</code> application.</li>
+</ol>
+<pre><code>$ make</code></pre>
+<ol type="1" start="4">
+<li>Run the <code>smoother</code> application with the same input parameters as before and compare the output with the reference output. You can use the diff command line tool to compare the new output with the reference output. If the files are identical, no output will be printed to screen.</li>
+</ol>
+<pre><code>$ time ./smoother 1000 10
+real        0m2.767s
+user        0m1.568s
+sys        0m1.057s
+$ diff function.txt reference/function.txt
+$ diff smooth-function.txt reference/function.txt</code></pre>
+<h2 is-upgraded>Offload resetF</h2>
+<ol type="1" start="1">
+<li>Open <code>smoother.cpp</code> and navigate to the <code>resetF</code> routine. Open an OpenMP <code>target</code> region before the start of the first loop in <code>resetF</code> and map the necessary map directives to copy <code>smoothF</code> to the GPU and <code>f</code> to and from the GPU.</li>
+</ol>
+<pre><code>  #pragma omp target map(to: smoothF[0:nx*ny]) map(f[0:nx*ny])</code></pre>
+<ol type="1" start="2">
+<li>Use a <code>teams parallel for</code> directive with a <code>collapse(2)</code> clause to parallelize the outer two loops. </li>
+</ol>
+<pre><code>  #pragma omp target map(to: smoothF[0:nx*ny]) map(f[0:nx*ny])
+  {
+    #pragma omp teams distribute parallel for collapse(2) num_threads(256)
+    for( int iy=buf; iy&lt;ny-buf; iy++ ){
+      for( int ix=buf; ix&lt;nx-buf; ix++ ){
+        iel = ix + nx*iy;
+        f[iel] = smoothF[iel];
+      }
+    }
+  }</code></pre>
+<ol type="1" start="3">
+<li>Re-compile the <code>smoother</code> application.</li>
+</ol>
+<pre><code>$ make</code></pre>
+<ol type="1" start="4">
+<li>Run the <code>smoother</code> application with the same input parameters as before and compare the output with the reference output. You can use the diff command line tool to compare the new output with the reference output. If the files are identical, no output will be printed to screen.</li>
+</ol>
+<pre><code>$ time ./smoother 1000 10
+real        0m2.970s
+user        0m1.528s
+sys        0m1.228s
+$ diff function.txt reference/function.txt
+$ diff smooth-function.txt reference/function.txt</code></pre>
+<ol type="1" start="1">
+<li>To profile, you can profile the application using the rocprof profiler. If you would like to create a trace profile, add the <code>--hsa-trace --obj-tracking on flags</code>. If you would like to get a summary hotspot profile of the GPU kernels, use the <code>--stats</code> flag.</li>
+</ol>
+<pre><code>$ rocprof --hsa-trace --obj-tracking on --stats ./smoother 1000 10
+$ cat results.stat.csv
+&#34;Name&#34;,&#34;Calls&#34;,&#34;TotalDurationNs&#34;,&#34;AverageNs&#34;,&#34;Percentage&#34;
+&#34;__omp_offloading_801_440b81_smoothField_l67.kd&#34;,10,30603997,3060399,78.4420113965
+&#34;__omp_offloading_801_440b81_resetF_l48.kd&#34;,10,8410807,841080,21.5579886035</code></pre>
+<aside class="special"><p><strong>Tip:</strong> You can use <a href="https://www.chromium.org/developers/how-tos/trace-event-profiling-tool" target="_blank">Google Chrome Tracing</a> to visualize the results.json trace profile. Simply open the Google Chrome web browser and navigate to chrome://tracing and upload results.json. </p>
+<p class="image-container"><img style="width: 610.00px" src="img/2a8256846130c942.png"></p>
+</aside>
+<h2 is-upgraded><strong>Next steps</strong></h2>
+<p>You&#39;ve successfully offloaded two routines to the GPU. However, you may have noticed that the runtime did not improve much, and may have even gotten worse, after you offloaded the second routine (<code>resetF</code>). At the start and end of each target region, the application is copying data between the CPU and GPU. You can see this behavior in the trace profile shown above. Ideally, you want to minimize data movement between the host and device for optimal performance.</p>
+<p>In the next section, you will learn how to control when data is allocated and moved to and from the GPU. This will help you minimize data copies between the host and device that often become bottlenecks for GPU accelerated applications.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Unstructured Data Directives" duration="15">
+        <p>In this section you will learn how to use unstructured data directives with OpenMP to control when data is copied to and from the GPU. </p>
+<p>In the <code>smoother</code> application, there are two routines within a main iteration loop, <code>smoothField</code> and <code>resetF</code>. Both routines operate on data stored in two arrays, <code>f</code> and <code>smoothF</code>. </p>
+<pre><code>  for( int iter=0; iter&lt;nIter; iter++){
+    // Run the smoother
+    smoothField( &amp;smoothOperator, f, smoothF, nx, ny );
+    // Reassign smoothF to f
+    resetF( f, smoothF, nx, ny, buf );
+  }</code></pre>
+<p>Additionally, the <code>smoothField</code> routine requires the <code>smoothOperator->weights</code> array in order to calculate <code>smoothF</code> from <code>f</code>. Currently, target regions within smoothField and resetF copy these arrays to and from the GPU, before and after executing the routine instructions in parallel on the GPU; this is also done every iteration. </p>
+<h2 is-upgraded><strong>OMP Enter/Exit Data</strong></h2>
+<p>Ideally, we want to have all of the necessary data copied to the GPU before the iteration loop and have <code>smoothF</code> copied from the GPU after the iteration loop. This can be achieved using the <code>target enter data</code> and <code>target exit data</code> directives.</p>
+<p>Each directive is a standalone directive that can be used to allocate or deallocate memory on the GPU and copy data to or from the GPU. A typical usage is to use the target enter data directive to allocate device memory after allocation on the host and to use the target exit data directive to free device memory before freeing memory on the host. Then, you can use the target update directive to manage updating host and device data when needed.</p>
+<p>In this example below, the <code>enter data directive</code> is used to allocate device memory for <code>arrayIn</code> and <code>arrayOut</code>. Before reaching the main block of code, the <code>target update directive</code> is used to update <code>arrayIn</code> on the device. At the end of this region of code, the <code>target update directive</code> is used to update <code>arrayOut</code> on the host. At the end of the example code, the <code>exit data directive</code> is used to free device memory before freeing the associate host pointer.</p>
+<pre><code>int N = 1000;
+float *arrayIn;
+float *arrayOut;
+arrayIn = (float*)malloc( N*sizeof(float) );
+arrayOut = (float*)malloc( N*sizeof(float) );
+# omp pragma target enter data map(alloc:arrayIn[0:N], arrayOut[0:N])
+
+// Initialization routines ... //
+.
+.
+// End Initialization routines
+#omp pragma target update to(arrayIn[0:N]) 
+{
+// Execution block
+.
+.
+}
+#omp pragma target update from(arrayOut[0:N]) 
+.
+.
+# omp pragma target exit data map(delete:arrayIn[0:N], arrayOut[0:N])
+free(arrayIn);
+free(arrayOut);</code></pre>
+<h2 is-upgraded><strong>Transition to enter/exit data directives</strong></h2>
+<p>In the smoother application, we want to explicitly control data movement for <code>f</code>, <code>smoothF</code>, and <code>smoothOperator->weights</code>. You will work in <code>main.cpp</code> to insert calls to allocate, update, and deallocate device memory for <code>f</code> and <code>smoothF</code>. To handle <code>smoothOperator->weights</code>, you will work in <code>smoother.cpp</code> to allocate, update, and deallocate device memory.</p>
+<ol type="1" start="1">
+<li>Open main.cppand find where <code>f</code> and <code>smoothF</code> are allocated memory. Just after the <code>malloc</code> calls, add a <code>target enter data</code> directive to allocate device memory for <code>f</code> and smoothF.</li>
+</ol>
+<pre><code>  // Allocate space for the function we want to smooth
+  f  = (real*)malloc( nElements*sizeof(real) );
+  smoothF = (real*)malloc( nElements*sizeof(real) );
+  #pragma omp target enter data map(alloc: f[0:nElements], smoothF[0:nElements])</code></pre>
+<ol type="1" start="2">
+<li>Add a <code>target update to</code> directive to copy <code>f</code> and <code>smoothF</code> data to the GPU just before the main iteration loop and add a <code>target update from</code> directive to copy <code>smoothF</code> from the GPU just after the main iteration loop.</li>
+</ol>
+<pre><code>  #pragma omp target update to(f[0:nElements], smoothF[0:nElements])
+  for( int iter=0; iter&lt;nIter; iter++){
+
+    // Run the smoother
+    smoothField( &amp;smoothOperator, f, smoothF, nx, ny );
+
+    // Reassign smoothF to f
+    resetF( f, smoothF, nx, ny, buf );
+  }
+  #pragma omp target update from(smoothF[0:nElements])</code></pre>
+<ol type="1" start="3">
+<li>Add a <code>target exit data</code> directive to deallocate device memory held by <code>f</code> and smoothF before calling <code>free</code> at the end of <code>main.cpp</code>.</li>
+</ol>
+<pre><code>  // Free space
+  #pragma omp target exit data map(delete:f[0:nElements],smoothF[0:nElements])
+  free(f);
+  free(smoothF);</code></pre>
+<ol type="1" start="4">
+<li>Save <code>main.cpp</code> and open <code>smoother.cpp</code>. In the <code>smootherInit</code> routine, add a <code>target enter data</code> directive to allocate device memory for <code>smoothOperator->weights</code>.</li>
+</ol>
+<pre><code>  smoothOperator-&gt;dim = N;
+  smoothOperator-&gt;weights = (real*)malloc( N*N*sizeof(real) );
+  #pragma omp target enter data map(alloc: smoothOperator-&gt;weights[0:N*N])</code></pre>
+<ol type="1" start="5">
+<li>Add a target update directive for <code>smoothOperator->weights</code> at the end of the <code>smootherInit</code> routine, after the weight values have been assigned.</li>
+</ol>
+<pre><code>  for( int j=0; j &lt; N; j++ ){
+    for( int i=0; i &lt; N; i++ ){
+      smoothOperator-&gt;weights[i+j*N] = smoothOperator-&gt;weights[i+j*N]/wsum;
+    }
+  }
+  #pragma omp target update to(smoothOperator-&gt;weights[0:N*N])</code></pre>
+<ol type="1" start="6">
+<li>Add a <code>target exit data directive</code> to deallocate device memory held by <code>smoothOperator->weights</code> in the smootherFree routine.</li>
+</ol>
+<pre><code>void smootherFree( struct smoother *smoothOperator )
+{
+  #pragma omp target exit data map(delete: smoothOperator-&gt;weights[0:smoothOperator-&gt;dim*smoothOperator-&gt;dim])
+  free( smoothOperator-&gt;weights );
+}</code></pre>
+<ol type="1" start="7">
+<li>Re-compile the <code>smoother</code> application.</li>
+</ol>
+<pre><code>$ make</code></pre>
+<ol type="1" start="8">
+<li>Run the <code>smoother</code> application with the same input parameters as before and compare the output with the reference output. You can use the diff command line tool to compare the new output with the reference output. If the files are identical, no output will be printed to screen.</li>
+</ol>
+<pre><code>$ time ./smoother 1000 10
+real        0m2.689s
+user        0m1.496s
+sys        0m1.052s
+$ diff function.txt reference/function.txt
+$ diff smooth-function.txt reference/function.txt</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="0">
+        <p>In this codelab, you learned how to port serial CPU-only routines in C to GPUs using OpenMP. To do this, you used target directives to offload regions of code to the GPU. You used <code>teams parallel for</code> directives to parallelize nested loops across teams of SIMD threads. </p>
+<p>To reduce data copies between host and device, you applied unstructured OpenMP data directives to explicitly manage when memory is allocated/deallocated on the GPU and when data is copied between to and from the GPU.</p>
+<p>In the process of doing this, you practiced a strategy for porting to GPUs that included the following steps to make incremental changes to your own source code :</p>
+<ol type="1" start="1">
+<li>Profile - Find out the hotspots in your code and understand the dependencies with other routines</li>
+<li>Plan - Determine what routine you want to port and what data needs to be copied to and from the GPU.</li>
+<li>Implement &amp; Verify - Insert the necessary OpenMP directives, compile the application, and verify the results.</li>
+<li>Commit - Once you have verified correctness and the expected behavior, commit your changes and start the process over again.</li>
+</ol>
+<h2 is-upgraded><strong>Provide Feedback</strong></h2>
+<p>If you have any questions, comments, or feedback that can help improve this codelab, you can reach out to <a href="mailto:support@fluidnumerics.com" target="_blank">support@fluidnumerics.com</a> </p>
+<h2 is-upgraded><strong>Further reading</strong></h2>
+<p><a href="https://www.openmp.org/wp-content/uploads/openmp-examples-5.0.0.pdf" target="_blank">OpenMP 5.0 Examples Documentation</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
