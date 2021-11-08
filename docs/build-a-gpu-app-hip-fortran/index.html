@@ -151,12 +151,12 @@ gcloud compute os-login ssh-keys add --key-file=${HOME}/.ssh/id_rsa.pub</pre>
 </ol>
 <aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, we recommend that you load the gcc@10.3.0 compiler into your path using <code>spack load gcc@10.3.0</code> before running the make command.</p>
 </aside>
-<pre><code>$ cd samples/c++/smoother/src
+<pre><code>$ cd samples/fortran/smoother/src
 $ make</code></pre>
 <ol type="1" start="3">
 <li>Test run the example. The application takes two arguments. The first argument is the number of grid cells, and the second argument is the number of times the smoothing operator is applied.</li>
 </ol>
-<p>$ ./smoother 1000 100</p>
+<p>$ ./smoother 1000 1000 100</p>
 <h2 is-upgraded><strong>Profile the Application</strong></h2>
 <p>Before starting any GPU porting exercise, it is important to profile your application to find hotspots where your application spends most of its time. Further, it is helpful to keep track of the runtime of the routines in your application so that you can later assess whether or not the GPU porting has resulted in improved performance. Ideally, your GPU-Accelerated application should outperform CPU-Only versions of your application when fully subscribed to available CPUs on a compute node.</p>
 <aside class="special"><p><strong>Tip:</strong> To obtain a fair comparison between CPU-Only and GPU-Accelerated versions of your application,  you will want to compare the run-time between fully-subscribed CPU-only routines and the GPU-ported routines. </p>
@@ -366,13 +366,8 @@ hipFree,3,192359,64119,0.02761722601411495</code></pre>
       </google-codelab-step>
     
       <google-codelab-step label="HIP Kernel Launch Basics" duration="10">
-        <p>Routines that are executed on the GPU are typically scheduled to run by issuing instructions from the host (CPU). In HIP, a GPU kernel is launched through a call to hipLaunchKernelGGL. When scheduling GPU kernel execution,  you specify </p>
-<ol type="1" start="1">
-<li>The kernel name,</li>
-<li>The number of threads and the thread grouping,</li>
-<li>The amount of Local Data Share (LDS) memory (Shared Memory) per block, and </li>
-<li>The stream ID.</li>
-</ol>
+        <p>Routines that are executed on the GPU are typically scheduled to run by issuing instructions from the host (CPU). With both HIP and CUDA, you can use &#34;chevron syntax&#34; to specify the number of threads per block, the number of blocks, the stream ID, and the amount of shared memory per block.</p>
+<pre>myGPUFunc &lt;&lt;&lt;BlockPerGrid, ThreadPerBlock,StreamId,ShareMem&gt;&gt;&gt;(int *d_ary, float *d_ary2);</pre>
 <p>Keep in mind that HIP kernels must be written in C++. In this section, we&#39;ll cover the basics of writing and launching a HIP kernel in C++ and conclude with a brief overview of how we will launch a HIP kernel from Fortran.</p>
 <h2 is-upgraded><strong>Threads, Blocks, and LDS Memory</strong></h2>
 <p>When a kernel is launched, all requested threads on the GPU execute the kernel instructions concurrently. How the threads are scheduled to execute the instructions depends on the thread grouping. Threads are grouped into blocks in the HIP and CUDA programming models. Threads within a block are able to share LDS memory and L1 Cache on GPU Compute Units (Streaming Multiprocessor in Nvidia/CUDA terminology).</p>
