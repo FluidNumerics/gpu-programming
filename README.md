@@ -15,4 +15,10 @@
 
 ## Getting Support
 
-* [Fluid Numerics RSE Support]() - Request support on scientific computing and parallel programming from Fluid Numerics
+**[Fluid Numerics RSE Support](https://octoskelo.atlassian.net/servicedesk/customer/portal/2/group/46/create/142)**
+
+Request support on scientific computing and parallel programming from Fluid Numerics. This support is only available to individuals attending training events with Fluid Numerics.
+
+**[Report mistakes in the codelabs](https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140)**
+
+If you find a mistake in one of the codelabs, you can post an issue to our community support channel.
