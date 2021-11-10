@@ -112,7 +112,7 @@ gcloud compute os-login ssh-keys add --key-file=${HOME}/.ssh/id_rsa.pub</pre>
 <ol type="1" start="4">
 <li>Now that you are in the login node, you can start an interactive session on a compute node. When submitting the job, you are required to specify the Quality of Service (QOS) as &#34;amd&#34;.</li>
 </ol>
-<pre>srun -N1 --gres=gpu:1 --partition=v100 --qos=amd --pty /bin/bash</pre>
+<pre>srun -N1 --gres=gpu:1 --partition=v100 --account=amd --qos=amd --pty /bin/bash</pre>
 <aside class="warning"><p><strong>NOTE : </strong>The OCEAN cluster is a cloud-native cluster hosted on Google Cloud Platform. If a compute node is not currently active (denoted by the idle~ state from sinfo), a node will be provisioned automatically on Google Cloud. It may take up to 3 minutes for a node to become active and your interactive session to start.</p>
 </aside>
 
