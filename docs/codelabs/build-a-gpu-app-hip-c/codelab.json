@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2021-11-10T04:17:55Z",
+  "updated": "2021-11-10T15:13:40Z",
   "id": "build-a-gpu-app-hip-c",
   "duration": 85,
   "title": "Building a basic GPU accelerated application with HIP in C/C++",
@@ -20,7 +20,7 @@
   "tags": [
     "web"
   ],
-  "feedback": "https://octoskelo.atlassian.net/servicedesk/customer/portals",
+  "feedback": "https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140",
   "ga": "TO DO",
   "url": "build-a-gpu-app-hip-c"
 }
