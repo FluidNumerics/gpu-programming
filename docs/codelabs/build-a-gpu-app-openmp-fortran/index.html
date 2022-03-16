@@ -28,7 +28,7 @@
                   feedback-link="https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p><strong>Last Updated:</strong> 2021-11-01</p>
+        <p><strong>Last Updated:</strong> 2022-03-16</p>
 <h2 is-upgraded><strong>What you will build</strong></h2>
 <p>In this codelab, you will port a small Fortran application to GPU hardware using OpenMP. You will transition a serial CPU-only mini-application to a portable GPU accelerated application, using OpenMP provided through the AOMP compiler. </p>
 <p>The goal of this codelab is to introduce you to using a few basic OpenMP directives and a development practice that can be applied to porting other applications.</p>
@@ -217,15 +217,15 @@ $ make</code></pre>
         <p>Before jumping straight into GPU offloading with OpenMP, you will take an incremental step to change the compiler and verify the application can be compiled and executed with the <code>amdflang</code> compiler. Once this is verified, you will then start the GPU offloading process.</p>
 <p>ROCm comes with compilers ( <code>amdflang</code>, <code>amdclang</code>, and <code>amdclang++</code> ) that support OpenMP 5.0. To enable GPU offloading at compile time, there are a few flags that you need to pass to the compiler.</p>
 <pre>amdflang -fopenmp \
-         -fopenmp-targets=&lt;target&gt; \
-         -Xopenmp-target=&lt;target&gt; \
-         -march=&lt;gpu-arch&gt;
+         -fopenmp-targets=[target] \
+         -Xopenmp-target=[target] \
+         -march=[gpu-arch]
          [other options]
-         &lt;source-code&gt;</pre>
+         [source-code]</pre>
 <p>In this example, </p>
 <ul>
-<li><code><target></code> is one of <code>amdgcn-amd-amdhsa</code> or <code>nvptx64-nvidia-cuda</code></li>
-<li><code><gpu-arch></code> is the GPU architecture code. For MI100 GPUs, <code><march>=gfx908</code> and for V100 GPUs, <code><march>=sm_72</code>.</li>
+<li><code>[target]</code> is one of <code>amdgcn-amd-amdhsa</code> or <code>nvptx64-nvidia-cuda</code></li>
+<li><code>[gpu-arch]</code> is the GPU architecture code. For MI100 GPUs, <code>[march]=gfx908</code> and for V100 GPUs, <code>[march]=sm_72</code>.</li>
 </ul>
 <p>ROCm also comes with a helpful tool (<code>mygpu</code>) that can be used to detect the GPU architecture. This is particularly useful if you are building the code on a machine that has the GPU you want to build for. </p>
 <p>In this section, you will make the following changes to the Makefile</p>
@@ -246,26 +246,35 @@ CUDA ?= /usr/local/cuda</code></pre>
 CUDA ?= /usr/local/cuda
 FC ?= $(ROCM)/bin/amdflang</code></pre>
 <ol type="1" start="3">
-<li>Let&#39;s now work on a section for detecting the GPU architecture. The mygpu utility can be used to detect a GPU, if one is present. The -d flag is used to set the default architecture to fall back to in case a GPU is not present. <br><br>For example,  <code>mygpu -d gfx908</code> will check for a GPU and return gfx908 if one is not found. In the make system, we want to also allow for someone building the code to specify the target architecture, in case they are on a system that does not have a GPU equipped.<br><br>Add the following section of code to your Makefile just beneath the definition of <code>FC</code>. This section sets INSTALLED_GPU to the output of <code>mygpu -d gfx908</code>, and sets <code>GPU_ARCH</code> to <code>INSTALLED_GPU</code> if it is not set in the user&#39;s environment.</li>
+<li>In ROCm 4.5.0, it is necessary to remove the -g flag from the FFLAGS definition in the Makefile. </li>
+</ol>
+<aside class="warning"><p><strong>Caution : </strong>If you do not remove the <code>-g</code> flag from <code>FFLAGS</code>, the <code>amdflang</code> compiler with crash with a segmentation fault.</p>
+</aside>
+<pre>FFLAGS = -O0</pre>
+<ol type="1" start="4">
+<li>Let&#39;s now work on a section for detecting the GPU architecture. The mygpu utility can be used to detect a GPU, if one is present. The -d flag is used to set the default architecture to fall back to in case a GPU is not present. <br><br>For example,  <code>mygpu -d gfx908</code> will check for a GPU and return gfx908 if one is not found. In the make system, we want to also allow for someone building the code to specify the target architecture, in case they are on a system that does not have a GPU equipped.<br><br>Add the following section of code to your Makefile just beneath the definition of <code>FC</code>. This section sets <code>GPU_ARCH</code> to the output of <code>mygpu -d gfx908</code>,  if it is not set in the user&#39;s environment. The <code>-d gfx908</code> flag indicates that the default GPU architecture will be set to <code>gfx908</code>, if one is not found on the system you are building on.</li>
 </ol>
 <pre><code># Detect the GPU architecture
-INSTALLED_GPU = $(shell $(ROCM)/bin/mygpu -d gfx908)
-GPU_ARCH ?= $(INSTALLED_GPU)</code></pre>
-<ol type="1" start="4">
+GPU_ARCH ?= $(shell $(ROCM)/bin/mygpu -d gfx908)</code></pre>
+<ol type="1" start="5">
 <li>Now that we have the GPU architecture, we can set the GPU target. Nvidia GPU architectures are all defined with a prefix of sm_ . We can use this with the <code>findstring</code> function to set the GPU target accordingly.<br><br>Add the following section of code to your Makefile just beneath the definition of <code>GPU_ARCH</code>. This section sets the <code>GPU_TARGET</code> variable to <code>nvptx64-nvidia-cuda</code> when an Nvidia GPU is detected and <code>amdgcn-amd-amdhsa</code> otherwise. Additionally, this appends the CUDA runtime library to <code>LFLAGS</code> in the event that you are building for an Nvidia platform.</li>
 </ol>
-<pre><code>ifeq (sm_,$(findstring sm_,$(GPU_TARGET)))
+<pre><code>ifeq (sm_,$(findstring sm_,$(GPU_ARCH)))
   GPU_TARGET = nvptx64-nvidia-cuda
   LFLAGS += -L$(CUDA)/targets/x86_64-linux/lib -lcudart
 else
   GPU_TARGET = amdgcn-amd-amdhsa
 endif</code></pre>
-<ol type="1" start="5">
+<ol type="1" start="6">
 <li>Now you can append the OpenMP offload flags to the <code>FFLAGS</code> variable. Just beneath the <code>GPU_TARGET</code> definition, add the following code to append to the <code>FFLAGS</code> variable.</li>
 </ol>
 <pre><code>FFLAGS += -fopenmp -fopenmp-targets=$(GPU_TARGET) -Xopenmp-target=$(GPU_TARGET) -march=$(GPU_ARCH)</code></pre>
 <h2 is-upgraded><strong>Verify the application compiles and runs</strong></h2>
 <p>Now that you have made the necessary modifications to the Makefile, it is time to re-compile and test the application. You also want to make sure that the application output is unchanged.</p>
+<aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module and set the FC environment variable using the commands below :</p>
+<p><code>module load rocmmod4.5.0</code></p>
+<p><code>export FC=$(which amdflang)</code></p>
+</aside>
 <ol type="1" start="1">
 <li>On your first run of the smoother application, two files were created : function.txt and smooth-function.txt . You will use these to verify that the code still produces the same output. <br><br>Copy the existing output from your previous run to a reference directory.</li>
 </ol>
@@ -346,7 +355,7 @@ ENDDO
 <li>Use a <code>teams distribute parallel do</code> directive with a <code>collapse(2)</code> clause to parallelize the outer two loops. </li>
 </ol>
 <pre><code>    !$omp target map(to:weights, f) map(smoothF)
-    !$omp teams distribute parallel for collapse(2) num_threads(256)
+    !$omp teams distribute parallel do collapse(2) thread_limit(256)
     DO j = 1+nW, nY-nW
       DO i = 1+nW, nX-nW
 
@@ -396,7 +405,7 @@ $ diff smooth-function.txt reference/function.txt</code></pre>
 <ol type="1" start="4">
 <li>Run the <code>smoother</code> application with the same input parameters as before and compare the output with the reference output. You can use the diff command line tool to compare the new output with the reference output. If the files are identical, no output will be printed to screen.</li>
 </ol>
-<pre><code>$./smoother 1000 10
+<pre><code>$./smoother 1000 1000 100
 $ diff function.txt reference/function.txt
 $ diff smooth-function.txt reference/function.txt</code></pre>
 <ol type="1" start="5">
@@ -409,6 +418,12 @@ $ cat results.stat.csv
 &#34;__omp_offloading_801_440b81_resetF_l48.kd&#34;,10,8410807,841080,21.5579886035</code></pre>
 <aside class="special"><p><strong>Tip:</strong> You can use <a href="https://www.chromium.org/developers/how-tos/trace-event-profiling-tool" target="_blank">Google Chrome Tracing</a> to visualize the results.json trace profile. Simply copy the results.json file from the cluster onto your local machine. Then, open the Google Chrome web browser and navigate to chrome://tracing and upload results.json. </p>
 <p class="image-container"><img style="width: 610.00px" src="img/2a8256846130c942.png"></p>
+</aside>
+<aside class="special"><p><strong>Tip</strong> : Setting the environment variable <code>LIBOMPTARGET_KERNEL_TRACE</code> while running an OpenMP program produces valuable information. </p>
+<ul>
+<li><code>LIBOMPTARGET_KERNEL_TRACE=1</code> will report the number of teams and threads for every kernel run on the GPU. </li>
+<li><code>LIBOMPTARGET_KERNEL_TRACE=2</code> will additionally report implementation-level APIs and corresponding timing information.</li>
+</ul>
 </aside>
 <h2 is-upgraded><strong>Next steps</strong></h2>
 <p>You&#39;ve successfully offloaded two routines to the GPU. However, you may have noticed that the runtime did not improve much, and may have even gotten worse, after you offloaded the second routine (<code>resetF</code>). At the start and end of each target region, the application is copying data between the CPU and GPU. You can see this behavior in the trace profile shown above. Ideally, you want to minimize data movement between the host and device. </p>
@@ -475,13 +490,13 @@ DEALLOCATE(arrayIn, arrayOut)</code></pre>
 <li>Re-compile the <code>smoother</code> application.Run the <code>smoother</code> application with the same input parameters as before and compare the output with the reference output. You can use the diff command line tool to compare the new output with the reference output. If the files are identical, no output will be printed to screen.</li>
 </ol>
 <pre><code>$ make
-$./smoother 1000 10
+$./smoother 1000 1000 100
 $ diff function.txt reference/function.txt
 $ diff smooth-function.txt reference/function.txt</code></pre>
 <ol type="1" start="5">
 <li>Profile the application using the rocprof profiler with the <code>--hsa-trace --obj-tracking on</code> flags enabled. (Optionally) Open the results.json trace profile using Chrome Trace (navigate to chrome://tracing in the Google Chrome browser). Notice that, this time, <code>ResetF</code> is called immediately after <code>ApplySmoother</code> and data transfers between the CPU and GPU only occur at the beginning and end of the application run.</li>
 </ol>
-<pre><code>$ rocprof --hsa-trace --obj-tracking on ./smoother 1000 1000 10</code></pre>
+<pre><code>$ rocprof --hsa-trace --obj-tracking on ./smoother 1000 1000 100</code></pre>
 <p class="image-container"><img style="width: 624.00px" src="img/7af3c33bd6b84d45.png"></p>
 
 

@@ -28,7 +28,7 @@
                   feedback-link="https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p><strong>Last Updated:</strong> 2021-11-03</p>
+        <p><strong>Last Updated:</strong> 2022-03-16</p>
 <h2 is-upgraded><strong>What you will build</strong></h2>
 <p>In this codelab, you will port a small C++ application to GPU hardware using OpenMP. You will transition a serial CPU-only mini-application to a portable GPU accelerated application, using OpenMP provided through the AOMP compiler. </p>
 <p>The goal of this codelab is to introduce you to using a few basic OpenMP directives and a development practice that can be applied to porting other applications.</p>
@@ -211,18 +211,18 @@ $ make</code></pre>
       </google-codelab-step>
     
       <google-codelab-step label="Update the Makefile to use the AOMP compiler" duration="15">
-        <p>Before jumping straight into GPU offloading with OpenMP, you will take an incremental step to change the compiler and verify the application can be compiled and executed with the <code>amdflang</code> compiler. Once this is verified, you will then start the GPU offloading process.</p>
+        <p>Before jumping straight into GPU offloading with OpenMP, you will take an incremental step to change the compiler and verify the application can be compiled and executed with the <code>amdclang</code> compiler. Once this is verified, you will then start the GPU offloading process.</p>
 <p>ROCm comes with compilers ( <code>amdflang</code>, <code>amdclang</code>, and <code>amdclang++</code> ) that support OpenMP 5.0. To enable GPU offloading at compile time, there are a few flags that you need to pass to the compiler.</p>
 <pre>amdclang -fopenmp \
-         -fopenmp-targets=&lt;target&gt; \
-         -Xopenmp-target=&lt;target&gt; \
-         -march=&lt;gpu-arch&gt;
+         -fopenmp-targets=[target] \
+         -Xopenmp-target=[target] \
+         -march=[gpu-arch]
          [other options]
-         &lt;source-code&gt;</pre>
+         [source-code]</pre>
 <p>In this example, </p>
 <ul>
-<li><code><target></code> is one of <code>amdgcn-amd-amdhsa</code> or <code>nvptx64-nvidia-cuda</code></li>
-<li><code><gpu-arch></code> is the GPU architecture code. For MI100 GPUs, <code><march>=gfx908</code> and for V100 GPUs, <code><march>=sm_72</code>.</li>
+<li><code>[target]</code> is one of <code>amdgcn-amd-amdhsa</code> or <code>nvptx64-nvidia-cuda</code></li>
+<li><code>[gpu-arch]</code> is the GPU architecture code. For MI100 GPUs, <code>[march]=gfx908</code> and for V100 GPUs, <code>[march]=sm_72</code>.</li>
 </ul>
 <p>ROCm also comes with a helpful tool (<code>mygpu</code>) that can be used to detect the GPU architecture. This is particularly useful if you are building the code on a machine that has the GPU you want to build for. </p>
 <p>In this section, you will make the following changes to the Makefile</p>
@@ -230,37 +230,47 @@ $ make</code></pre>
 <li>Change the default Fortran compiler to amdflang</li>
 <li>Use the <code>mygpu</code> binary to set the GPU architecture and target</li>
 <li>Append the required OpenMP flags to FFLAGS</li>
-<li>Starting from the <code>smoother</code> makefile (<code>samples/fortran/smoother/src/Makefile</code>), Let&#39;s first add variables for the paths to ROCm and CUDA at the top of the file. These will be needed to reference full paths to the compiler and <code>mygpu</code> binary. <br><br>When setting these variables, we use the ?= relation to allow a user&#39;s environment variables to override these values if desired.</li>
 </ul>
+<ol type="1" start="1">
+<li>Starting from the <code>smoother</code> makefile (<code>samples/fortran/smoother/src/Makefile</code>), Let&#39;s first add variables for the paths to ROCm and CUDA at the top of the file. These will be needed to reference full paths to the compiler and <code>mygpu</code> binary. <br><br>When setting these variables, we use the ?= relation to allow a user&#39;s environment variables to override these values if desired.</li>
+</ol>
 <pre><code>ROCM ?= /opt/rocm
 CUDA ?= /usr/local/cuda</code></pre>
-<ul>
+<ol type="1" start="2">
 <li>Next, change the specification for the C compiler, by setting CC ?= $(ROCM)/bin/amdclang . The first three lines of your Makefile should look like this : </li>
-</ul>
+</ol>
 <pre><code>ROCM ?= /opt/rocm
 CUDA ?= /usr/local/cuda
 CC ?= $(ROCM)/bin/amdclang</code></pre>
-<ul>
-<li>Let&#39;s now work on a section for detecting the GPU architecture. The mygpu utility can be used to detect a GPU, if one is present. The -d flag is used to set the default architecture to fall back to in case a GPU is not present. <br><br>For example,  <code>mygpu -d gfx908</code> will check for a GPU and return gfx908 if one is not found. In the make system, we want to also allow for someone building the code to specify the target architecture, in case they are on a system that does not have a GPU equipped.<br><br>Add the following section of code to your Makefile just beneath the definition of <code>FC</code>. This section sets INSTALLED_GPU to the output of <code>mygpu -d gfx908</code>, and sets <code>GPU_ARCH</code> to <code>INSTALLED_GPU</code> if it is not set in the user&#39;s environment.</li>
-</ul>
+<ol type="1" start="3">
+<li>In ROCm 4.5.0, it is necessary to remove the -g flag from the FFLAGS definition in the Makefile. </li>
+</ol>
+<aside class="warning"><p><strong>Caution : </strong>If you do not remove the <code>-g</code> flag from <code>FFLAGS</code>, the <code>amdflang</code> compiler with crash with a segmentation fault.</p>
+</aside>
+<ol type="1" start="4">
+<li>Let&#39;s now work on a section for detecting the GPU architecture. The mygpu utility can be used to detect a GPU, if one is present. The -d flag is used to set the default architecture to fall back to in case a GPU is not present. <br><br>For example,  <code>mygpu -d gfx908</code> will check for a GPU and return gfx908 if one is not found. In the make system, we want to also allow for someone building the code to specify the target architecture, in case they are on a system that does not have a GPU equipped.<br><br>Add the following section of code to your Makefile just beneath the definition of <code>FC</code>. This section sets <code>GPU_ARCH</code> to the output of <code>mygpu -d gfx908</code>,  if it is not set in the user&#39;s environment. The <code>-d gfx908</code> flag indicates that the default GPU architecture will be set to <code>gfx908</code>, if one is not found on the system you are building on.</li>
+</ol>
 <pre><code># Detect the GPU architecture
-INSTALLED_GPU = $(shell $(ROCM)/bin/mygpu -d gfx908)
-GPU_ARCH ?= $(INSTALLED_GPU)</code></pre>
-<ul>
+GPU_ARCH ?= $(shell $(ROCM)/bin/mygpu -d gfx908)</code></pre>
+<ol type="1" start="5">
 <li>Now that we have the GPU architecture, we can set the GPU target. Nvidia GPU architectures are all defined with a prefix of sm_ . We can use this with the <code>findstring</code> function to set the GPU target accordingly.<br><br>Add the following section of code to your Makefile just beneath the definition of <code>GPU_ARCH</code>. This section sets the <code>GPU_TARGET</code> variable to <code>nvptx64-nvidia-cuda</code> when an Nvidia GPU is detected and <code>amdgcn-amd-amdhsa</code> otherwise. Additionally, this appends the CUDA runtime library to <code>LFLAGS</code> in the event that you are building for an Nvidia platform.</li>
-</ul>
-<pre><code>ifeq (sm_,$(findstring sm_,$(GPU_TARGET)))
+</ol>
+<pre><code>ifeq (sm_,$(findstring sm_,$(GPU_ARCH)))
   GPU_TARGET = nvptx64-nvidia-cuda
   LFLAGS += -L$(CUDA)/targets/x86_64-linux/lib -lcudart
 else
   GPU_TARGET = amdgcn-amd-amdhsa
 endif</code></pre>
-<ul>
+<ol type="1" start="6">
 <li>Now you can append the OpenMP offload flags to the <code>CFLAGS</code> variable. Just beneath the <code>GPU_TARGET</code> definition, add the following code to append to the <code>CFLAGS</code> variable.</li>
-</ul>
+</ol>
 <pre><code>CFLAGS += -fopenmp -fopenmp-targets=$(GPU_TARGET) -Xopenmp-target=$(GPU_TARGET) -march=$(GPU_ARCH)</code></pre>
 <h2 is-upgraded><strong>Verify the application compiles and runs</strong></h2>
 <p>Now that you have made the necessary modifications to the Makefile, it is time to re-compile and test the application. You also want to make sure that the application output is unchanged.</p>
+<aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module and set the CC environment variable using the commands below :</p>
+<p><code>module load rocmmod4.5.0</code></p>
+<p><code>export CC=$(which amdclang)</code></p>
+</aside>
 <ol type="1" start="1">
 <li>Copy the existing output from your previous run to a reference directory.</li>
 </ol>
@@ -270,7 +280,7 @@ $ cp function.txt smooth-function.txt reference/</code></pre>
 <li>Re-compile the <code>smoother</code> application.</li>
 </ol>
 <pre><code>$ make clean
-$ make --no-builtin-variables</code></pre>
+$ make</code></pre>
 <ol type="1" start="3">
 <li>Run the <code>smoother</code> application with the same input parameters as before and compare the output with the reference output. You can use the diff command line tool to compare the new output with the reference output. If the files are identical, no output will be printed to screen.</li>
 </ol>
