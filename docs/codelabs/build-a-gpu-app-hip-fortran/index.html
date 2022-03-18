@@ -28,7 +28,7 @@
                   feedback-link="https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p><strong>Last Updated:</strong> 2021-11-8</p>
+        <p><strong>Last Updated:</strong> 2022-03-17</p>
 <h2 is-upgraded><strong>What you will build</strong></h2>
 <p>In this codelab, you will port a small Fortran application to GPU hardware using HIP and HIPFort. You will transition a serial CPU-only mini-application to a portable GPU accelerated application, using HIP and HIPFort. </p>
 <p>The goal of this codelab is to introduce you to using the HIPFort API and a development practice that can be applied to porting other Fortran applications to GPU hardware with HIPFort.</p>
@@ -238,11 +238,10 @@ $ mv function.txt smooth-function.txt ./reference/</code></pre>
   USE smoother
   USE hipfort
   USE hipfort_check
-  USE ISO_C_BINDING
   
   IMPLICIT NONE</code></pre>
 <ol type="1" start="2">
-<li>Change the ALLOCATABLE arrays to Fortran POINTER and add declarations for device copies of the <code>f</code>, <code>smoothF</code>, and <code>weights</code> arrays. The device copies can be declared as <code>TYPE(c_ptr)</code> or Fortran <code>POINTER</code>. In this </li>
+<li>Change the ALLOCATABLE arrays to Fortran POINTER and add declarations for device copies of the <code>f</code>, <code>smoothF</code>, and <code>weights</code> arrays. The device copies can be declared as <code>TYPE(c_ptr)</code> or Fortran <code>POINTER</code>. In this example, we will use Fortran <code>POINTER</code>.</li>
 </ol>
 <aside class="special"><p><strong>Note: </strong>When working on your own applications, it is recommended to use Fortran <code>POINTER</code>&#39;s, since other API&#39;s, such as MPI, can operate directly with Fortran <code>POINTER</code>&#39;s.</p>
 </aside>
@@ -276,13 +275,19 @@ $ mv function.txt smooth-function.txt ./reference/</code></pre>
       CALL hipCheck( hipFree(smoothF_dev) )
       CALL hipCheck( hipFree(weights_dev) )</code></pre>
 <ol type="1" start="5">
-<li>Before going too much further, let&#39;s check to make sure the code compiles and runs with these changes. Save the changes you&#39;ve just made to main.F90 and open the Makefile. Change the compiler to <code>hipfc</code> and save your changes.</li>
+<li>Before going too much further, let&#39;s check to make sure the code compiles and runs with these changes. Starting from the <code>smoother</code> makefile (<code>samples/fortran/smoother/src/Makefile</code>), let&#39;s first add variables for the paths to ROCm and CUDA at the top of the file. These will be needed to reference full paths to the hipfc compiler. <br><br>When setting these variables, we use the ?= relation to allow a user&#39;s environment variables to override these values if desired.</li>
 </ol>
-<pre><code>FC=hipfc
+<pre><code>ROCM ?= /opt/rocm
+CUDA ?= /usr/local/cuda</code></pre>
+<p><br>Change the compiler to <code>hipfc</code> and save your changes.</p>
+<pre><code>FC=$(ROCM)/hipfort/bin/hipfc
 FFLAGS=-O0 -g</code></pre>
 <aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, we recommend that you load the hipfort % gcc@10.3.0 compiler into your path using <code>spack load hipfort % gcc@10.3.0</code> before running the make command.</p>
 <p>Additionally, you may need to the <code>HIPFORT_COMPILER</code> environment variable. </p>
 <p><code>export HIPFORT_COMPILER=$(spack location -i gcc@10.3.0)/bin/gfortran</code></p>
+</aside>
+<aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module using the command below :</p>
+<p><code>module load rocmmod4.5.0</code></p>
 </aside>
 <ol type="1" start="6">
 <li>Remove the <code>*.o</code> files and the <code>smoother</code> binary to ensure a clean build and make a new <code>smoother</code> binary</li>

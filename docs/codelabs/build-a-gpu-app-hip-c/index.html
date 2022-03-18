@@ -28,7 +28,7 @@
                   feedback-link="https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p><strong>Last Updated:</strong> 2021-11-03</p>
+        <p><strong>Last Updated:</strong> 2022-03-18</p>
 <h2 is-upgraded><strong>What you will build</strong></h2>
 <p>In this codelab, you will port a small C++ application to GPU hardware using OpenMP. You will transition a serial CPU-only mini-application to a portable GPU accelerated application, using OpenMP provided through the AOMP compiler. </p>
 <p>The goal of this codelab is to introduce you to using a few basic OpenMP directives and a development practice that can be applied to porting other applications.</p>
@@ -256,11 +256,16 @@ $ make</code></pre>
 </ol>
 <pre><code>  hipFree(smoothOperator-&gt;weights_dev);</code></pre>
 <ol type="1" start="5">
-<li>Change the compiler in the <code>Makefile</code> to <code>hipcc</code> and set the necessary compiler flags. <br>(AMD Platforms only) Set the necessary compiler flags. You can determine your GPU target type by running <a href="https://github.com/RadeonOpenCompute/rocminfo" target="_blank"><code>rocminfo</code></a>. Once you have determined the target type, you can add <code>--amdgpu-target=TARGET</code>. <a href="https://github.com/RadeonOpenCompute/hcc/wiki#compiling-for-different-gpu-architectures" target="_blank">The ROCm Wiki</a> provides more information on compiling for different AMD GPU targets.</li>
+<li>Before going too much further, let&#39;s check to make sure the code compiles and runs with these changes. Starting from the <code>smoother</code> Makefile, let&#39;s first add variables for the paths to ROCm and CUDA at the top of the file. These will be needed to reference full paths to the hipfc compiler. <br><br>When setting these variables, we use the ?= relation to allow a user&#39;s environment variables to override these values if desired.</li>
 </ol>
-<pre><code>CC=hipcc
-CFLAGS=-O0 -g
-LFLAGS=-lm</code></pre>
+<pre><code>ROCM ?= /opt/rocm
+CUDA ?= /usr/local/cuda</code></pre>
+<p><br>Change the compiler to <code>hipfc</code> and save your changes.</p>
+<pre><code>CC=$(ROCM)/bin/hipcc
+FFLAGS=-O0 -g</code></pre>
+<aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module using the command below :</p>
+<p><code>module load rocmmod4.5.0</code></p>
+</aside>
 <p>Once you have completed the code and Makefile modifications, you can now compile <code>smoother</code> and verify that data allocated and copied to the GPU.</p>
 <ol type="1" start="1">
 <li>Copy existing CPU data to a <code>reference/</code> subdirectory for later comparison. Whenever we make a change to the code, we will compare output with this reference data.</li>
