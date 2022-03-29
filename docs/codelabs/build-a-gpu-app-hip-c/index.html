@@ -151,7 +151,7 @@ gcloud compute os-login ssh-keys add --key-file=${HOME}/.ssh/id_rsa.pub</pre>
 <ol type="1" start="2">
 <li>Build the smoother application. Keep in mind, the compiler is set to gcc by default in the provided makefile.</li>
 </ol>
-<aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, we recommend that you load the gcc@10.3.0 compiler into your path using <code>spack load gcc@10.3.0</code> before running the make command.</p>
+<aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, you will need to load hipfort into your path using <code>spack load gcc@9.4.0 && spack load hipfort % gcc@9.4.0</code>  before running the make command.</p>
 </aside>
 <pre><code>$ cd samples/c++/smoother/src
 $ make</code></pre>

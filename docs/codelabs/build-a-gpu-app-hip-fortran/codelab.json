@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2022-03-18T19:39:46Z",
+  "updated": "2022-03-28T22:37:34Z",
   "id": "build-a-gpu-app-hip-fortran",
   "duration": 85,
   "title": "Building a basic GPU accelerated application with HIP in Fortran",

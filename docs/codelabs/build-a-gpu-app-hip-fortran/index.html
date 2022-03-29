@@ -149,7 +149,7 @@ gcloud compute os-login ssh-keys add --key-file=${HOME}/.ssh/id_rsa.pub</pre>
 <ol type="1" start="2">
 <li>Build the smoother application. Keep in mind, the compiler is set to gcc by default in the provided makefile.</li>
 </ol>
-<aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, we recommend that you load the gcc@10.3.0 compiler into your path using <code>spack load gcc@10.3.0</code> before running the make command.</p>
+<aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, you will need to load hipfort into your path using <code>spack load gcc@9.4.0 && spack load hipfort % gcc@9.4.0</code>  before running the make command.</p>
 </aside>
 <pre><code>$ cd samples/fortran/smoother/src
 $ make</code></pre>
@@ -280,11 +280,12 @@ $ mv function.txt smooth-function.txt ./reference/</code></pre>
 <pre><code>ROCM ?= /opt/rocm
 CUDA ?= /usr/local/cuda</code></pre>
 <p><br>Change the compiler to <code>hipfc</code> and save your changes.</p>
-<pre><code>FC=$(ROCM)/hipfort/bin/hipfc
-FFLAGS=-O0 -g</code></pre>
-<aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, we recommend that you load the hipfort % gcc@10.3.0 compiler into your path using <code>spack load hipfort % gcc@10.3.0</code> before running the make command.</p>
+<pre><code>HIPFORT_COMPILER ?= /usr/bin/gfortran
+FC ?= $(ROCM)/hipfort/bin/hipfc
+FFLAGS=-O0 -g -hipfort-compiler $(HIPFORT_COMPILER)</code></pre>
+<aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, we recommend that you load the hipfort % gcc@9.4.0 compiler into your path using <code>spack load hipfort % gcc@9.4.0</code> before running the make command.</p>
 <p>Additionally, you may need to the <code>HIPFORT_COMPILER</code> environment variable. </p>
-<p><code>export HIPFORT_COMPILER=$(spack location -i gcc@10.3.0)/bin/gfortran</code></p>
+<p><code>export HIPFORT_COMPILER=$(spack location -i gcc@9.4.0)/bin/gfortran</code></p>
 </aside>
 <aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module using the command below :</p>
 <p><code>module load rocmmod4.5.0</code></p>
