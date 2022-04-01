@@ -24,7 +24,7 @@ void smootherInit( struct smoother *smoothOperator)
     y = (real)j -shift;
     for( int i=0; i < N; i++ ){
       x = (real)i -shift;
-      r = -(pow(x,2.0)+pow(y,2.0));
+      r = -(x*x+y*y);
       wsum += exp(r);
       smoothOperator->weights[i+j*N] = exp(r);
     }
