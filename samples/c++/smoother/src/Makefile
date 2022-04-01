@@ -1,4 +1,4 @@
-CFLAGS=-O0 -g
+CFLAGS=-O0 -g -pg
 LFLAGS=-lm
 CC=gcc
 
