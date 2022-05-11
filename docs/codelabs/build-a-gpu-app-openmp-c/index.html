@@ -268,7 +268,7 @@ endif</code></pre>
 <h2 is-upgraded><strong>Verify the application compiles and runs</strong></h2>
 <p>Now that you have made the necessary modifications to the Makefile, it is time to re-compile and test the application. You also want to make sure that the application output is unchanged.</p>
 <aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module and set the CC environment variable using the commands below :</p>
-<p><code>module load rocmmod4.5.0</code></p>
+<p><code>module load rocmmod5.0.0</code></p>
 <p><code>export CC=$(which amdclang)</code></p>
 </aside>
 <ol type="1" start="1">
@@ -404,14 +404,14 @@ sys        0m1.228s
 $ diff function.txt reference/function.txt
 $ diff smooth-function.txt reference/function.txt</code></pre>
 <ol type="1" start="1">
-<li>To profile, you can profile the application using the rocprof profiler. If you would like to create a trace profile, add the <code>--hsa-trace --obj-tracking on flags</code>. If you would like to get a summary hotspot profile of the GPU kernels, use the <code>--stats</code> flag.</li>
+<li>To profile, you can profile the application using the rocprof profiler. If you would like to create a trace profile, add the <code>--hsa-trace</code> flags. If you would like to get a summary hotspot profile of the GPU kernels, use the <code>--stats</code> flag.</li>
 </ol>
-<pre><code>$ rocprof --hsa-trace --obj-tracking on --stats ./smoother 1000 10
+<pre><code>$ rocprof --hsa-trace  --stats ./smoother 1000 10
 $ cat results.stat.csv
 &#34;Name&#34;,&#34;Calls&#34;,&#34;TotalDurationNs&#34;,&#34;AverageNs&#34;,&#34;Percentage&#34;
 &#34;__omp_offloading_801_440b81_smoothField_l67.kd&#34;,10,30603997,3060399,78.4420113965
 &#34;__omp_offloading_801_440b81_resetF_l48.kd&#34;,10,8410807,841080,21.5579886035</code></pre>
-<aside class="special"><p><strong>Tip:</strong> You can use <a href="https://www.chromium.org/developers/how-tos/trace-event-profiling-tool" target="_blank">Google Chrome Tracing</a> to visualize the results.json trace profile. Simply open the Google Chrome web browser and navigate to chrome://tracing and upload results.json. </p>
+<aside class="special"><p><strong>Tip:</strong> You can <a href="https://ui.perfetto.dev" target="_blank">https://ui.perfetto.dev</a> to visualize the results.json trace profile. Simply open your web browser and navigate to <a href="https://ui.perfetto.dev" target="_blank">https://ui.perfetto.dev</a></p>
 <p class="image-container"><img style="width: 610.00px" src="img/2a8256846130c942.png"></p>
 </aside>
 <h2 is-upgraded><strong>Next steps</strong></h2>
