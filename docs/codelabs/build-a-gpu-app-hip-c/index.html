@@ -256,13 +256,13 @@ $ make</code></pre>
 </ol>
 <pre><code>  hipFree(smoothOperator-&gt;weights_dev);</code></pre>
 <ol type="1" start="5">
-<li>Before going too much further, let&#39;s check to make sure the code compiles and runs with these changes. Starting from the <code>smoother</code> Makefile, let&#39;s first add variables for the paths to ROCm and CUDA at the top of the file. These will be needed to reference full paths to the hipfc compiler. <br><br>When setting these variables, we use the ?= relation to allow a user&#39;s environment variables to override these values if desired.</li>
+<li>Before going too much further, let&#39;s check to make sure the code compiles and runs with these changes. Starting from the <code>smoother</code> Makefile, let&#39;s first add variables for the paths to ROCm and CUDA at the top of the file. These will be needed to reference full paths to the hipcc compiler. <br><br>When setting these variables, we use the ?= relation to allow a user&#39;s environment variables to override these values if desired.</li>
 </ol>
 <pre><code>ROCM ?= /opt/rocm
 CUDA ?= /usr/local/cuda</code></pre>
-<p><br>Change the compiler to <code>hipfc</code> and save your changes.</p>
+<p><br>Change the compiler to <code>hipcc</code> and save your changes.</p>
 <pre><code>CC=$(ROCM)/bin/hipcc
-FFLAGS=-O0 -g</code></pre>
+CFLAGS=-O0 -g</code></pre>
 <aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module using the command below :</p>
 <p><code>module load rocmmod5.0.0</code></p>
 </aside>
