@@ -611,20 +611,16 @@ hipFree,3,300215,100071,0.0872907081227</code></pre>
   // Copy smoothF_dev from device to host
   hipMemcpy(smoothF, smoothF_dev, nElements*sizeof(real), hipMemcpyDeviceToHost);</code></pre>
 <ol type="1" start="4">
-<li>Add <code>resetF_gpu</code> declaration to <code>smoother.h</code></li>
-</ol>
-<pre><code>__global__ void smoothField_gpu( real* weights, real *f, real *smoothF, int nx, int ny, int N);</code></pre>
-<ol type="1" start="5">
 <li>Recompile the smoother application</li>
 </ol>
 <pre><code>$ make</code></pre>
-<ol type="1" start="6">
+<ol type="1" start="5">
 <li>Verify that the solution output agrees with your reference output</li>
 </ol>
 <pre><code>$ ./smoother 1000 10
 $ diff function.txt reference/function.txt
 $ diff smooth-function.txt reference/smooth-function.txt</code></pre>
-<ol type="1" start="7">
+<ol type="1" start="6">
 <li>You can verify that the the number of hipMemcpy calls is now reduced.</li>
 </ol>
 <ol type="1" start="1">
