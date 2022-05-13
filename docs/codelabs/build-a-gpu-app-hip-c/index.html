@@ -279,13 +279,13 @@ $ mv function.txt smooth-function.txt ./reference/</code></pre>
 <ol type="1" start="3">
 <li>Run <code>smoother</code> with the same input parameters as you did in the previous section and verify the output is unchanged. We use the diff command line utility to compare the output files and the reference files. If there are no differences, diff will produce no output.</li>
 </ol>
-<pre><code>$ ./smoother 1000 10
+<pre><code>$ ./smoother 1000 100
 $ diff function.txt reference/function.txt
 $ diff smooth-function.txt reference.txt</code></pre>
 <ol type="1" start="4">
-<li>Verify that data is allocated on the GPU and that data is copied from the CPU to GPU by using a profiler.<br><br>To profile, use <code>rocprof</code> with the <code>--hip-trace on</code> and <code>--stats</code> flags. Running <code>rocprof</code> will create a file called <code>results.json</code> that contains the data for a trace profile. Additionally, <code>results.stats.csv</code> and <code>results.hip-stats.csv</code> will contain hotspot analysis for HIP kernels and HIP API calls, respectively.<br></li>
+<li>Verify that data is allocated on the GPU and that data is copied from the CPU to GPU by using a profiler.<br><br>To profile, use <code>rocprof</code> with the <code>--sys-trace on</code> and <code>--stats</code> flags. Running <code>rocprof</code> will create a file called <code>results.json</code> that contains the data for a trace profile. Additionally, <code>results.stats.csv</code> and <code>results.hip-stats.csv</code> will contain hotspot analysis for HIP kernels and HIP API calls, respectively.<br></li>
 </ol>
-<pre><code>$ rocprof --hip-trace --stats ./smoother 1000 10
+<pre><code>$ rocprof --sys-trace --stats ./smoother 1000 100
 &#34;Name&#34;,&#34;Calls&#34;,&#34;TotalDurationNs&#34;,&#34;AverageNs&#34;,&#34;Percentage&#34;
 hipMemcpy,1,12503928,12503928,95.8586582624
 hipMalloc,3,387867,129289,2.9734984242
@@ -420,39 +420,39 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
         <p>In this section, you will offload the smoothField routine to the GPU.</p>
 <h2 is-upgraded><strong>Planning the GPU port</strong></h2>
 <p>Let&#39;s look at the smoothField routine from smoother.c</p>
-<pre><code>void smoothField( struct smoother *smoothOperator, real *f, real *smoothF, int nX, int nY )
+<pre><code>void smoothField( struct smoother *smoothOperator, real *f, real *smoothF, int nx, int ny )
 {
   int iel, ism;
   int N = (real)smoothOperator-&gt;dim;
   int buf = (real)(smoothOperator-&gt;dim-1)/2.0;
   real smLocal;
 
-  for( int j=buf; j &lt; nY-buf; j++ ){
-    for( int i=buf; i &lt; nX-buf; i++ ){
+  for( int j=buf; j &lt; ny-buf; j++ ){
+    for( int i=buf; i &lt; nx-buf; i++ ){
       smLocal = 0.0;
       for( int jj=-buf; jj &lt;= buf; jj++ ){
         for( int ii=-buf; ii &lt;= buf; ii++ ){
-          iel = (i+ii)+(j+jj)*nX;
+          iel = (i+ii)+(j+jj)*nx;
           ism = (ii+buf) + (jj+buf)*N;
           smLocal += f[iel]*smoothOperator-&gt;weights[ism];
         }
       }
-      iel = i+j*nX;
+      iel = i+j*nx;
       smoothF[iel] = smLocal;
     }
   }
 }</code></pre>
-<p>The outer loops, over i and j, are tightly nested loops over a 2-D grid. The size of these loops are nY-2*buf and nX-2*buf. The values of nX and nY are determined by the user through the first command line argument (we have been using 1000), and buf is 2 (smoothOperator-&gt;dim=5; see smootherInit). Within the i and j loops, we carry out a reduction operation for smLocal and then assign the value to each element of smoothF.</p>
+<p>The outer loops, over i and j, are tightly nested loops over a 2-D grid. The size of these loops are ny-2*buf and nx-2*buf. The values of nx and ny are determined by the user through the first command line argument (we have been using 1000), and buf is 2 (smoothOperator-&gt;dim=5; see smootherInit). Within the i and j loops, we carry out a reduction operation for smLocal and then assign the value to each element of smoothF.</p>
 <p>In the smoothField algorithm, the order in which we execute the i and j loops does not matter. Further, the size of each loop is O(1000) for the example we&#39;re working with. A good strategy for offloading this routine to the GPU is to have each GPU thread execute the instructions within the i and j loops. Ideally, then we want each thread to execute something the following</p>
 <pre><code>    real smLocal = 0.0;
     for( int jj=-buf; jj &lt;= buf; jj++ ){
       for( int ii=-buf; ii &lt;= buf; ii++ ){
-        iel = (i+ii)+(j+jj)*nX;
+        iel = (i+ii)+(j+jj)*nx;
         ism = (ii+buf) + (jj+buf)*N;
         smLocal += f[iel]*smoothOperator-&gt;weights[ism];
       }
     }
-    iel = i+j*nX;
+    iel = i+j*nx;
     smoothF[iel] = smLocal;</code></pre>
 <p>Notice now the i and j loops are gone. Within the HIP kernel, we can calculate i and j from threadIdx.[x,y], blockIdx.[x,y], and blockDim.[x,y], assuming that we will launch the kernel with 2-D Grid and Block dimensions. You can use something like the following to calculate i and j.</p>
 <pre><code>  size_t i = threadIdx.x + blockIdx.x*blockDim.x;
@@ -463,8 +463,8 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
 <pre><code>  int buf = (real)(smoothOperator-&gt;dim-1)/2.0;
   int threadsPerBlockX = 16;
   int threadsPerBlockY = 16;
-  int gridDimX = (nX-2*buf)/threadsPerBlockX + 1;
-  int gridDimY = (nY-2*buf)/threadsPerBlockY + 1;</code></pre>
+  int gridDimX = (nx-2*buf)/threadsPerBlockX + 1;
+  int gridDimY = (ny-2*buf)/threadsPerBlockY + 1;</code></pre>
 <aside class="special"><p><strong>Note:</strong> In general, the number of threads-per-block will impact the application runtime and you will want to use a suitable profiler to help optimize performance. </p>
 <p>On AMD platforms, threads in a block are executed in 64-wide chunks called &#34;wavefronts&#34; and it is good practice is to make the block size a multiple of 64.</p>
 <p>On Nvidia platforms, threads in a block are executed in 32-wide chunks called &#34;warps&#34; and it is good practice is to make the block size a multiple of 32.</p>
@@ -473,23 +473,23 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
 <ol type="1" start="1">
 <li>Add a new routine, <code>smoothField_gpu</code>, to <code>smoother.cpp</code>. This routine needs to be of type __global__ so that it can be launched on the GPU (device) from the CPU (host) using hipLaunchKernelGGL.</li>
 </ol>
-<pre><code>__global__ void smoothField_gpu( real *weights_dev, real *f_dev, real *smoothF_dev, int nX, int nY, int N )
+<pre><code>__global__ void smoothField_gpu( real *weights_dev, real *f_dev, real *smoothF_dev, int nx, int ny, int N )
 {
   int buf = (real)(N-1)/2.0;
   size_t i = threadIdx.x + blockIdx.x*blockDim.x + buf;
   size_t j = threadIdx.y + blockIdx.y*blockDim.y + buf;
   int iel, ism;
   
-  if( i &gt;= buf &amp;&amp; i &lt; nX-buf &amp;&amp; j &gt;= buf &amp;&amp; j&lt; nY-buf){
+  if( i &gt;= buf &amp;&amp; i &lt; nx-buf &amp;&amp; j &gt;= buf &amp;&amp; j&lt; ny-buf){
     real smLocal = 0.0;
     for( int jj=-buf; jj &lt;= buf; jj++ ){
       for( int ii=-buf; ii &lt;= buf; ii++ ){
-        iel = (i+ii)+(j+jj)*nX;
+        iel = (i+ii)+(j+jj)*nx;
         ism = (ii+buf) + (jj+buf)*N;
         smLocal += f_dev[iel]*weights_dev[ism];
       }
     }
-    iel = i+j*nX;
+    iel = i+j*nx;
     smoothF_dev[iel] = smLocal;
   }
 }</code></pre>
@@ -501,8 +501,8 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
 <pre><code>  int buf = (real)(smoothOperator.dim-1)/2.0;
   int threadsPerBlockX = 16;
   int threadsPerBlockY = 16;
-  int gridDimX = (nX-2*buf)/threadsPerBlockX + 1;
-  int gridDimY = (nY-2*buf)/threadsPerBlockY + 1;</code></pre>
+  int gridDimX = (nx-2*buf)/threadsPerBlockX + 1;
+  int gridDimY = (ny-2*buf)/threadsPerBlockY + 1;</code></pre>
 <ol type="1" start="3">
 <li>Replace the smoothField call in main.cpp with a kernel launch call for smoothField_gpu</li>
 </ol>
@@ -518,7 +518,7 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
 <ol type="1" start="4">
 <li>Add <code>smoothField_gpu</code> declaration to <code>smoother.h</code></li>
 </ol>
-<pre><code>__global__ void smoothField_gpu( real* weights, real *f, real *smoothF, int nX, int nY, int N);</code></pre>
+<pre><code>__global__ void smoothField_gpu( real* weights, real *f, real *smoothF, int nx, int ny, int N);</code></pre>
 <ol type="1" start="5">
 <li>Rebuild the application. For Nvidia Platforms, you will need to set <code>CFLAGS=-O0 -g -fmad=false</code> before recompiling.</li>
 </ol>
@@ -590,7 +590,7 @@ hipFree,3,300215,100071,0.0872907081227</code></pre>
   size_t i = threadIdx.x + blockIdx.x*blockDim.x + buf;
   size_t j = threadIdx.y + blockIdx.y*blockDim.y + buf;
   int iel = i + nx*j;
-  if( i &gt;= buf &amp;&amp; i &lt; nX-buf &amp;&amp; j &gt;= buf &amp;&amp; j&lt; nY-buf){
+  if( i &gt;= buf &amp;&amp; i &lt; nx-buf &amp;&amp; j &gt;= buf &amp;&amp; j&lt; ny-buf){
     f[iel] = smoothF[iel];
   }
 }</code></pre>
@@ -613,7 +613,7 @@ hipFree,3,300215,100071,0.0872907081227</code></pre>
 <ol type="1" start="4">
 <li>Add <code>resetF_gpu</code> declaration to <code>smoother.h</code></li>
 </ol>
-<pre><code>__global__ void smoothField_gpu( real* weights, real *f, real *smoothF, int nX, int nY, int N);</code></pre>
+<pre><code>__global__ void smoothField_gpu( real* weights, real *f, real *smoothF, int nx, int ny, int N);</code></pre>
 <ol type="1" start="5">
 <li>Recompile the smoother application</li>
 </ol>
