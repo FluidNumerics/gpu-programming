@@ -28,7 +28,7 @@
                   feedback-link="https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p><strong>Last Updated:</strong> 2022-03-18</p>
+        <p><strong>Last Updated:</strong> 2022-05-11</p>
 <h2 is-upgraded><strong>What you will build</strong></h2>
 <p>In this codelab, you will port a small C++ application to GPU hardware using OpenMP. You will transition a serial CPU-only mini-application to a portable GPU accelerated application, using OpenMP provided through the AOMP compiler. </p>
 <p>The goal of this codelab is to introduce you to using a few basic OpenMP directives and a development practice that can be applied to porting other applications.</p>
@@ -264,7 +264,7 @@ CUDA ?= /usr/local/cuda</code></pre>
 <pre><code>CC=$(ROCM)/bin/hipcc
 FFLAGS=-O0 -g</code></pre>
 <aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module using the command below :</p>
-<p><code>module load rocmmod4.5.0</code></p>
+<p><code>module load rocmmod5.0.0</code></p>
 </aside>
 <p>Once you have completed the code and Makefile modifications, you can now compile <code>smoother</code> and verify that data allocated and copied to the GPU.</p>
 <ol type="1" start="1">
