@@ -1,0 +1,633 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Educational materials for scientific and parallel computing" name="description"/>
+<meta content="Fluid Numerics" name="author"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.5.1" name="generator"/>
+<title>Getting to know your hardware (Part 1) - Scientific Computing (edu)</title>
+<link href="../../assets/stylesheets/main.2e8b5541.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>html.glightbox-open { overflow: initial; height: 100%; }</style><script src="../../assets/javascripts/glightbox.min.js"></script></head>
+<body data-md-color-accent="cyan" data-md-color-primary="black" data-md-color-scheme="slate" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#getting-to-know-your-hardware-part-1">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Scientific Computing (edu)" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Scientific Computing (edu)">
+<img alt="logo" src="../../assets/images/logo-fluid-numerics.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Scientific Computing (edu)
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Getting to know your hardware (Part 1)
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="cyan" data-md-color-media="" data-md-color-primary="black" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="cyan" data-md-color-media="" data-md-color-primary="black" data-md-color-scheme="default" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+</form>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/scientific-computing-edu" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub/fluidnumerics/scientific-computing-edu
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Scientific Computing (edu)" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Scientific Computing (edu)">
+<img alt="logo" src="../../assets/images/logo-fluid-numerics.png"/>
+</a>
+    Scientific Computing (edu)
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/scientific-computing-edu" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub/fluidnumerics/scientific-computing-edu
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2">
+          Portable GPU Programming
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Portable GPU Programming" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+          Portable GPU Programming
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Getting to know your hardware (Part 1)
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Getting to know your hardware (Part 1)
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#gathering-specification-sheets">
+    Gathering Specification Sheets
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#back-of-the-envelope-calculations">
+    Back-of-the-envelope calculations
+  </a>
+<nav aria-label="Back-of-the-envelope calculations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pcie-bandwidth">
+    PCIe Bandwidth
+  </a>
+<nav aria-label="PCIe Bandwidth" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pcie-lanes">
+    PCIe Lanes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#transfer-rates">
+    Transfer rates
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overhead-rates">
+    Overhead Rates
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-1-pcie-bandwidth-calculation">
+    Example 1 : PCIe Bandwidth Calculation
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reference-data-for-pcie-theoretical-peak-bandwidth">
+    Reference Data for PCIe Theoretical Peak Bandwidth
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#memory-bandwidth">
+    Memory Bandwidth
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#flops-calculations">
+    FLOPS Calculations
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#roofline-modeling">
+    Roofline Modeling
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#gathering-specification-sheets">
+    Gathering Specification Sheets
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#back-of-the-envelope-calculations">
+    Back-of-the-envelope calculations
+  </a>
+<nav aria-label="Back-of-the-envelope calculations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pcie-bandwidth">
+    PCIe Bandwidth
+  </a>
+<nav aria-label="PCIe Bandwidth" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pcie-lanes">
+    PCIe Lanes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#transfer-rates">
+    Transfer rates
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overhead-rates">
+    Overhead Rates
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-1-pcie-bandwidth-calculation">
+    Example 1 : PCIe Bandwidth Calculation
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reference-data-for-pcie-theoretical-peak-bandwidth">
+    Reference Data for PCIe Theoretical Peak Bandwidth
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#memory-bandwidth">
+    Memory Bandwidth
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#flops-calculations">
+    FLOPS Calculations
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#roofline-modeling">
+    Roofline Modeling
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/fluidnumerics/scientific-computing-edu/edit/main/docs/mkdocs/GPU/Hardware-Part1.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
+</a>
+<h1 id="getting-to-know-your-hardware-part-1">Getting to know your hardware - Part 1</h1>
+<p>In this section you will learn about</p>
+<ul>
+<li>How to assess and characterize peak performance and bandwidth using vendor specifications and back-of-the-envelope calculations</li>
+<li>Performance differences between the CPU and GPU</li>
+<li>The PCIe switch and its place as a potential bottleneck for GPU computing</li>
+</ul>
+<h2 id="gathering-specification-sheets">Gathering Specification Sheets</h2>
+<p>A good place to get started with familiarizing yourself with hardware is to seek out whitepapers and specification sheets. Whitepapers, from the hardware vendors or independent third parties, typically have write ups that explain specific hardware layout and usually share benchmarks that document empirical performance metrics. Whitepapers often outline features specific to a make/model of GPU and how to leverage these features for optimal performance. Specification sheets from the hardware vendors typically provide details such as the memory and compute clock frequencies, number of compute units / streaming multiprocessors, global memory size and bus width, etc. Both resources provide you with the necessary information for understanding potential performance of the hardware, while white papers often show <em>how</em> to obtain the best possible performance.</p>
+<p>Specification sheets can normally be found on the vendors website and are typically listed for each GPU make and model. The list below provides a few examples for a few popular GPUs in High Performance Computing.</p>
+<ul>
+<li><a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf">AMD CDNA MI100 “Whitepaper”</a></li>
+<li><a href="https://images.nvidia.com/content/volta-architecture/pdf/volta-architecture-whitepaper.pdf">Nvidia Volta architecture “Whitepaper”</a></li>
+<li><a href="https://images.nvidia.com/content/technologies/volta/pdf/volta-v100-datasheet-update-us-1165301-r5.pdf">Nvidia V100 Datasheet / Specification Sheet</a></li>
+</ul>
+<h2 id="back-of-the-envelope-calculations">Back-of-the-envelope calculations</h2>
+<p>Once you’ve gathered specification sheets from the hardware vendor, you can use some very basic calculations along-side system utilities, to verify that your operating system sees hardware that matches the vendor’s specifications.  Carrying out these back-of-the-envelope calculations is a useful way for you to get familiar with your hardware.</p>
+<p>Keeping the high level view from Figure 1.2.1 in mind, what we aim to find with these calculations are the following :</p>
+<ol>
+<li>CPU to CPU-RAM Theoretical Peak Bandwidth</li>
+<li>CPU Theoretical Peak FLOPS</li>
+<li>CPU to GPU (PCIe switch) Theoretical Peak Bandwidth</li>
+<li>GPU to GPU-RAM (Global Memory) Theoretical Peak Bandwidth</li>
+<li>GPU Theoretical Peak FLOPS</li>
+</ol>
+<h3 id="pcie-bandwidth">PCIe Bandwidth</h3>
+<p>On dedicated GPU platforms, all data communicated between the GPU and CPU occurs over the PCIe switch. Because of this, it is a critical hardware component that can heavily influence the overall performance of your application. In this section, the key features and descriptors of a PCI  that you need to be aware of in order to calculate the theoretical PCI Bandwidth. Knowing how to calculate this number, on-the-fly, is useful for estimating possible performance limiters when porting your application to GPUs. </p>
+<p>The PCIe switch is a physical component that dedicated GPUs are attached to. They allow for communication between the CPU and GPU. Communication occurs over multiple PCIe lanes. We’ll start by presenting a formula for the theoretical bandwidth, and then explain each term. </p>
+<div class="arithmatex">\[\begin{equation}
+  B_w = N \cdot R \cdot O
+\end{equation}\]</div>
+<p>where <span class="arithmatex">\(N\)</span> is the number of PCIe Lanes, <span class="arithmatex">\(R\)</span> is the transfer rate per lane, and <span class="arithmatex">\(O\)</span> is an <a href="https://www.xilinx.com/support/documentation/white_papers/wp350.pdf">overhead factor associated with Transaction Layer Packet protocol</a></p>
+<p>Theoretical Bandwidth is measured in units of Gigabytes per second (<span class="arithmatex">\(\frac{GB}{s}\)</span>). It is calculated by multiplying the number of lanes and the maximum transfer rate for each lane and converting from bits to Bytes. The conversion is left in the formula since the transfer rates are usually reported in Gigabits per second. Alternatively, you may see GigaTransfers per second (<span class="arithmatex">\(\frac{GT}{s}\)</span>); these units are equivalent to <span class="arithmatex">\(\frac{GB}{s}\)</span>. Finally, an overhead factor is applied.</p>
+<h4 id="pcie-lanes">PCIe Lanes</h4>
+<p>The number of lanes of a PCI bus can be found by looking through manufacturer specifications, or by a number of tools available on Linux platforms. Keep in mind that some of these tools may require root privileges. If you do not have these privileges, it is best to consult your system administrator to find out this information. Nonetheless, we will present two options for determining the number of PCIe lanes.</p>
+<p>A common utility, available on Linux systems is lspci. This utility will list all components attached to the motherboard. We can use the grep regular expression tool to filter only the PCI Bridge. The following command will show you the vendor information and the device name with the number of PCIe lanes. For this example, “(x16)” in the output indicates that there are 16 lanes.</p>
+<pre><code>$ lspci -vmm | grep "PCI bridge" -A2
+Class:  PCI bridge
+Vendor: Intel Corporation
+Device: Sky Lake PCIe Controller (x16)
+Alternatively, dmidecode provides similar information.
+$ dmidecode | grep "PCI"
+PCI is supported
+Type: x16 PCI Express
+</code></pre>
+<h4 id="transfer-rates">Transfer rates</h4>
+<p>The maximum transfer rates for each lane in a PCIe bus can directly be determined by its design Generation. Table 1 below shows the maximum transfer rate per PCI Lane and PCI Direction. </p>
+<table>
+<tr>
+<td>
+<table>
+<tr>
+<td><strong>PCIe Generation</strong>
+</td>
+<td><strong>Maximum Transfer Rate</strong>
+</td>
+</tr>
+<tr>
+<td>Gen1
+   </td>
+<td>2.5 Gb/s
+   </td>
+</tr>
+<tr>
+<td>Gen2
+   </td>
+<td>5.0 Gb/s
+   </td>
+</tr>
+<tr>
+<td>Gen3
+   </td>
+<td>8.0 Gb/s
+   </td>
+</tr>
+<tr>
+<td>Gen4
+   </td>
+<td>16 Gb/s
+   </td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td><span style="text-decoration:underline;">Table 1</span> : PCIe Generations and Transfer Rates.
+
+   </td>
+</tr>
+</table>
+<p>If you don’t know the Generation of your PCIe Bus, you can use lspci to learn this information. In all of the information output by lspci, we are looking for the Link Capacity for the PCIe switch. In the output, Link Capacity is abbreviated LnkCap.</p>
+<pre><code>$ sudo lspci -vvv | grep -E 'PCI|LnkCap'
+00:01.0 PCI bridge: Intel Corporation Sky Lake PCIe Controller (x16) (rev 07)
+        LnkCap: Port #2, Speed 8GT/s, Width x16, ASPM L0s L1, Exit Latency L0s
+</code></pre>
+<p>Since we know the max transfer rate directly from this output, we can use this in the bandwidth formula directly. It’s also helpful to know that this speed can also be aligned with the Generation. In this case, the output indicates that we are working with a Gen3 PCIe system.</p>
+<h4 id="overhead-rates">Overhead Rates</h4>
+<p>Transmitting data across the PCI requires additional overhead. Generation 1 and 2 standards stipulate that 10 bytes are transmitted for every 8 bytes of useful data. Generation 3 and 4 transmits 130 Bytes for every 128 Bytes. These conditions can be translated into an overhead factor. The overhead factor is the ratio of the number of usable bytes over the total bytes transmitted. Table 2 shows the overhead factors </p>
+<table>
+<tr>
+<td>
+<table>
+<tr>
+<td><strong>PCIe Generation</strong>
+</td>
+<td><strong>Overhead Factor</strong>
+</td>
+</tr>
+<tr>
+<td>Gen1
+   </td>
+<td>0.8000
+   </td>
+</tr>
+<tr>
+<td>Gen2
+   </td>
+<td>0.8000
+   </td>
+</tr>
+<tr>
+<td>Gen3
+   </td>
+<td>0.9846
+   </td>
+</tr>
+<tr>
+<td>Gen4
+   </td>
+<td>0.9846
+   </td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td><span style="text-decoration:underline;">Table 2 </span>: PCIe Generations and Overhead factors
+
+   </td>
+</tr>
+</table>
+<p>Now that we have all of the information needed, let’s estimate the theoretical bandwidth through an example, using output shown in the previous sections.</p>
+<h4 id="example-1-pcie-bandwidth-calculation">Example 1 : PCIe Bandwidth Calculation</h4>
+<p>We have identified that we have a Gen3 PCIe system with 16 lanes. Calculate the Theoretical Peak Bandwidth for this system. Gen3 systems have a maximum transfer rate of <span class="arithmatex">\(R = 8.0 \frac{Gb}{s}\)</span> per lane and an overhead factor of <span class="arithmatex">\(O = 0.9846\)</span>. With <span class="arithmatex">\(N=16\)</span> lanes, the Theoretical Bandwidth is <span class="arithmatex">\(15.7536 \frac{GB}{s}\)</span>, as shown below.</p>
+<div class="arithmatex">\[\begin{equation}
+  B_w (\frac{GB}{s}) = 16 \times 8.0 \frac{Gb}{s} \times 0.9846 \times \frac{1 B}{8 b} = 15.7536 \frac{GB}{s}
+\end{equation}\]</div>
+<p>
+</p>
+<h4 id="reference-data-for-pcie-theoretical-peak-bandwidth">Reference Data for PCIe Theoretical Peak Bandwidth</h4>
+<p>Although you can do this calculation for each system you encounter, Table 3 summarizes the theoretical bandwidth for current PCIe systems.</p>
+<table>
+<tr>
+<td>
+<table>
+<tr>
+<td>Generation/Lanes
+   </td>
+<td>x2
+   </td>
+<td>x4
+   </td>
+<td>x8
+   </td>
+<td>x16
+   </td>
+</tr>
+<tr>
+<td>Gen1
+   </td>
+<td>0.5000
+   </td>
+<td>1.0000
+   </td>
+<td>2.0000
+   </td>
+<td>4.0000
+   </td>
+</tr>
+<tr>
+<td>Gen2
+   </td>
+<td>1.0000
+   </td>
+<td>2.0000
+   </td>
+<td>4.0000
+   </td>
+<td>8.0000
+   </td>
+</tr>
+<tr>
+<td>Gen3
+   </td>
+<td>1.9692
+   </td>
+<td>3.9384
+   </td>
+<td>7.8768
+   </td>
+<td>15.7536
+   </td>
+</tr>
+<tr>
+<td>Gen4 
+   </td>
+<td>3.9384
+   </td>
+<td>7.8768
+   </td>
+<td>15.7536
+   </td>
+<td>31.5072
+   </td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td>Table 3 : PCIe Theoretical Peak Bandwidths ( GB/s ) for Gen1 - Gen4
+
+   </td>
+</tr>
+</table>
+<h3 id="memory-bandwidth">Memory Bandwidth</h3>
+<p>To better understand memory bandwidth calculations it is useful to think of the connection between memory and a compute unit as a multi-lane highway. On this highway, traffic is allowed to flow at a regular frequency with each lane having one vehicle at a time. In this fictitious mental model, all vehicles are the same size and move at the same rate from one end of the highway to the other. With this configuration, there are two ways to control the rate at which vehicles move across the highway</p>
+<ol>
+<li>Change the frequency at which vehicles enter the highway</li>
+<li>Change the number of lanes on the highway</li>
+</ol>
+<p>We can express this mathematically as</p>
+<div class="arithmatex">\[\begin{equation}
+\frac{vehicles}{second} = \frac{1 vehicle}{lane} \times N \frac{lane}{cycle} \times f \frac{cycle}{second}
+\end{equation}\]</div>
+<div class="arithmatex">\[\begin{equation}
+r = N \times f
+\end{equation}\]</div>
+<p>These equations depict the unit analysis used to calculate the rate ( in <span class="arithmatex">\(\frac{vehicles}{second}\)</span> ). Essentially, the rate is calculated on the assumption that in each cycle that <span class="arithmatex">\(N\)</span> lanes are open for travel and one vehicle is allowed per lane. Together, this gives <span class="arithmatex">\(N\)</span> vehicles traversing the highway per cycle. To convert this to units of <span class="arithmatex">\(\frac{vehicles}{second}\)</span>, we multiply by the number of cycles per second. </p>
+<p>On your computer, the highway from this model is called the <strong><em>memory bus</em></strong>. The frequency in this model corresponds to the <strong><em>memory clock frequency</em></strong> and the number of lanes on the highway is the <strong><em>bus width</em></strong>. Additionally, each vehicle corresponds to a single bit of data that is transmitted across the memory bus. Using this analogy, we can write a formula for the theoretical peak memory bandwidth as</p>
+<div class="arithmatex">\[\begin{equation}
+b_w = N \times f
+\end{equation}\]</div>
+<p>Where</p>
+<ul>
+<li><span class="arithmatex">\(b_w\)</span> is the theoretical peak memory bandwidth in units of <span class="arithmatex">\(\frac{bits}{second}\)</span></li>
+<li><span class="arithmatex">\(N\)</span> is the memory bus width, and is usually expressed in units of <span class="arithmatex">\(bits\)</span></li>
+<li><span class="arithmatex">\(f\)</span> is the memory clock frequency, and is usually expressed in units of <span class="arithmatex">\(Hz\)</span>. Note that <span class="arithmatex">\(1 Hz = \frac{1}{second}\)</span></li>
+</ul>
+<p>Often, we want to express the memory bandwidth in <span class="arithmatex">\(\frac{bytes}{second}\)</span>. To convert from <span class="arithmatex">\(\frac{bits}{second}\)</span> to <span class="arithmatex">\(\frac{bytes}{second}\)</span>, we can use the definition <span class="arithmatex">\(1 byte = 8 bits\)</span> to get</p>
+<div class="arithmatex">\[\begin{equation}
+B_w = \frac{1}{8}N \times f
+\end{equation}\]</div>
+<h3 id="flops-calculations">FLOPS Calculations</h3>
+<p>Way back in the day, calculators were people whose jobs was solely to perform arithmetic (or calculus) operations by hand. Imagine going to an office building, where there are <span class="arithmatex">\(M\)</span> individuals who, on average can calculate one multiply and one addition operation every <span class="arithmatex">\(T\)</span> seconds. Just using these basic assumptions, these human calculators can perform <span class="arithmatex">\(\frac{2M}{T}\)</span> floating-point operations per second on average. Suppose these human calculators can perform their calculations at the same pace as each other at a frequency of <span class="arithmatex">\(f_c = \frac{1}{T} Hz\)</span>. Then, we can write the theoretical peak performance of this team of human calculators:</p>
+<div class="arithmatex">\[\begin{equation}
+  F_{peak} = N \times 2M \times f_c
+\end{equation}\]</div>
+<p>This equation also serves as a good model for modern CPUs, which have <span class="arithmatex">\(M\)</span> compute cores that can perform a fused-multiply-add operation with each clock cycle. Many CPUs also have the ability to perform vector operations, which increases the number of floating point operations that can theoretically be done with each clock cycle. However, we'll reserve this discussion for a future section.</p>
+<p>This equation is very similar to the equations for PCIe and memory bandwidth; this is because the model for understanding the rates at which processing can be done is based on similar principles.</p>
+<ol>
+<li>Moving data or performing calculations is done at regular intervals; there is a clock frequency</li>
+<li>A collection of synchronized components can perform a fixed amount of work with each clock cycle</li>
+</ol>
+<p>In this particular model, the office building is your computer and the individuals performing calculations all day are analogous to individual cores on a computer chip. Each core is able to independently carry out a “fused-multiply-add” operation, which accounts for two floating point operations, every clock cycle.</p>
+<p>From the equation for <span class="arithmatex">\(F_{peak}\)</span>, we can see that the compute performance of a computer depends on the number of cores available for floating point operations and the frequency at which those operations are executed. Keep in mind that the models presented above are an incredible simplification of what is really going on on your system and is only meant to provide upper bounds on performance. When vendors report “theoretical peak” performance metrics, they are referring to simple calculations like those shown in these equations. </p>
+<p>In reality, there are multiple levels of cache memory in addition to compute registers to worry about. In practice, different algorithms have their own requirements on memory layout and the types of compute operations that need to be carried out. Additionally, the choice in programming language, compiler, operating system, and other abstraction layers influence the end performance of your code. Nonetheless, understanding the limits of your system and your application’s measured performance can help you assess how much more performance you can expect out of your application on a specific target architecture.</p>
+<h3 id="roofline-modeling">Roofline Modeling</h3>
+<p>In real applications, memory and compute operations are orchestrated together in order to carry out more complex algorithms. In order to perform compute operations on data, that data needs to be read from memory and brought to a compute register. Additionally, after computing, the results typically need to be written back to memory. Because of this, a team at UC Berkeley’s Parallel Computing Laboratory proposed the <a href="https://people.eecs.berkeley.edu/~kubitron/cs252/handouts/papers/RooflineVyNoYellow.pdf">Roofline Performance Model</a> (in 2008).</p>
+<p>A Roofline diagram is used to depict peak performance of various hardware components and to identify which hardware is limiting application performance. The Roofline Model is based on simple scale analysis to relate bandwidth and compute performance.</p>
+<div class="arithmatex">\[\begin{equation}
+F = I \times B_w
+\end{equation}\]</div>
+<p>In this equation,</p>
+<ul>
+<li><span class="arithmatex">\(F\)</span>  is the compute performance and has units of  <span class="arithmatex">\(\frac{FLOPs}{second}\)</span></li>
+<li><span class="arithmatex">\(I\)</span> is the “arithmetic intensity” and has units of <span class="arithmatex">\(\frac{FLOPs}{Byte}\)</span></li>
+<li><span class="arithmatex">\(B_w\)</span> is the bandwidth and has units of <span class="arithmatex">\(\frac{Bytes}{second}\)</span></li>
+</ul>
+<p>The arithmetic intensity is a property of an algorithm implemented to run on given hardware. Given the arithmetic intensity, the achieved performance is limited by the minimum of <span class="arithmatex">\(F_{peak}\)</span> and <span class="arithmatex">\(F\)</span>. A roofline diagram is a log-log plot with the compute performance on the y-axis and the arithmetic intensity on the x-axis. To understand how to sketch a roofline diagram, we can take a logarithm of <span class="arithmatex">\(F\)</span> to get</p>
+<div class="arithmatex">\[\begin{equation}
+\log_{10}(F) = \log_{10}(I) + \log_{10}(B_w)
+\end{equation}\]</div>
+<p>To start, you can draw a horizontal line at the value of <span class="arithmatex">\(F_{peak}\)</span>. Then, you can draw a line at a 45 degree angle that intercepts the y-axis at <span class="arithmatex">\(y=\log_{10}(B_w)\)</span>. Figure 1.3.1 shows a depiction of a Roofline diagram. The red line is the peak compute performance for a given hardware. The  blue line is the performance roof for a memory bound kernel. On a roofline diagram, the blue and red lines are fixed for a given system. </p>
+<table>
+<tr>
+<td>
+<a class="glightbox" href="../../assets/images/roofline-schematic.png"><img alt="alt_text" src="../../assets/images/roofline-schematic.png" title="image_tooltip" width=""/></a>
+</td>
+</tr>
+<tr>
+<td>Figure 1 : Depiction of a Roofline diagram showing compute performance on the y-axis and the arithmetic intensity on the x-axis.
+   </td>
+</tr>
+</table>
+<p>A kernel’s peak potential performance is dictated by its arithmetic intensity. There is a value for the arithmetic intensity that is specific to the hardware that delineates between an application being compute bound or memory bound.</p>
+<div class="arithmatex">\[\begin{equation}
+I_0 = \frac{F_{peak}}{B_w}
+\end{equation}\]</div>
+<p>The Roofline model is useful for understanding the limits of your hardware and the potential peak performance of an algorithm on that hardware. So far, we’ve only discussed the Roofline model in the context of RAM bandwidth and peak performance based on FMA’s. There are other roofs that can be calculated for vector units / vectorization and different levels of memory. Knowing where your software sits on the roofline diagram is helpful for understanding whether or not there is more performance you can obtain on a given platform. </p>
+<p>For now, you should focus on being able to characterize hardware using peak performance, peak memory bandwidth, and the roofline model. At this point, you should be able to sketch a roofline diagram for hardware from vendor specifications and some hand-calculations.</p>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Home" class="md-footer__link md-footer__link--prev" href="../.." rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Previous
+              </span>
+              Home
+            </div>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+<script src="../../assets/javascripts/bundle.d691e9de.min.js"></script>
+<script src="../../javascripts/mathjax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "width": "100%", "height": "auto", "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom"});})</script></body>
+</html>
