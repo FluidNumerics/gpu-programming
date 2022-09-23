@@ -1,5 +1,14 @@
 # Scientific Computing Educational Materials
 
+## Notes
+We are working on a comprehensive set of notes that cover the following topics
+* Portable GPU Programming
+* Parallel and High Performance Computing
+* Mathematical Modeling and Algorithm Development
+* Working on HPC Clusters
+* Programming in C/C++, Fortran, and Python
+
+[**Scientific Computing (edu) Notes**](https://fluidnumerics.github.io/scientific-computing-edu/)
 
 ## Slide Decks
 
