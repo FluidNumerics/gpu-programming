@@ -7,7 +7,7 @@
 #include <time.h>
 #include <stdio.h>
 
-double host_to_device( int N, int nReps ){
+double host_to_device( long N, long nReps ){
 
   float *f_cpu;
   float *f_gpu;
@@ -21,7 +21,7 @@ double host_to_device( int N, int nReps ){
   hipMalloc(&f_gpu, N*sizeof(float));
 
   t = clock();
-  for( int i=0; i < nReps; i++ ){
+  for( long i=0; i < nReps; i++ ){
     hipMemcpy(f_gpu,f_cpu,N*sizeof(float), hipMemcpyHostToDevice);
   }
   hipDeviceSynchronize();
@@ -35,7 +35,7 @@ double host_to_device( int N, int nReps ){
   return wallTime;
 }
 
-double device_to_host( int N, int nReps ){
+double device_to_host( long N, long nReps ){
 
   float *f_cpu;
   float *f_gpu;
@@ -49,7 +49,7 @@ double device_to_host( int N, int nReps ){
   hipMalloc(&f_gpu, N*sizeof(float));
 
   t = clock();
-  for( int i=0; i < nReps; i++ ){
+  for( long i=0; i < nReps; i++ ){
     hipMemcpy(f_cpu,f_gpu,N*sizeof(float), hipMemcpyDeviceToHost);
   }
   hipDeviceSynchronize();
@@ -63,7 +63,7 @@ double device_to_host( int N, int nReps ){
   return wallTime;
 }
 
-double host_to_device_pinned( int N, int nReps ){
+double host_to_device_pinned( long N, long nReps ){
 
   float *f_cpu;
   float *f_gpu;
@@ -77,7 +77,7 @@ double host_to_device_pinned( int N, int nReps ){
   hipMalloc(&f_gpu, N*sizeof(float));
 
   t = clock();
-  for( int i=0; i < nReps; i++ ){
+  for( long i=0; i < nReps; i++ ){
     hipMemcpy(f_gpu,f_cpu,N*sizeof(float), hipMemcpyHostToDevice);
   }
   hipDeviceSynchronize();
@@ -91,7 +91,7 @@ double host_to_device_pinned( int N, int nReps ){
   return wallTime;
 }
 
-double device_to_host_pinned( int N, int nReps ){
+double device_to_host_pinned( long N, long nReps ){
 
   float *f_cpu;
   float *f_gpu;
@@ -105,7 +105,7 @@ double device_to_host_pinned( int N, int nReps ){
   hipMalloc(&f_gpu, N*sizeof(float));
 
   t = clock();
-  for( int i=0; i < nReps; i++ ){
+  for( long i=0; i < nReps; i++ ){
     hipMemcpy(f_cpu,f_gpu,N*sizeof(float), hipMemcpyDeviceToHost);
   }
   hipDeviceSynchronize();
@@ -121,48 +121,48 @@ double device_to_host_pinned( int N, int nReps ){
 
 int main ( ){
 
-  int nMax = 100000000;
-  int nStep = 10;
+  long nMax = 1000000000;
+  long nStep = 10;
 
   printf("Type, Size (Bytes), Wall Time (s), Bandwidth (GB/s) \n" );
 
   // Do the host to device (pageable) transfers
-  for( int i = 1; i<nMax; i *= nStep ){
+  for( long i = 1; i<nMax; i *= nStep ){
 
     double wallTime = host_to_device( i, 1000 );
-    int dataSize=sizeof(float)*i;
+    long dataSize=sizeof(float)*i;
     double bandwidth=dataSize/wallTime/1024/1024/1024;
-    printf("Host to Device (pageable), %d, %f, %f \n",dataSize,wallTime,bandwidth);
+    printf("Host to Device (pageable), %ld, %f, %f \n",dataSize,wallTime,bandwidth);
 
   } 
 
   // Do the host to device (pageable) transfers
-  for( int i = 1; i<nMax; i *= nStep ){
+  for( long i = 1; i<nMax; i *= nStep ){
 
     double wallTime = device_to_host( i, 1000 );
-    int dataSize=sizeof(float)*i;
+    long dataSize=sizeof(float)*i;
     double bandwidth=dataSize/wallTime/1024/1024/1024;
-    printf("Device to Host (pageable), %d, %f, %f \n",dataSize,wallTime,bandwidth);
+    printf("Device to Host (pageable), %ld, %f, %f \n",dataSize,wallTime,bandwidth);
 
   } 
 
   // Do the host to device (pinned) transfers
-  for( int i = 1; i<nMax; i *= nStep ){
+  for( long i = 1; i<nMax; i *= nStep ){
 
     double wallTime = host_to_device_pinned( i, 1000 );
-    int dataSize=sizeof(float)*i;
+    long dataSize=sizeof(float)*i;
     double bandwidth=dataSize/wallTime/1024/1024/1024;
-    printf("Host to Device (pinned), %d, %f, %f \n",dataSize,wallTime,bandwidth);
+    printf("Host to Device (pinned), %ld, %f, %f \n",dataSize,wallTime,bandwidth);
 
   } 
 
   // Do the host to device (pinned) transfers
-  for( int i = 1; i<nMax; i *= nStep ){
+  for( long i = 1; i<nMax; i *= nStep ){
 
     double wallTime = device_to_host_pinned( i, 1000 );
-    int dataSize=sizeof(float)*i;
+    long dataSize=sizeof(float)*i;
     double bandwidth=dataSize/wallTime/1024/1024/1024;
-    printf("Device to Host (pinned), %d, %f, %f \n",dataSize,wallTime,bandwidth);
+    printf("Device to Host (pinned), %ld, %f, %f \n",dataSize,wallTime,bandwidth);
 
   } 
 
