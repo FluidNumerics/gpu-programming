@@ -56,8 +56,8 @@ void resetF( real *f, real *smoothF, int nx, int ny, int buf ){
 void smoothField( struct smoother *smoothOperator, real *f, real *smoothF, int nX, int nY )
 {
   int iloc, ism, iel;
-  int N = (real)smoothOperator->dim;
-  int buf = (real)(smoothOperator->dim-1)/2.0;
+  int N = smoothOperator->dim;
+  int buf = (smoothOperator->dim-1)/2;
   real smLocal;
 
   for( int j=buf; j < nY-buf; j++ ){
