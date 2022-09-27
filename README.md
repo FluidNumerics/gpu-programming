@@ -22,10 +22,10 @@ We are working on a comprehensive set of notes that cover the following topics
 
 Sample code (under the [samples/](./samples) directory of this repository) are licensed under the [Apache 2.0 License](./LICENSE)
 
-* [Codelab tutorial : Building a GPU accelerated application with OpenMP in Fortran](https://fluidnumerics.github.io/scientific-computing-edu/docs/codelabs/build-a-gpu-app-openmp-fortran/index.html#0)
-* [Codelab tutorial : Building a GPU accelerated application with OpenMP in C/C++](https://fluidnumerics.github.io/scientific-computing-edu/docs/codelabs/build-a-gpu-app-openmp-c/index.html#0)
-* [Codelab tutorial : Building a GPU accelerated application with HIP in Fortran](https://fluidnumerics.github.io/scientific-computing-edu/docs/codelabs/build-a-gpu-app-hip-fortran/index.html#0)
-* [Codelab tutorial : Building a GPU accelerated application with HIP in C/C++](https://fluidnumerics.github.io/scientific-computing-edu/docs/codelabs/build-a-gpu-app-hip-c/index.html#0)
+* [Codelab tutorial : Building a GPU accelerated application with OpenMP in Fortran](https://fluidnumerics.github.io/scientific-computing-edu/codelabs/build-a-gpu-app-openmp-fortran/index.html#0)
+* [Codelab tutorial : Building a GPU accelerated application with OpenMP in C/C++](https://fluidnumerics.github.io/scientific-computing-edu/codelabs/build-a-gpu-app-openmp-c/index.html#0)
+* [Codelab tutorial : Building a GPU accelerated application with HIP in Fortran](https://fluidnumerics.github.io/scientific-computing-edu/codelabs/build-a-gpu-app-hip-fortran/index.html#0)
+* [Codelab tutorial : Building a GPU accelerated application with HIP in C/C++](https://fluidnumerics.github.io/scientific-computing-edu/codelabs/build-a-gpu-app-hip-c/index.html#0)
 
 
 ## Getting Support
