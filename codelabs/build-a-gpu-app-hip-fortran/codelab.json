@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2022-09-29T16:30:53Z",
+  "updated": "2022-09-29T16:34:30Z",
   "id": "build-a-gpu-app-hip-fortran",
   "duration": 65,
   "title": "Building a basic GPU accelerated application with HIP in Fortran",
@@ -20,7 +20,7 @@
   "tags": [
     "web"
   ],
-  "feedback": "https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140",
+  "feedback": "https://docs.google.com/forms/d/e/1FAIpQLScPCM3NJftpR6JlNlRRwb34PfHRls_Dg_vUBtgJwYYkiUfBcQ/viewform?usp=sf_link",
   "ga": "TO DO",
   "url": "build-a-gpu-app-hip-fortran"
 }
