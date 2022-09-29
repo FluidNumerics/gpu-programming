@@ -88,7 +88,7 @@ $ make</code></pre>
 <ol type="1" start="3">
 <li>Test run the example. The application takes two arguments. The first argument is the number of grid cells, and the second argument is the number of times the smoothing operator is applied.</li>
 </ol>
-<p>$ ./smoother 1000 100</p>
+<p>$ ./smoother 1000 10</p>
 <h2 is-upgraded><strong>Profile the Application</strong></h2>
 <p>Before starting any GPU porting exercise, it is important to profile your application to find hotspots where your application spends most of its time. Further, it is helpful to keep track of the runtime of the routines in your application so that you can later assess whether or not the GPU porting has resulted in improved performance. Ideally, your GPU-Accelerated application should outperform CPU-Only versions of your application when fully subscribed to available CPUs on a compute node.</p>
 <aside class="special"><p><strong>Tip:</strong> To obtain a fair comparison between CPU-Only and GPU-Accelerated versions of your application,  you will want to compare the run-time between fully-subscribed CPU-only routines and the GPU-ported routines. </p>
