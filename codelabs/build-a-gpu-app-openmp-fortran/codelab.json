@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2022-09-29T16:21:59Z",
+  "updated": "2022-09-29T16:30:19Z",
   "id": "build-a-gpu-app-openmp-fortran",
   "duration": 65,
   "title": "Building a GPU accelerated application with OpenMP in Fortran",
