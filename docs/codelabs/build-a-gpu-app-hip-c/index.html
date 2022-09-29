@@ -54,38 +54,6 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Start an Interactive Session on the AMD Accelerator Cloud" duration="5">
-        <p>If you plan on using the AMD Accelerator Cloud for a portion of this tutorial, you will need to start an interactive session on a compute node to complete this codelab.</p>
-<p>The AMD Accelerator Cloud comes with the Slurm job scheduler and a set of compute partitions that provide you access to a variety compute platforms. This section will walk you through how to log in to the AMD Accelerator Cloud and start an interactive session on a compute node with a MI100 GPU. </p>
-<aside class="warning"><p><strong>NOTE : </strong>Prior to completing these steps, make sure that you have completed the onboarding process for the AMD Accelerator Cloud. Instructions to login to the cluster should have been provided to you during onboarding.</p>
-</aside>
-<ol type="1" start="1">
-<li>Once you are connected to the AMD Accelerator Cloud login node, you can use srun to start an interactive session on a node with MI100 GPUs. We recommend that you set a time limit for interactive jobs so that you don&#39;t accidentally leave a reserved node idle.</li>
-</ol>
-<pre>srun -n1 --cpus-per-task=32 --partition=MI210 --time=1:00:00 --pty /bin/bash</pre>
-<ol type="1" start="2">
-<li>Once your interactive session starts, you can use the rocm-smi command to verify that GPUs are available</li>
-</ol>
-<pre>rocm-smi
-
-
-======================= ROCm System Management Interface =======================
-================================= Concise Info =================================
-GPU  Temp   AvgPwr  SCLK    MCLK     Fan   Perf  PwrCap  VRAM%  GPU%  
-0    31.0c  42.0W   800Mhz  1600Mhz  0%   auto  300.0W    0%   0%    
-1    28.0c  41.0W   800Mhz  1600Mhz  0%   auto  300.0W    0%   0%    
-2    32.0c  40.0W   800Mhz  1600Mhz  0%   auto  300.0W    0%   0%    
-3    24.0c  40.0W   800Mhz  1600Mhz  0%   auto  300.0W    0%   0%        
-================================================================================
-============================= End of ROCm SMI Log ==============================</pre>
-<ol type="1" start="3">
-<li>Since the compute nodes on the AMD Accelerator Cloud have multiple GPUs per node, and Slurm&#39;s GRES is not configured, it is recommended that you set the HIP_VISIBLE_DEVICES variable to specify which GPU you will run on. The value for HIP_VISIBLE_DEVICES is an integer between 0 and 3 (inclusive); e.g.</li>
-</ol>
-<pre>export HIP_VISIBLE_DEVICES=3</pre>
-
-
-      </google-codelab-step>
-    
       <google-codelab-step label="Clone and Run the Demo Application (CPU-Only)" duration="15">
         <p>The demo application provided for this tutorial performs 2-D smoothing operations using a 3x3 gaussian stencil.</p>
 <p>In this section, we introduce the demo application and walk through building and verifying the example. It&#39;s important to make sure that the code produces the expected result as we will be using the CPU generated model output to ensure that the solution does not change when we port to the GPU. </p>
