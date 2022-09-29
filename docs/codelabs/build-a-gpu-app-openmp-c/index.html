@@ -221,43 +221,6 @@ $ diff smooth-function.txt reference/function.txt</code></pre>
       <google-codelab-step label="Offload Routines to the GPU with OpenMP" duration="20">
         <p>In the <code>smoother</code> application, we have seen that the <code>smoothField</code> routine, called by <code>main</code>, takes up the most time. Within the main iteration loop in <code>main.cpp</code>, the <code>resetF</code> function is called to update the input for <code>smoother</code> for the next iteration.</p>
 <p>You will start by offloading both the <code>smoothField</code> and <code>resetF</code> routines to the GPU using OpenMP directives (also called &#34;pragmas&#34;). In this section you will learn how to offload sections of code to the GPU and how to manage GPU data using OpenMP pragmas. </p>
-<h2 is-upgraded><strong>OMP Target Basics</strong></h2>
-<p>With OpenMP, you can use the <code>omp target</code> directive to mark regions of code that you want the compiler to offload to the GPU. When you open an OpenMP target region, you can use the <strong><code>map</code></strong> directive to indicate variables that you want to copy <strong><code>to</code></strong> the GPU and <strong><code>from</code></strong> the GPU. </p>
-<p>The example below shows how to open and close a target region that will be offloaded to the GPU. Pointers are created for variables <code>arrayIn</code> and <code>arrayOut</code> on the host. The map directives indicates that <code>arrayIn</code> will be copied to the GPU and <code>arrayOut</code> will be copied from the GPU to the CPU at the end of the target region. Note that, since <code>arrayIn</code> and <code>arrayOut</code> are pointers, we must use array section notation to properly map the arrays.</p>
-<pre><code>int N = 1000;
-float *arrayIn;
-float *arrayOut;
-arrayIn = (float*)malloc( N*sizeof(float) );
-arrayOut = (float*)malloc( N*sizeof(float) );
-
-// Initialization routines ... //
-.
-.
-// End Initialization routines
-#omp pragma target map (to: arrayIn[0:N]) map (from: arrayOut[0:N])
-{
-.
-.
-}</code></pre>
-<h2 is-upgraded><strong>OMP Teams &amp; Parallel</strong></h2>
-<p>Within a target region, with no other specifications, a single thread of execution is launched on the GPU. However, GPUs are capable of running thousands of threads simultaneously. Threads on GPUs are scheduled to run on multiple Compute Units (AMD) or Streaming Multiprocessors (Nvidia) in groups of 64 (AMD) or 32 (Nvidia) called Wavefronts (AMD) or Warps (Nvidia). Modern GPUs are capable of executing many Wavefronts/Warps at any given time. </p>
-<p>Before the teams directive was introduced in OpenMP 4.0, parallelization was limited to parallelizing with a single group of threads. Since OpenMP 4.0, the teams directive can be used to express another dimension of parallelism that is appropriate for GPUs.</p>
-<p>The teams directive creates a &#34;league&#34; of teams that have, by default, a single thread. Each team executes instructions concurrently. The parallel directive creates multiple threads within each team. The number of threads can be set with the optional <code>num_threads</code> clause after the parallel directive. On a GPU, the number of threads per team is ideally a multiple of the Wavefront/Warp size (64 or 32 threads).</p>
-<p>This example shows how to parallelize a for-loop with parallel teams, where each team has 256 threads.</p>
-<pre><code>int N = 1000;
-float *arrayIn;
-float *arrayOut;
-arrayIn = (float*)malloc( N*sizeof(float) );
-arrayOut = (float*)malloc( N*sizeof(float) );
-
-
-#omp pragma target map (to: arrayIn[0:N]) map (from: arrayOut[0:N])
-{
-  #pragma omp teams parallel for num_threads(256)
-  for( int i = 0; i&lt;N; i++){
-    arrayOut[i] = 2.0*arrayIn[i];
-  }
-}</code></pre>
 <h2 is-upgraded>Offload smoothField</h2>
 <ol type="1" start="1">
 <li>Open <code>smoother.c</code> and navigate to the <code>smoothField</code> routine. Open an OpenMP target region before the start of the first loop in <code>smoothField</code> and map the necessary map directives to copy <code>smoother->weights</code> and <code>f</code> to the GPU and <code>smoothF</code> to and from the GPU.</li>
@@ -465,7 +428,10 @@ $ diff smooth-function.txt reference/function.txt</code></pre>
 <h2 is-upgraded><strong>Provide Feedback</strong></h2>
 <p>If you have any questions, comments, or feedback that can help improve this codelab, you can reach out to <a href="mailto:support@fluidnumerics.com" target="_blank">support@fluidnumerics.com</a> </p>
 <h2 is-upgraded><strong>Further reading</strong></h2>
-<p><a href="https://www.openmp.org/wp-content/uploads/openmp-examples-5.0.0.pdf" target="_blank">OpenMP 5.0 Examples Documentation</a></p>
+<ul>
+<li><a href="https://fluidnumerics.github.io/scientific-computing-edu" target="_blank">https://fluidnumerics.github.io/scientific-computing-edu</a> </li>
+<li><a href="https://www.openmp.org/wp-content/uploads/openmp-examples-5.0.0.pdf" target="_blank">OpenMP 5.0 Examples Documentation</a></li>
+</ul>
 
 
       </google-codelab-step>
