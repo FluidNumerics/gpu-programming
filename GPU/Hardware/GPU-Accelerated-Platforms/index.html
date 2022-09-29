@@ -1,0 +1,892 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Educational materials for scientific and parallel computing" name="description"/>
+<meta content="Fluid Numerics" name="author"/>
+<link href="../../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.5.1" name="generator"/>
+<title>GPU Accelerated Platforms - Scientific Computing (edu)</title>
+<link href="../../../assets/stylesheets/main.2e8b5541.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>html.glightbox-open { overflow: initial; height: 100%; }</style><script src="../../../assets/javascripts/glightbox.min.js"></script></head>
+<body data-md-color-accent="cyan" data-md-color-primary="black" data-md-color-scheme="slate" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#gpu-accelerated-platforms">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Scientific Computing (edu)" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Scientific Computing (edu)">
+<img alt="logo" src="../../../assets/images/logo-fluid-numerics.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Scientific Computing (edu)
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              GPU Accelerated Platforms
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="cyan" data-md-color-media="" data-md-color-primary="black" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="cyan" data-md-color-media="" data-md-color-primary="black" data-md-color-scheme="default" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+</form>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/scientific-computing-edu" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub/fluidnumerics/scientific-computing-edu
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Scientific Computing (edu)" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Scientific Computing (edu)">
+<img alt="logo" src="../../../assets/images/logo-fluid-numerics.png"/>
+</a>
+    Scientific Computing (edu)
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/scientific-computing-edu" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub/fluidnumerics/scientific-computing-edu
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2">
+          Portable GPU Programming
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Portable GPU Programming" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+          Portable GPU Programming
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" id="__nav_2_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_1">
+          Hardware
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Hardware" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_1">
+<span class="md-nav__icon md-icon"></span>
+          Hardware
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          GPU Accelerated Platforms
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        GPU Accelerated Platforms
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#a-simple-model">
+    A simple model
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performance-metrics">
+    Performance Metrics
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#gpu-architectures">
+    GPU Architectures
+  </a>
+<nav aria-label="GPU Architectures" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#amd">
+    AMD®
+  </a>
+<nav aria-label="AMD®" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cdna-conceptual">
+    CDNA™ (Conceptual)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cdna1-mi100">
+    CDNA1™ (MI100)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cdna2-mi200">
+    CDNA2™ (MI200)
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../Estimating-Performance/">
+        Estimating Performance
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" id="__nav_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_2">
+          Codelabs
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Codelabs" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+          Codelabs
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../codelabs/build-a-gpu-app-hip-c/">
+        Build a GPU Accelerated Application with HIP in C/C++
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../codelabs/build-a-gpu-app-hip-fortran/">
+        Build a GPU Accelerated Application with HIPFort in Fortran
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../codelabs/build-a-gpu-app-openmp-c/">
+        Build a GPU Accelerated Application with OpenMP in C/C++
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../codelabs/build-a-gpu-app-openmp-fortran/">
+        Build a GPU Accelerated Application with OpenMP in Fortran
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#a-simple-model">
+    A simple model
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performance-metrics">
+    Performance Metrics
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#gpu-architectures">
+    GPU Architectures
+  </a>
+<nav aria-label="GPU Architectures" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#amd">
+    AMD®
+  </a>
+<nav aria-label="AMD®" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cdna-conceptual">
+    CDNA™ (Conceptual)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cdna1-mi100">
+    CDNA1™ (MI100)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cdna2-mi200">
+    CDNA2™ (MI200)
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/fluidnumerics/scientific-computing-edu/edit/main/docs/mkdocs/GPU/Hardware/GPU-Accelerated-Platforms.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
+</a>
+<h1 id="gpu-accelerated-platforms">GPU Accelerated Platforms</h1>
+<p>In this section you will learn about</p>
+<ul>
+<li>A simple model for thinking about GPU accelerated platforms</li>
+<li>AMD® GPU architectures</li>
+<li>Nvidia® GPU architectures (Coming soon)</li>
+</ul>
+<h2 id="a-simple-model">A simple model</h2>
+<table>
+<tr>
+<td>
+<a class="glightbox" href="../../../assets/images/CPU-GPU_Conceptual_Model.png"><img alt="alt_text" src="../../../assets/images/CPU-GPU_Conceptual_Model.png" title="image_tooltip" width=""/></a>
+</td>
+</tr>
+<tr>
+<td><strong><span style="text-decoration:underline;">Figure 1</span></strong> : A conceptual diagram of a simple GPU accelerated system that has one CPU socket and a GPU connected to that socket over a PCI Bus. 
+   </td>
+</tr>
+</table>
+<p>Figure 1 is a conceptual diagram of a simple GPU accelerated system that has one CPU socket and a GPU connected to that socket over a PCIe switch. On GPU accelerated platforms, the CPU and GPU have their own memory spaces. Because of this, any programming model for leveraging GPUs needs to be able to manage this feature. The CPU and GPU exchange information (data and instructions) over a PCIe switch. All GPU programming models have tools for allocating memory on GPUs, copying data between CPU and GPU, and a mechanism to launch kernels (subroutines/functions) on the GPU.</p>
+<h2 id="performance-metrics">Performance Metrics</h2>
+<p>When comparing compute hardware, we typically talk about how much data can be read or written from memory per unit time and the number of floating-point operations per second (FLOPS). <strong>Bandwidth</strong> is the amount of data that can be read or written per unit time and it is typically expressed in bytes per second, usually with an appropriate SI prefix; for example,</p>
+<ul>
+<li>Megabytes per second ( <span class="arithmatex">\(\frac{MB}{s}\)</span> )</li>
+<li>Gigabytes per second ( <span class="arithmatex">\(\frac{GB}{s}\)</span> ) </li>
+<li>Terabytes per second ( <span class="arithmatex">\(\frac{TB}{s}\)</span> ) </li>
+</ul>
+<p>Floating-point operations per second, or FLOPS, are a measure of the number of addition, subtraction, and multiplication operations that can be performed per second. Similar to bandwidth, FLOPS are usually prefixed with an appropriate SI prefix.</p>
+<ul>
+<li>Giga-FLOPS ( <span class="arithmatex">\(GFLOPS\)</span> )</li>
+<li>Tera-FLOPS ( <span class="arithmatex">\(TFLOPS\)</span> )</li>
+<li>Peta-FLOPS ( <span class="arithmatex">\(PFLOPS\)</span> )</li>
+<li>Exa-FLOPS ( <span class="arithmatex">\(EFLOPS\)</span> ) </li>
+</ul>
+<p>For reference, Table 1 provides a list of SI prefixes along with the symbol and associated power of 10.</p>
+<table>
+<tr>
+<td>
+<table>
+<tr>
+<td><strong>SI Prefix</strong>
+</td>
+<td><strong>Symbol</strong>
+</td>
+<td>
+\begin{equation}
+10^{n}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>yotta
+   </td>
+<td>
+\begin{equation}
+Y
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{24}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>zetta
+   </td>
+<td>
+\begin{equation}
+Z
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{21}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>exa
+   </td>
+<td>
+\begin{equation}
+E
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{18}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>peta
+   </td>
+<td>
+\begin{equation}
+P
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{15}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>tera
+   </td>
+<td>
+\begin{equation}
+T
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{12}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>giga
+   </td>
+<td>
+\begin{equation}
+G
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{9}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>mega
+   </td>
+<td>
+\begin{equation}
+M
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{6}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>kilo
+   </td>
+<td>
+\begin{equation}
+K
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{3}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>hecto
+   </td>
+<td>
+\begin{equation}
+H
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{2}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>deka
+   </td>
+<td>
+\begin{equation}
+da
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{1}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>
+</td>
+<td>
+</td>
+<td>
+\begin{equation}
+10^{0}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>deci
+   </td>
+<td>
+\begin{equation}
+d
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{-1}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>centi
+   </td>
+<td>
+\begin{equation}
+c
+\end{equation}
+   </td>
+<td>
+\begin{equation}
+10^{-2}
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>milli
+   </td>
+<td>
+\begin{equation}
+m
+\end{equation}
+   </td>
+<td>
+
+\begin{equation}
+10^{-3}
+\end{equation}
+
+
+   </td>
+</tr>
+<tr>
+<td>micro
+   </td>
+<td>
+
+\begin{equation}
+\mu
+\end{equation}
+
+   </td>
+<td>
+
+\begin{equation}
+10^{-6}
+\end{equation}
+
+
+   </td>
+</tr>
+<tr>
+<td>nano
+   </td>
+<td>
+\begin{equation}
+n
+\end{equation}
+   </td>
+<td>
+
+\begin{equation}
+10^{-9}
+\end{equation}
+
+
+   </td>
+</tr>
+<tr>
+<td>pico
+   </td>
+<td>
+\begin{equation}
+p
+\end{equation}
+   </td>
+<td>
+
+\begin{equation}
+10^{-12}
+\end{equation}
+
+
+   </td>
+</tr>
+<tr>
+<td>femto
+   </td>
+<td>
+\begin{equation}
+f
+\end{equation}
+   </td>
+<td>
+
+\begin{equation}
+10^{-15}
+\end{equation}
+
+
+   </td>
+</tr>
+<tr>
+<td>atto
+   </td>
+<td>
+\begin{equation}
+a
+\end{equation}
+   </td>
+<td>
+
+\begin{equation}
+10^{-18}
+\end{equation}
+
+
+   </td>
+</tr>
+<tr>
+<td>zepto
+   </td>
+<td>
+\begin{equation}
+z
+\end{equation}
+   </td>
+<td>
+
+\begin{equation}
+10^{-21}
+\end{equation}
+
+
+   </td>
+</tr>
+<tr>
+<td>yocto
+   </td>
+<td>
+\begin{equation}
+y
+\end{equation}
+   </td>
+<td>
+
+\begin{equation}
+10^{-24}
+\end{equation}
+
+
+   </td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td> <strong><span style="text-decoration:underline;">Table 1</span></strong> : Prefixes for use in the Internal System of Units (SI).
+
+Thompson, A. and Taylor, B. N. "Guide for the Use of the International System of Units (SI)." NIST Special Publication SP811, 2008 ed. [http://physics.nist.gov/cuu/pdf/sp811.pdf](http://physics.nist.gov/cuu/pdf/sp811.pdf).
+
+   </td>
+</tr>
+</table>
+<p>To assess the potential performance of compute hardware, there are three recommended steps to obtain measures of peak potential bandwidth and FLOPS :</p>
+<ol>
+<li>Research specification sheets from hardware designers, vendors, or manufacturers.</li>
+<li>Verify reported specifications using back-of-the-envelope calculations and system utilities.</li>
+<li>Run standard micro-benchmarks to exercise key hardware components.</li>
+</ol>
+<p>In the next few sections, you will learn more about each of these steps. For now, we will simply provide ballpark estimates for peak bandwidth and FLOPS for various hardware components that you will later be able to prove.</p>
+<table>
+<tr>
+<td>
+<table>
+<tr>
+<td><strong>Component 1</strong>
+</td>
+<td><strong>Component 2</strong>
+</td>
+<td><strong>Connection</strong>
+</td>
+<td><strong>Bandwidth</strong>
+</td>
+</tr>
+<tr>
+<td>CPU
+   </td>
+<td>CPU Memory
+   </td>
+<td>CPU Memory Bus
+   </td>
+<td>
+\begin{equation}
+\mathcal{O}(100 GB/s)
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>CPU
+   </td>
+<td>GPU
+   </td>
+<td>PCIe Switch
+   </td>
+<td>
+\begin{equation}
+\mathcal{O}(10 GB/s)
+\end{equation}
+   </td>
+</tr>
+<tr>
+<td>GPU Cores
+   </td>
+<td>GPU Memory
+   </td>
+<td>GPU Global Memory Bus
+   </td>
+<td>
+\begin{equation}
+\mathcal{O}(1000 GB/s)
+\end{equation}
+   </td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td><strong><span style="text-decoration:underline;">Table 2</span></strong> : Bandwidth references for the three connections on GPU accelerated platforms shown in Figure 1.
+
+   </td>
+</tr>
+</table>
+<p>In Figure 1, the CPU is connected to CPU RAM over a memory bus and to the GPU over a PCI Bus. The GPU is connected to GPU RAM through its own memory bus. Table 2 summarizes estimates of current theoretical peak bandwidth for moving data between the various hardware components in Figure 1. In general, GPUs have the potential to access memory at a higher rate than CPUs because the memory clock frequency on GPUs is higher than the memory clock frequency on CPUs and the memory bus on GPUs is wider. </p>
+<p>The PCIe switch is the least performant component of GPU accelerated systems and is typically the source of much agony when initially porting an application to the GPU. In the porting process, there is often a significant amount of data being transferred between the CPU and GPU. Although individual kernels may show significant performance gains, overall runtime can stagnate or become much worse. Because of this, it is critical to migrate as much of the application as possible to the GPU in order to minimize data transfers between the host and device.</p>
+<p>In terms of compute performance, we typically look at the rate at which a device can perform floating point operations. This rate is determined by the number of compute cores that can execute instructions independently, and the clock frequency of the cores. GPUs typically have lower compute clock frequencies than CPUs. However, CPUs usually have only 10s of cores, while GPUs have 1000s which is what gives them their greater theoretical peak performance. Of course, reaching this performance requires that you are able to efficiently leverage these 1000s of cores. </p>
+<p>For current hardware, typical theoretical peak performance of CPUs is <span class="arithmatex">\(\mathcal{O}(1 TFLOP)\)</span> (at double precision), while GPUs are <span class="arithmatex">\(\mathcal{O}(10 TFLOP)\)</span>.</p>
+<p>Applications that seek to benefit from GPU acceleration and outperform CPUs must exploit the fact that GPUs have more cores while being aware of the lower compute clock speeds. This requires algorithms to be expressable with Same-Instruction-Multiple-Data (SIMD) and Same-Instruction-Multiple-Thread (SIMT) parallelism.</p>
+<h2 id="gpu-architectures">GPU Architectures</h2>
+<p>GPU hardware is designed to provide large core counts relative to CPU architecture. While there are many similarities between GPUs designed by different vendors, there are also differences. In this material, when we say "architecture" we mean the hardware as well as the <strong>instruction set architecture (ISA)</strong>. An ISA is the abstract model of a computer and it defines how software interacts with hardware. ISA defines supported data types, how the hardware manages memory, and instructions the hardware can execute.</p>
+<p>In this section, we'll present conceptual models for AMD® and Nvidia® GPU hardware, present the ISA for current high performance GPUs, and discuss a few specific high performance GPU models from each vendor.</p>
+<h3 id="amd">AMD®</h3>
+<p>Advanced Micro-Devices (AMD®) is a commercial hardware vendor that designs, manufactures, and licenses (for manufacturing) GPUs. When discussing GPUs from AMD®, there are two ends of the spectrum to consider :</p>
+<ol>
+<li>GPUs designed for gaming ( “RDNA™” GPUs )</li>
+<li>GPUs designed for high performance computing ( “CDNA™” GPUs )</li>
+</ol>
+<p>While both classes of GPUs are designed for general purpose computing, the RDNA™ class of GPUs are built to optimize frames/second for popular gaming applications, while the CDNA™ class of GPUs are built to optimize FLOPS in scientific computing. </p>
+<p>AMD's CDNA™ architectures
+<em>Discuss Graphics Core Next (GCN) architecture and the relationship to CDNA™ and RDNA™</em></p>
+<h4 id="cdna-conceptual">CDNA™ (Conceptual)</h4>
+<table>
+<tr>
+<td>
+<a class="glightbox" href="../../../assets/images/amd-gpu-architecture-microarchitecture.png"><img alt="alt_text" src="../../../assets/images/amd-gpu-architecture-microarchitecture.png" title="image_tooltip" width=""/></a>
+</td>
+</tr>
+<tr>
+<td><strong><span style="text-decoration:underline;">Figure 3</span></strong> : This is a conceptual diagram of the CDNA™ GPU architecture from AMD®.
+   </td>
+</tr>
+</table>
+<p>Figure 3 shows a conceptual diagram of the CDNA™ GPU architecture from AMD®. The GPU consists of</p>
+<ul>
+<li>A Command Processor</li>
+<li>"Global" GPU RAM</li>
+<li>L2 Cache</li>
+<li>A set of Shader Engines, each of which consist of a set of Compute Units that share a workload manager</li>
+</ul>
+<p>For compute operations, each shader engine handles tasks received by the Command Processor through its Workload Manager. The Workload Manager is responsible for queueing work across the Compute Units within its Shader Engine. All of the Compute Units share the L2 Cache, which provides a faster (but smaller) bank of memory in comparison to the Global GPU RAM. </p>
+<table>
+<tr>
+<td>
+<a class="glightbox" href="../../../assets/images/amd-cdna-compute-unit.png"><img alt="alt_text" src="../../../assets/images/amd-cdna-compute-unit.png" title="image_tooltip" width=""/></a>
+</td>
+</tr>
+<tr>
+<td><strong><span style="text-decoration:underline;">Figure 4</span></strong> : This is a diagram of a Compute Unit in the CDNA1 MI100 architecture, taken from <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf">AMD®'s CDNA™1 Whitepaper</a>
+.
+   </td>
+</tr>
+</table>
+<p>The view of the GPU hardware presented in Figure 3 is a macro view of the GPU architecture. The Compute Units have their own micro-architecture, as shown in Figure 4. Each CU is equipped with a Wavefront Scheduler, Vector Registers, Scalar Registers, 4x 16-wide Vector Execution Units, a Scalar Unit, Shared Memory, and L1 Cache. The CDNA1 Compute Unit architecture, which is depicted in Figure 4, also introduced matrices as first class data types (in addition to scalars and vectors) and provided Matrix-Fused-Multiply-Add instructions.</p>
+<h4 id="cdna1-mi100">CDNA1™ (MI100)</h4>
+<table>
+<tr>
+<td>
+<a class="glightbox" href="../../../assets/images/amd-cdna1-mi100.png"><img alt="alt_text" src="../../../assets/images/amd-cdna1-mi100.png" title="image_tooltip" width=""/></a>
+</td>
+</tr>
+<tr>
+<td><strong><span style="text-decoration:underline;">Figure 5</span></strong> : This is a block diagram of the AMD® CDNA™1 Compute Unit architecture taken from <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf">AMD®'s CDNA™1 Whitepaper</a> .
+   </td>
+</tr>
+</table>
+<p>The MI100 series of GPUs is based on the CDNA1™ architecture. It is composed of 8 Shader Engines that each have 15 Compute Units, giving a total of 120 CUs, and 32 GB Global memory with a peak memory bandwidth of 1.2 TB/s. The L2 cache is shared across all CU’s and has an aggregate capacity of 8MB and a theoretical peak bandwidth of about 3TB/s. The MI100 GPU is connected to the host via a PCIe 4 interface that provides 32 GB/s one-way bandwidth.</p>
+<p>The architecture of each compute unit is shown in Figure 5. For the MI100 GPU specifically, each compute unit has four vector execution units with Matrix Engines for computing “Matrix-Fused Multiply Add (MFMA)” operations, four vector register files and 64 KB Local Memory.</p>
+<h4 id="cdna2-mi200">CDNA2™ (MI200)</h4>
+<table>
+<tr>
+<td>
+<a class="glightbox" href="../../../assets/images/amd-cdna2-mi200.png"><img alt="alt_text" src="../../../assets/images/amd-cdna2-mi200.png" title="image_tooltip" width=""/></a>
+</td>
+</tr>
+<tr>
+<td><strong><span style="text-decoration:underline;">Figure 6</span></strong> : This is a block diagram of the AMD® CDNA™2 MI200 Graphic Compute Die architecture taken from <a href="https://www.amd.com/system/files/documents/amd-cdna2-white-paper.pdf">AMD®'s CDNA™2 Whitepaper</a> .
+   </td>
+</tr>
+</table>
+<p>Figure 6 shows a block diagram of AMD®'s CDNA2 (MI200) Graphics Compute Die. The CDNA2 GCD architecture reduced the number of compute units per GCD from 120 (CDNA1) to 112 (CDNA2). HowevNotable improvements, relative to the CDNA1 architecture include:</p>
+<ul>
+<li>CDNA2 Matrix FMAs support FP64 matrix operations (CDNA1 only supported FP32 matrix operations)</li>
+<li>CNDA2 introduced the Packed FP32 instructions, wich can execute two component vector instructions on FP32 data types for FMA, FADD, and FMUL operations.</li>
+<li>Theoretical peak L2 cache bandwidth is doubled relative to CDNA1 to approximately 6 <span class="arithmatex">\(\frac{TB}{s}\)</span></li>
+<li>Global memory capacity is increased to 64 GB per GCD (relative to CDNA1 32GB)</li>
+</ul>
+<p>Additionally, the MI200 series of GPUs, called a "Multi-Chip Module", consist of two GCD's, giving a total of 224 compute units per GPU. Each GCD is connected through high speed on-die fabric. In practice, one physical MI200 card appears to the operating system as two distinct GPUs capable of executing work.</p>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Home" class="md-footer__link md-footer__link--prev" href="../../.." rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Previous
+              </span>
+              Home
+            </div>
+</div>
+</a>
+<a aria-label="Next: Estimating Performance" class="md-footer__link md-footer__link--next" href="../Estimating-Performance/" rel="next">
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Next
+              </span>
+              Estimating Performance
+            </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+<script src="../../../assets/javascripts/bundle.d691e9de.min.js"></script>
+<script src="../../../javascripts/mathjax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "width": "100%", "height": "auto", "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom"});})</script></body>
+</html>

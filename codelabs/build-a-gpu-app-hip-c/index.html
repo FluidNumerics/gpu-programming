@@ -28,7 +28,7 @@
                   feedback-link="https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p><strong>Last Updated:</strong> 2022-05-11</p>
+        <p><strong>Last Updated:</strong> 2022-09-27</p>
 <h2 is-upgraded><strong>What you will build</strong></h2>
 <p>In this codelab, you will port a small C++ application to GPU hardware using OpenMP. You will transition a serial CPU-only mini-application to a portable GPU accelerated application, using OpenMP provided through the AOMP compiler. </p>
 <p>The goal of this codelab is to introduce you to using a few basic OpenMP directives and a development practice that can be applied to porting other applications.</p>
@@ -62,7 +62,7 @@
 <ol type="1" start="1">
 <li>Once you are connected to the AMD Accelerator Cloud login node, you can use srun to start an interactive session on a node with MI100 GPUs. We recommend that you set a time limit for interactive jobs so that you don&#39;t accidentally leave a reserved node idle.</li>
 </ol>
-<pre>srun -n1 --partition=MI100 --time=1:00:00 --pty /bin/bash</pre>
+<pre>srun -n1 --cpus-per-task=32 --partition=MI210 --time=1:00:00 --pty /bin/bash</pre>
 <ol type="1" start="2">
 <li>Once your interactive session starts, you can use the rocm-smi command to verify that GPUs are available</li>
 </ol>
@@ -72,49 +72,16 @@
 ======================= ROCm System Management Interface =======================
 ================================= Concise Info =================================
 GPU  Temp   AvgPwr  SCLK    MCLK     Fan   Perf  PwrCap  VRAM%  GPU%  
-0    33.0c  35.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-1    33.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-2    34.0c  34.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-3    33.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-4    33.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-5    32.0c  38.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-6    33.0c  34.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-7    31.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
+0    31.0c  42.0W   800Mhz  1600Mhz  0%   auto  300.0W    0%   0%    
+1    28.0c  41.0W   800Mhz  1600Mhz  0%   auto  300.0W    0%   0%    
+2    32.0c  40.0W   800Mhz  1600Mhz  0%   auto  300.0W    0%   0%    
+3    24.0c  40.0W   800Mhz  1600Mhz  0%   auto  300.0W    0%   0%        
 ================================================================================
 ============================= End of ROCm SMI Log ==============================</pre>
 <ol type="1" start="3">
-<li>Since the compute nodes on the AMD Accelerator Cloud have multiple GPUs per node, and Slurm&#39;s GRES is not configured, it is recommended that you set the HIP_VISIBLE_DEVICES variable to specify which GPU you will run on. The value for HIP_VISIBLE_DEVICES is an integer between 0 and 7 (inclusive); e.g.</li>
+<li>Since the compute nodes on the AMD Accelerator Cloud have multiple GPUs per node, and Slurm&#39;s GRES is not configured, it is recommended that you set the HIP_VISIBLE_DEVICES variable to specify which GPU you will run on. The value for HIP_VISIBLE_DEVICES is an integer between 0 and 3 (inclusive); e.g.</li>
 </ol>
 <pre>export HIP_VISIBLE_DEVICES=3</pre>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Start an Interactive Session on the OCEAN Cluster" duration="5">
-        <aside class="warning"><p><strong>CAUTION :</strong> The amdflang installation on the OCEAN cluster does not have bitcodes for Nvidia GPUs currently and you may encounter errors at compile time. We recommend using the AMD Accelerator Cloud for this codelab at this time.</p>
-</aside>
-<p>If you plan on using the OCEAN cluster for a portion of this tutorial, you will need to start an interactive session on a compute node to complete this codelab.</p>
-<p>The OCEAN cluster comes with the Slurm job scheduler and a set of compute partitions that provide you access to a variety compute platforms. This section will walk you through how to log in to the OCEAN cluster and start an interactive session on a compute node with a GPU.</p>
-<ol type="1" start="1">
-<li>Open your web browser and navigate to <a href="https://shell.cloud.google.com?show=terminal" target="_blank">https://shell.cloud.google.com?show=terminal</a> . This opens up Google Cloud shell and will be your primary access point to get onto the OCEAN cluster.</li>
-</ol>
-<aside class="warning"><p><strong>CAUTION: </strong>You must log in with your amd-user*@ocean.waterchange.org account to access the cluster. See <a href="https://www.oshackathon.org/resources/os-hpc-cluster/onboarding" target="_blank">https://www.oshackathon.org/resources/os-hpc-cluster/onboarding</a> for more details.</p>
-</aside>
-<ol type="1" start="2">
-<li>If you have not aligned an ssh key with your account already, you will need to create an SSH key in the Cloud Shell and attach it to your account. This is easily done using ssh-keygen and the gcloud SDK provided for you in the Cloud Shell. <br><br>Run the commands below; at the prompts, accept the default path to store the ssh key pair and set a password to protect the private key.</li>
-</ol>
-<pre>ssh-keygen -t rsa
-gcloud compute os-login ssh-keys add --key-file=${HOME}/.ssh/id_rsa.pub</pre>
-<ol type="1" start="3">
-<li>Now, ssh to the OCEAN cluster&#39;s login node</li>
-</ol>
-<pre>ssh ocean.waterchange.org</pre>
-<ol type="1" start="4">
-<li>Now that you are in the login node, you can start an interactive session on a compute node. When submitting the job, you are required to specify the Quality of Service (QOS) as &#34;amd&#34;.</li>
-</ol>
-<pre>srun -N1 --gres=gpu:1 --partition=v100 --account=amd --qos=amd --pty /bin/bash</pre>
-<aside class="warning"><p><strong>NOTE : </strong>The OCEAN cluster is a cloud-native cluster hosted on Google Cloud Platform. If a compute node is not currently active (denoted by the idle~ state from sinfo), a node will be provisioned automatically on Google Cloud. It may take up to 3 minutes for a node to become active and your interactive session to start.</p>
-</aside>
 
 
       </google-codelab-step>
@@ -147,18 +114,16 @@ gcloud compute os-login ssh-keys add --key-file=${HOME}/.ssh/id_rsa.pub</pre>
 <ol type="1" start="1">
 <li>Clone the repository</li>
 </ol>
-<pre><code>$ git clone https://github.com/fluidnumerics/scientific-computing-edu ~/scientific-computing-edu</code></pre>
+<pre><code>git clone https://github.com/fluidnumerics/scientific-computing-edu ~/scientific-computing-edu</code></pre>
 <ol type="1" start="2">
 <li>Build the smoother application. Keep in mind, the compiler is set to gcc by default in the provided makefile.</li>
 </ol>
-<aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, you will need to load hipfort into your path using <code>spack load gcc@9.4.0 && spack load hipfort % gcc@9.4.0</code>  before running the make command.</p>
-</aside>
-<pre><code>$ cd samples/c++/smoother/src
-$ make</code></pre>
+<pre><code>cd ~/scientific-computing-edu/samples/c++/smoother/src
+make</code></pre>
 <ol type="1" start="3">
 <li>Test run the example. The application takes two arguments. The first argument is the number of grid cells, and the second argument is the number of times the smoothing operator is applied.</li>
 </ol>
-<p>$ ./smoother 1000 100</p>
+<pre>./smoother 1000 10</pre>
 <h2 is-upgraded><strong>Profile the Application</strong></h2>
 <p>Before starting any GPU porting exercise, it is important to profile your application to find hotspots where your application spends most of its time. Further, it is helpful to keep track of the runtime of the routines in your application so that you can later assess whether or not the GPU porting has resulted in improved performance. Ideally, your GPU-Accelerated application should outperform CPU-Only versions of your application when fully subscribed to available CPUs on a compute node.</p>
 <aside class="special"><p><strong>Tip:</strong> To obtain a fair comparison between CPU-Only and GPU-Accelerated versions of your application,  you will want to compare the run-time between fully-subscribed CPU-only routines and the GPU-ported routines. </p>
@@ -225,7 +190,7 @@ $ make</code></pre>
 <h2 is-upgraded><strong>Copy smoothOperator class data to the GPU</strong></h2>
 <p>The <code>smoothField</code> routine uses the <code>smoothOperator -> weights</code> array when applying the operator. Because of this, you will need to create and allocate a device copy of the weights array. After filling in the weights values on the CPU, you can copy the values over to the device array.</p>
 <ol type="1" start="1">
-<li>Include the hip runtime header at the top of <code>smoother.c</code> so that you can make HIP API calls.</li>
+<li>Include the hip runtime header at the top of <code>smoother.cpp</code> so that you can make HIP API calls.</li>
 </ol>
 <pre><code>#include &lt;math.h&gt;
 #include &lt;stdio.h&gt;
@@ -256,7 +221,7 @@ $ make</code></pre>
 </ol>
 <pre><code>  hipFree(smoothOperator-&gt;weights_dev);</code></pre>
 <ol type="1" start="5">
-<li>Before going too much further, let&#39;s check to make sure the code compiles and runs with these changes. Starting from the <code>smoother</code> Makefile, let&#39;s first add variables for the paths to ROCm and CUDA at the top of the file. These will be needed to reference full paths to the hipcc compiler. <br><br>When setting these variables, we use the ?= relation to allow a user&#39;s environment variables to override these values if desired.</li>
+<li>Before going too much further, let&#39;s check to make sure the code compiles and runs with these changes. Starting from the <code>smoother</code> Makefile, let&#39;s first add variables for the paths to ROCm and CUDA at the top of the file. These will be needed to reference full paths to the hipcc compiler. <br><br>When setting these variables, we use the <code>?=</code> relation to allow a user&#39;s environment variables to override these values if desired.</li>
 </ol>
 <pre><code>ROCM ?= /opt/rocm
 CUDA ?= /usr/local/cuda</code></pre>
@@ -264,7 +229,7 @@ CUDA ?= /usr/local/cuda</code></pre>
 <pre><code>CC=$(ROCM)/bin/hipcc
 CFLAGS=-O0 -g</code></pre>
 <aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module using the command below :</p>
-<p><code>module load rocmmod5.0.0</code></p>
+<p><code>module load rocmmod5.0.2</code></p>
 </aside>
 <p>Once you have completed the code and Makefile modifications, you can now compile <code>smoother</code> and verify that data allocated and copied to the GPU.</p>
 <ol type="1" start="1">
@@ -279,7 +244,7 @@ $ mv function.txt smooth-function.txt ./reference/</code></pre>
 <ol type="1" start="3">
 <li>Run <code>smoother</code> with the same input parameters as you did in the previous section and verify the output is unchanged. We use the diff command line utility to compare the output files and the reference files. If there are no differences, diff will produce no output.</li>
 </ol>
-<pre><code>$ ./smoother 1000 100
+<pre><code>$ ./smoother 1000 10
 $ diff function.txt reference/function.txt
 $ diff smooth-function.txt reference.txt</code></pre>
 <ol type="1" start="4">
@@ -290,8 +255,7 @@ $ diff smooth-function.txt reference.txt</code></pre>
 hipMemcpy,1,12503928,12503928,95.8586582624
 hipMalloc,3,387867,129289,2.9734984242
 hipFree,3,152335,50778,1.16784331343</code></pre>
-<aside class="special"><p><strong>Tip:</strong> You can use <a href="https://www.chromium.org/developers/how-tos/trace-event-profiling-tool" target="_blank">Google Chrome Tracing</a> to visualize the results.json trace profile. Simply open the Google Chrome web browser and navigate to chrome://tracing and upload results.json. </p>
-<p class="image-container"><img style="width: 610.00px" src="img/3682f6a6d97594e4.png"></p>
+<aside class="special"><p><strong>Tip:</strong> You can use <a href="https://ui.perfetto.dev" target="_blank">Perfetto</a> to visualize the results.json trace profile. Simply open the Google Chrome web browser and navigate to <a href="https://ui.perfetto.dev" target="_blank">https://ui.perfetto.dev</a> and upload results.json. </p>
 </aside>
 <ol type="1" start="5">
 <li>Commit your changes to your local git repository.</li>
@@ -308,7 +272,7 @@ hipFree,3,152335,50778,1.16784331343</code></pre>
 #include &#34;smoother.h&#34;
 #include &lt;hip/hip_runtime.h&gt;</code></pre>
 <ol type="1" start="2">
-<li>Declare real pointers for f and smoothF in main.cpp</li>
+<li>Declare real pointers for <code>f_dev</code> and <code>smoothF_dev</code> in <code>main.cpp</code></li>
 </ol>
 <pre><code>int main( int argc, char *argv[] )  {
   smoother smoothOperator;
@@ -318,7 +282,7 @@ hipFree,3,152335,50778,1.16784331343</code></pre>
   real *f, *smoothF;
   real *f_dev, *smoothF_dev;</code></pre>
 <ol type="1" start="3">
-<li>Insert calls to hipMalloc for f_dev and smoothF_dev</li>
+<li>Insert calls to <code>hipMalloc</code> for <code>f_dev</code> and <code>smoothF_dev</code></li>
 </ol>
 <pre><code>  // Create the smoother
   smootherInit(&amp;smoothOperator);
@@ -330,7 +294,7 @@ hipFree,3,152335,50778,1.16784331343</code></pre>
   hipMalloc(&amp;f_dev, nElements*sizeof(real));
   hipMalloc(&amp;smoothF_dev, nElements*sizeof(real));</code></pre>
 <ol type="1" start="4">
-<li>Insert hipMemcpy call to update f_dev (host to device) prior to calling smoothField and to update smoothF_dev (device to host) after calling smoothField.</li>
+<li>Insert a <code>hipMemcpy</code> call to update <code>f_dev</code> (host to device) prior to calling <code>smoothField</code> and to update <code>smoothF_dev</code> (device to host) after calling <code>smoothField</code>.</li>
 </ol>
 <pre><code>    hipMemcpy(f_dev, f, nElements*sizeof(real), hipMemcpyHostToDevice);
 
@@ -338,10 +302,18 @@ hipFree,3,152335,50778,1.16784331343</code></pre>
 
     hipMemcpy(smoothF, smoothF_dev, nElements*sizeof(real), hipMemcpyDeviceToHost);</code></pre>
 <ol type="1" start="5">
+<li>Last, insert calls to <code>hipFree</code> at the end of the main function to free memory held by the <code>f_dev</code> and <code>smoothF_dev</code> pointers.</li>
+</ol>
+<pre>  // Free space
+  free(f);
+  free(smoothF);
+  hipFree(f_dev);
+  hipFree(smoothF_dev);</pre>
+<ol type="1" start="6">
 <li>Verify that the application still builds. </li>
 </ol>
-<pre><code>$ make</code></pre>
-<ol type="1" start="6">
+<pre><code>make</code></pre>
+<ol type="1" start="7">
 <li>(Optional) You can verify that data is being copied between the CPU and GPU by using a profiler<br><br>For AMD platforms, use <code>rocprof</code> with the <code>--hip-trace</code> flag. Running rocprof will create a file called <code>profile.json</code>. The contents of <code>results.hip_stats.json</code> will show calls to <code>hipMalloc</code>, <code>hipMemcpy</code>, and <code>hipFree</code>.<br></li>
 </ol>
 <pre><code>&#34;Name&#34;,&#34;Calls&#34;,&#34;TotalDurationNs&#34;,&#34;AverageNs&#34;,&#34;Percentage&#34;
@@ -374,48 +346,6 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
 
       </google-codelab-step>
     
-      <google-codelab-step label="HIP Kernel Launch Basics" duration="10">
-        <p>Routines that are executed on the GPU are typically scheduled to run by issuing instructions from the host (CPU). With both HIP and CUDA, you can use &#34;chevron syntax&#34; to specify the number of threads per block, the number of blocks, the stream ID, and the amount of shared memory per block.</p>
-<pre>myGPUFunc &lt;&lt;&lt;BlockPerGrid, ThreadPerBlock,StreamId,ShareMem&gt;&gt;&gt;(int *d_ary, float *d_ary2);</pre>
-<h2 is-upgraded><strong>Threads, Blocks, and LDS Memory</strong></h2>
-<p>When a kernel is launched, all requested threads on the GPU execute the kernel instructions concurrently. How the threads are scheduled to execute the instructions depends on the thread grouping. Threads are grouped into blocks in the HIP and CUDA programming models. Threads within a block are able to share LDS memory and L1 Cache on GPU Compute Units (Streaming Multiprocessor in Nvidia/CUDA terminology).</p>
-<p>Within a HIP kernel, you are able to use HIP intrinsics to determine the unique ID of a thread. This allows you to codify memory access patterns for each thread within a kernel and expose SIMD parallelism. These intrinsics are summarized the table below.</p>
-<table>
-<tr><td colspan="1" rowspan="1"><p><strong>Intrinsic</strong></p>
-</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
-</td></tr>
-<tr><td colspan="1" rowspan="1"><p>blockIdx.[x,y,z]</p>
-</td><td colspan="1" rowspan="1"><p>The block ID in the [x,y,z] grid directions.</p>
-</td></tr>
-<tr><td colspan="1" rowspan="1"><p>blockDimx.[x,y,z]</p>
-</td><td colspan="1" rowspan="1"><p>The number of threads within each block in the [x,y,z] grid directions.</p>
-</td></tr>
-<tr><td colspan="1" rowspan="1"><p>threadIdx.[x,y,z]</p>
-</td><td colspan="1" rowspan="1"><p>The local thread ID within a block in the [x,y,z] block directions.</p>
-</td></tr>
-</table>
-<aside class="special"><p><strong>Note:</strong> Block dimensions (threads-per-block) and Grid dimensions (number-of-blocks) are expressed as <a href="https://github.com/ROCm-Developer-Tools/HIP/blob/master/docs/markdown/hip_kernel_language.md#dim3" target="_blank">dim3</a> variables, giving 3 dimensions (x,y,z). </p>
-</aside>
-<h3 is-upgraded><strong>Example</strong></h3>
-<p>To see how this works, consider this simple example kernel that takes in a device array and returns the same array multiplied by two.</p>
-<pre><code>__global__ void myKernel(int N, double *d_a) {
-  int i = threadIdx.x + blockIdx.x*blockDim.x;
-  if (i&lt;N) {
-    d_a[i] *= 2.0;
-  }
-}</code></pre>
-<p>In this example, when the kernel is launched, each thread will calculate i based on its thread ID within a block, its block ID, and the number of threads-per-block (blockDimx.x). A conditional is added to ensure that threads only access in-bounds addresses of d_a. Provided this conditional is met for a thread, that thread will double the i-th element of d_a, concurrently with other threads.</p>
-<h3 is-upgraded><strong>Best practice</strong></h3>
-<p>On AMD GPUs, threads in a block are executed in 64-wide chunks called &#34;wavefronts&#34;. Because of this, it is good practice to make block sizes a multiple of 64 on AMD GPUs.</p>
-<p>On Nvidia GPUs, threads in a block are executed in 32-wide chunks called &#34;warps&#34; and it is good practice to make the block size a multiple of 32.</p>
-<aside class="warning"><p><strong>Caution: </strong>The number of threads per block, number of blocks, and the amount of local dynamic memory per block are limited; these limits can be found using <a href="https://github.com/RadeonOpenCompute/rocminfo" target="_blank">rocminfo</a> on AMD platforms and the <a href="https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#running-binaries" target="_blank">deviceQuery CUDA-Toolkit example</a> on Nvidia platforms. </p>
-</aside>
-<h2 is-upgraded><strong>Streams</strong></h2>
-<p>In this codelab, we will always set the stream ID to 0. Using multiple streams is useful when you want to run multiple GPU kernels concurrently. This strategy is useful when you are having difficulty keeping GPUs fully subscribed and you have code that has instruction-level parallelism.</p>
-
-
-      </google-codelab-step>
-    
       <google-codelab-step label="Offload the Smoothing Kernel to the GPU" duration="20">
         <p>In this section, you will offload the smoothField routine to the GPU.</p>
 <h2 is-upgraded><strong>Planning the GPU port</strong></h2>
@@ -442,8 +372,8 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
     }
   }
 }</code></pre>
-<p>The outer loops, over i and j, are tightly nested loops over a 2-D grid. The size of these loops are ny-2*buf and nx-2*buf. The values of nx and ny are determined by the user through the first command line argument (we have been using 1000), and buf is 2 (smoothOperator-&gt;dim=5; see smootherInit). Within the i and j loops, we carry out a reduction operation for smLocal and then assign the value to each element of smoothF.</p>
-<p>In the smoothField algorithm, the order in which we execute the i and j loops does not matter. Further, the size of each loop is O(1000) for the example we&#39;re working with. A good strategy for offloading this routine to the GPU is to have each GPU thread execute the instructions within the i and j loops. Ideally, then we want each thread to execute something the following</p>
+<p>The outer loops, over i and j, are tightly nested loops over a 2-D grid. The size of these loops are <code>ny-2*buf</code> and <code>nx-2*buf</code>. The values of <code>nx</code> and <code>ny</code> are determined by the user through the first command line argument (we have been using 1000), and <code>buf</code> is 2 (<code>smoothOperator->dim=5</code>; see <code>smootherInit</code>). Within the <code>i</code> and <code>j</code> loops, we carry out a reduction operation for <code>smLocal</code> and then assign the value to each element of <code>smoothF</code>.</p>
+<p>In the <code>smoothField</code> algorithm, the order in which we execute the <code>i</code> and <code>j</code> loops does not matter. Further, the size of each loop is O(1000) for the example we&#39;re working with. A reasonable strategy for offloading this routine to the GPU is to have each GPU thread execute the instructions within the <code>i</code> and <code>j</code> loops. Ideally, then we want each thread to execute something the following</p>
 <pre><code>    real smLocal = 0.0;
     for( int jj=-buf; jj &lt;= buf; jj++ ){
       for( int ii=-buf; ii &lt;= buf; ii++ ){
@@ -454,10 +384,10 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
     }
     iel = i+j*nx;
     smoothF[iel] = smLocal;</code></pre>
-<p>Notice now the i and j loops are gone. Within the HIP kernel, we can calculate i and j from threadIdx.[x,y], blockIdx.[x,y], and blockDim.[x,y], assuming that we will launch the kernel with 2-D Grid and Block dimensions. You can use something like the following to calculate i and j.</p>
-<pre><code>  size_t i = threadIdx.x + blockIdx.x*blockDim.x;
-  size_t j = threadIdx.y + blockIdx.y*blockDim.y;</code></pre>
-<aside class="special"><p><strong>Note:</strong> threadIdx.[x,y] and blockIdx.[x,y] are 0-based indices.</p>
+<p>Notice now the i and j loops are gone. Within the HIP kernel, we can calculate <code>i</code> and <code>j</code> from <code>threadIdx.[x,y]</code>, <code>blockIdx.[x,y]</code>, and <code>blockDim.[x,y]</code>, assuming that we will launch the kernel with 2-D Grid and Block dimensions. You can use something like the following to calculate <code>i</code> and <code>j</code>.</p>
+<pre><code>  size_t i = threadIdx.x + blockIdx.x*blockDim.x+buf;
+  size_t j = threadIdx.y + blockIdx.y*blockDim.y+buf;</code></pre>
+<aside class="special"><p><strong>Note: </strong><code>threadIdx.[x,y]</code> and <code>blockIdx.[x,y]</code> are 0-based indices.</p>
 </aside>
 <p>Within the main program, you will be able to launch the GPU kernel, but you will need to calculate the Grid and Block Dimensions. For now, let&#39;s assume that the number of threads-per-block in the i and j loop dimensions (x and y directions) is fixed at 16. With the number of threads-per-block (in each direction) chosen, you can calculate the grid dimensions, by requiring the x and y grid dimensions to be greater than or equal to the i and j loop sizes, respectively.</p>
 <pre><code>  int buf = (real)(smoothOperator-&gt;dim-1)/2.0;
@@ -471,38 +401,40 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
 </aside>
 <h2 is-upgraded><strong>Implement the Changes</strong></h2>
 <ol type="1" start="1">
-<li>Add a new routine, <code>smoothField_gpu</code>, to <code>smoother.cpp</code>. This routine needs to be of type __global__ so that it can be launched on the GPU (device) from the CPU (host) using hipLaunchKernelGGL.</li>
+<li>Add a new routine, <code>smoothField_gpu</code>, to <code>smoother.cpp</code>. This routine needs to be decorated with the __global__  declaration specifier so that it can be launched on the GPU (device) from the CPU (host).</li>
 </ol>
-<pre><code>__global__ void smoothField_gpu( real *weights_dev, real *f_dev, real *smoothF_dev, int nx, int ny, int N )
+<pre><code>__global__ void smoothField_gpu( real *weights, real *f, real *smoothF, int nX, int nY, int N )
 {
-  int buf = (real)(N-1)/2.0;
+  int buf = (N-1)/2;
   size_t i = threadIdx.x + blockIdx.x*blockDim.x + buf;
   size_t j = threadIdx.y + blockIdx.y*blockDim.y + buf;
   int iel, ism;
   
-  if( i &gt;= buf &amp;&amp; i &lt; nx-buf &amp;&amp; j &gt;= buf &amp;&amp; j&lt; ny-buf){
+  if( i &lt; nX-buf &amp;&amp; j&lt; nY-buf){
     real smLocal = 0.0;
     for( int jj=-buf; jj &lt;= buf; jj++ ){
       for( int ii=-buf; ii &lt;= buf; ii++ ){
-        iel = (i+ii)+(j+jj)*nx;
+        iel = (i+ii)+(j+jj)*nX;
         ism = (ii+buf) + (jj+buf)*N;
-        smLocal += f_dev[iel]*weights_dev[ism];
+        smLocal += f[iel]*weights[ism];
       }
     }
-    iel = i+j*nx;
-    smoothF_dev[iel] = smLocal;
+    iel = i+j*nX;
+    smoothF[iel] = smLocal;
   }
 }</code></pre>
-<aside class="special"><p><strong>Note:</strong> We&#39;ve added <code>buf</code> to <code>i</code> and <code>j</code> since the original loops began at <code>i=buf</code> and <code>j=buf</code>. Also, notice that we&#39;ve added conditionals to safely ensure that threads do not step outside of the memory bounds of <code>f_dev</code>, <code>weights_dev</code>, and <code>smoothF_dev</code>.</p>
+<aside class="special"><p><strong>Note:</strong> We&#39;ve added <code>buf</code> to <code>i</code> and <code>j</code> since the original loops began at <code>i=buf</code> and <code>j=buf</code>. Also, notice that we&#39;ve added conditionals to safely ensure that threads do not step outside of the memory bounds of <code>f</code>, <code>weights</code>, and <code>smoothF</code>.</p>
 </aside>
 <ol type="1" start="2">
 <li>Calculate the Block and Grid dimensions in <code>main.cpp</code>. You can place this block of code just before the iteration loop</li>
 </ol>
-<pre><code>  int buf = (real)(smoothOperator.dim-1)/2.0;
-  int threadsPerBlockX = 16;
-  int threadsPerBlockY = 16;
-  int gridDimX = (nx-2*buf)/threadsPerBlockX + 1;
-  int gridDimY = (ny-2*buf)/threadsPerBlockY + 1;</code></pre>
+<pre><code>  int buf = (smoothOperator.dim-1)/2;
+  int tX = 16;
+  int tY = 16;
+  int gX = (nx-2*buf)/tX + 1;
+  int gY = (ny-2*buf)/tY + 1;
+  dim3 threads(tX,tY,1);
+  dim3 blocks(gX,gY,1);</code></pre>
 <ol type="1" start="3">
 <li>Replace the smoothField call in main.cpp with a kernel launch call for smoothField_gpu</li>
 </ol>
@@ -510,7 +442,7 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
     hipMemcpy(f_dev, f, nElements*sizeof(real), hipMemcpyHostToDevice);
 
     // Run the smoother
-    smoothField_gpu&lt;&lt;&lt;dim3(gridDimX,gridDimY,1), dim3(threadsPerBlockX,threadsPerBlockY,1), 0, 0&gt;&gt;&gt;(
+    smoothField_gpu&lt;&lt;&lt;blocks,threads&gt;&gt;&gt;(
                         smoothOperator.weights_dev, f_dev, smoothF_dev, nx, ny, smoothOperator.dim );
 
     // Copy smoothF_dev from device to host
@@ -520,58 +452,18 @@ hipFree,3,173225,57741,0.393127872872</code></pre>
 </ol>
 <pre><code>__global__ void smoothField_gpu( real* weights, real *f, real *smoothF, int nx, int ny, int N);</code></pre>
 <ol type="1" start="5">
-<li>Rebuild the application. For Nvidia Platforms, you will need to set <code>CFLAGS=-O0 -g -fmad=false</code> before recompiling.</li>
+<li>Rebuild the application.</li>
 </ol>
-<aside class="warning"><p><strong>Caution: </strong>In order to obtain bit-for-bit correctness on Nvidia Platforms, you must add the <code>-fmad=false</code> flag to the <code>CFLAGS</code> variable in the Makefile. This flag disables fused multiply-add operations. Fused Multiply-Add (FMA) operations on the GPU result in improved performance but can cause a difference in the computed solution between <code>smoothField</code> and <code>smoothField_gpu</code>.</p>
-</aside>
 <pre><code>$ make clean &amp;&amp; make</code></pre>
 <ol type="1" start="6">
-<li>Verify that the solution output agrees with your reference output</li>
+<li>Run the application and obtain a profile</li>
 </ol>
-<pre><code>$ ./smoother 1000 10
-$ diff function.txt reference/function.txt
-$ diff smooth-function.txt reference/smooth-function.txt</code></pre>
-<ol type="1" start="7">
-<li>You can verify that the HIP Kernel is running on the GPU by using a profiler.</li>
-</ol>
-<ol type="1" start="1">
-<li>For AMD platforms, use <code>rocprof</code> with the <code>--hip-trace</code> and <code>--stats</code> flags. Running rocprof will create a file called <code>results.stats.csv</code> that contains a summary of the kernels that are run on the GPU. </li>
-</ol>
-<pre><code>&#34;Name&#34;,&#34;Calls&#34;,&#34;TotalDurationNs&#34;,&#34;AverageNs&#34;,&#34;Percentage&#34;
-&#34;smoothField_gpu(float*, float*, float*, int, int, int)&#34;,10,278624770,27862477,99.9749094615</code></pre>
-<p>The results.hip_stats.csv file shows the HIP API calls that are executed. Notice that, for this example (10 iterations), hipMemcpy is called 22 times.</p>
-<pre><code>&#34;Name&#34;,&#34;Calls&#34;,&#34;TotalDurationNs&#34;,&#34;AverageNs&#34;,&#34;Percentage&#34;
-hipMemcpy,22,334403308,15200150,97.2313227317
-hipModuleLaunchKernel,20,8892061,444603,2.58546142385
-hipMalloc,3,329911,109970,0.0959251363438
-hipFree,3,300215,100071,0.0872907081227</code></pre>
-<ol type="1" start="2">
-<li>For Nvidia platforms, use <code>nvprof</code>. </li>
-</ol>
-<pre><code>$ nvprof ./smoother 1000 10
-==9394== NVPROF is profiling process 9394, command: ./smoother 1000 10
-==9394== Profiling application: ./smoother 1000 10
-==9394== Profiling result:
-            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
- GPU activities:   53.96%  10.307ms        10  1.0307ms  1.0293ms  1.0337ms  smoothField_gpu(float*, float*, float*, int, int, int)
-                   23.97%  4.5788ms        12  381.57us  1.4720us  522.30us  [CUDA memcpy HtoD]
-                   22.07%  4.2150ms        10  421.50us  407.71us  463.90us  [CUDA memcpy DtoH]
-      API calls:   89.23%  189.13ms         3  63.045ms  105.94us  188.86ms  cudaMalloc
-                   10.09%  21.383ms        22  971.95us  17.322us  1.7658ms  cudaMemcpy
-                    0.25%  533.80us        97  5.5030us     172ns  379.31us  cuDeviceGetAttribute
-                    0.24%  512.54us         3  170.85us  163.89us  174.59us  cudaFree
-                    0.09%  186.85us         1  186.85us  186.85us  186.85us  cuDeviceTotalMem
-                    0.08%  162.32us        10  16.232us  7.4320us  50.629us  cudaLaunchKernel
-                    0.02%  38.694us         1  38.694us  38.694us  38.694us  cuDeviceGetName
-                    0.00%  3.8060us         1  3.8060us  3.8060us  3.8060us  cuDeviceGetPCIBusId
-                    0.00%  1.3010us         3     433ns     208ns     825ns  cuDeviceGetCount
-                    0.00%     766ns         2     383ns     186ns     580ns  cuDeviceGet
-                    0.00%     300ns         1     300ns     300ns     300ns  cuDeviceGetUuid</code></pre>
+<pre><code>rocprof --sys-trace --stats ./smoother 1000 10</code></pre>
 <aside class="special"><p><strong>Tip:</strong> Once you have verified your results, make sure that you commit your changes to your local git repository.</p>
 </aside>
 <h2 is-upgraded><strong>Next steps</strong></h2>
-<p>Congratulations! So far, you&#39;ve learned how to allocate and manage memory on the GPU and how to launch a GPU kernel. Right now, we have the code in a state where, every iteration, data is copied to the GPU before calling smoothField_gpu and from the GPU after calling smoothField_gpu. This situation happens quite often when porting to GPUs for the first time.</p>
-<p>The next step in this codelab is to offload the resetF routine to the GPU, even though it does not take up a lot of time. We want to offload it to the GPU so that we can move the hipMemcpy calls outside of the iteration loop in main and reduce the number of times data is transmitted across the PCI bus.</p>
+<p>Congratulations! So far, you&#39;ve learned how to allocate and manage memory on the GPU and how to launch a GPU kernel. Right now, we have the code in a state where, every iteration, data is copied to the GPU before calling <code>smoothField_gpu</code> and from the GPU after calling <code>smoothField_gpu</code>. This situation happens quite often when porting to GPUs for the first time.</p>
+<p>The next step in this codelab is to offload the <code>resetF</code> routine to the GPU, even though it does not take up a lot of time. We want to offload it to the GPU so that we can move the <code>hipMemcpy</code> calls outside of the iteration loop in main and reduce the number of times data is transmitted across the PCI bus.</p>
 
 
       </google-codelab-step>
@@ -581,80 +473,43 @@ hipFree,3,300215,100071,0.0872907081227</code></pre>
 <ol type="1" start="1">
 <li>Add <code>resetF_gpu</code> definition to <code>smoother.h</code></li>
 </ol>
-<pre><code>__global__ void resetF_gpu( real *f, real *smoothF, int nx, int ny, int buf );</code></pre>
+<pre>__global__ void resetF_gpu( real *f, real *smoothF, int nX, int nY, int buf );</pre>
 <ol type="1" start="2">
 <li>Add <code>resetF_gpu</code> to <code>smoother.cpp</code></li>
 </ol>
-<pre><code>__global__ void resetF_gpu( real *f, real *smoothF, int nx, int ny, int buf )
+<pre>__global__ void resetF_gpu( real *f, real *smoothF, int nX, int nY, int buf )
 {
   size_t i = threadIdx.x + blockIdx.x*blockDim.x + buf;
   size_t j = threadIdx.y + blockIdx.y*blockDim.y + buf;
   int iel = i + nx*j;
-  if( i &gt;= buf &amp;&amp; i &lt; nx-buf &amp;&amp; j &gt;= buf &amp;&amp; j&lt; ny-buf){
+  if( i &lt; nx-buf &amp;&amp; j&lt; ny-buf){
     f[iel] = smoothF[iel];
   }
-}</code></pre>
+}</pre>
 <ol type="1" start="3">
 <li>Replace <code>resetF</code> with <code>resetF_gpu</code> in <code>main.cpp</code>, move the <code>hipMemcpy</code> host-to-device calls before the iteration loop, and move the <code>hipMemcpy</code> device-to-host call after the iteration loop.</li>
 </ol>
-<pre><code>  hipMemcpy(f_dev, f, nElements*sizeof(real), hipMemcpyHostToDevice);
+<pre>  hipMemcpy(f_dev, f, nElements*sizeof(real), hipMemcpyHostToDevice);
 
   for( int iter=0; iter&lt;nIter; iter++){
 
     // Run the smoother
-    smoothField_gpu&lt;&lt;&lt;dim3(gridDimX,gridDimY,1), dim3(threadsPerBlockX,threadsPerBlockY,1), 0, 0&gt;&gt;&gt;(
+    smoothField_gpu&lt;&lt;&lt;blocks,threads&gt;&gt;&gt;(
                         smoothOperator.weights_dev, f_dev, smoothF_dev, nx, ny, smoothOperator.dim );
 
     // Reassign smoothF to f
-    resetF_gpu&lt;&lt;&lt;dim3(gridDimX,gridDimY,1), dim3(threadsPerBlockX,threadsPerBlockY,1), 0, 0&gt;&gt;&gt;(f_dev, smoothF_dev, nx, ny, buf );
+    resetF_gpu&lt;&lt;&lt;blocks,threads&gt;&gt;&gt;(f_dev, smoothF_dev, nx, ny, buf );
   }
   // Copy smoothF_dev from device to host
-  hipMemcpy(smoothF, smoothF_dev, nElements*sizeof(real), hipMemcpyDeviceToHost);</code></pre>
+  hipMemcpy(smoothF, smoothF_dev, nElements*sizeof(real), hipMemcpyDeviceToHost);</pre>
 <ol type="1" start="4">
 <li>Recompile the smoother application</li>
 </ol>
-<pre><code>$ make</code></pre>
+<pre>make</pre>
 <ol type="1" start="5">
-<li>Verify that the solution output agrees with your reference output</li>
+<li>Run the application again with the profiler. When you examine the results.hip_stats.csv file, you should see significantly fewer memory copies between the host and device.</li>
 </ol>
-<pre><code>$ ./smoother 1000 10
-$ diff function.txt reference/function.txt
-$ diff smooth-function.txt reference/smooth-function.txt</code></pre>
-<ol type="1" start="6">
-<li>You can verify that the the number of hipMemcpy calls is now reduced.</li>
-</ol>
-<ol type="1" start="1">
-<li>For AMD platforms, use <code>rocprof</code> with the <code>--hip-trace</code> flag. Running rocprof with the --hip-trace flag will create a file called <code>results.hip_stats.csv</code> that contains a summary of the HIP API calls that are executed. Notice that the number of hipMemcpy calls has been reduced to 4, from 22 calls.</li>
-</ol>
-<pre><code>&#34;Name&#34;,&#34;Calls&#34;,&#34;TotalDurationNs&#34;,&#34;AverageNs&#34;,&#34;Percentage&#34;
-hipMemcpy,4,301495556,75373889,96.9712661155
-hipModuleLaunchKernel,20,8972482,448624,2.88585659862
-hipMalloc,3,301029,100343,0.0968212057742
-hipFree,3,143194,47731,0.0460560801107</code></pre>
-<ol type="1" start="2">
-<li>For Nvidia platforms, use <code>nvprof</code>. </li>
-</ol>
-<pre><code>$ nvprof ./smoother 1000 10
-==5017== NVPROF is profiling process 5017, command: ./smoother 1000 10
-==5017== Profiling application: ./smoother 1000 10
-==5017== Profiling result:
-            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
- GPU activities:   83.03%  9.3196ms        10  931.96us  931.14us  934.88us  smoothField_gpu(float*, float*, float*, int, int, int)
-                    7.37%  826.91us         3  275.64us  1.4400us  415.81us  [CUDA memcpy HtoD]
-                    5.91%  662.82us        10  66.281us  65.536us  67.616us  resetF_gpu(float*, float*, int, int, int)
-                    3.70%  415.27us         1  415.27us  415.27us  415.27us  [CUDA memcpy DtoH]
-      API calls:   93.01%  167.17ms         3  55.725ms  106.73us  166.94ms  cudaMalloc
-                    6.40%  11.511ms         4  2.8777ms  11.740us  10.515ms  cudaMemcpy
-                    0.27%  493.11us         3  164.37us  152.91us  180.26us  cudaFree
-                    0.11%  202.57us        97  2.0880us     204ns  83.892us  cuDeviceGetAttribute
-                    0.11%  197.07us         1  197.07us  197.07us  197.07us  cuDeviceTotalMem
-                    0.06%  111.06us        20  5.5530us  3.8360us  29.368us  cudaLaunchKernel
-                    0.02%  37.002us         1  37.002us  37.002us  37.002us  cuDeviceGetName
-                    0.00%  4.3920us         1  4.3920us  4.3920us  4.3920us  cuDeviceGetPCIBusId
-                    0.00%  2.0330us         3     677ns     237ns  1.4970us  cuDeviceGetCount
-                    0.00%     951ns         2     475ns     243ns     708ns  cuDeviceGet
-                    0.00%     393ns         1     393ns     393ns     393ns  cuDeviceGetUuid
-</code></pre>
+<pre>rocprof --sys-trace --stats ./smoother 1000 10</pre>
 <aside class="special"><p><strong>Tip:</strong> Once you have verified your results, make sure that you commit your changes to your local git repository.</p>
 </aside>
 
