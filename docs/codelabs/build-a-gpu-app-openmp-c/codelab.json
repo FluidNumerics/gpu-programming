@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2022-09-29T16:30:28Z",
+  "updated": "2022-09-29T16:34:48Z",
   "id": "build-a-gpu-app-openmp-c",
   "duration": 65,
   "title": "Building a basic GPU accelerated application with OpenMP in C/C++",
@@ -20,7 +20,7 @@
   "tags": [
     "web"
   ],
-  "feedback": "https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140",
+  "feedback": "https://docs.google.com/forms/d/e/1FAIpQLScPCM3NJftpR6JlNlRRwb34PfHRls_Dg_vUBtgJwYYkiUfBcQ/viewform?usp=sf_link",
   "ga": "TO DO",
   "url": "build-a-gpu-app-openmp-c"
 }
