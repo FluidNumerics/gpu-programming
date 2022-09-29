@@ -1,4 +1,4 @@
-# Getting to know your hardware - Part 1
+# Getting to know your hardware - Estimating Performance
 
 In this section you will learn about
 
@@ -383,7 +383,7 @@ To start, you can draw a horizontal line at the value of $F_{peak}$. Then, you c
   <tr>
    <td>
 
-   <img src="../../assets/images/roofline-schematic.png" width="" alt="alt_text" title="image_tooltip">
+   <img src="../../../assets/images/roofline-schematic.png" width="" alt="alt_text" title="image_tooltip">
 
    </td>
   </tr>
