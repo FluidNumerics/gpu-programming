@@ -770,7 +770,7 @@ Thompson, A. and Taylor, B. N. "Guide for the Use of the International System of
 <table>
 <tr>
 <td>
-<a class="glightbox" href="../../../assets/images/amd-gpu-architecture-microarchitecture.png"><img alt="alt_text" src="../../../assets/images/amd-gpu-architecture-microarchitecture.png" title="image_tooltip" width=""/></a>
+<a class="glightbox" href="../../../assets/images/amd-gpu-architecture-microarchitecture.png"><img alt="Schematic of AMD GPU architecture" src="../../../assets/images/amd-gpu-architecture-microarchitecture.png" title="Schematic of AMD GPU architecture" width=""/></a>
 </td>
 </tr>
 <tr>
@@ -789,7 +789,7 @@ Thompson, A. and Taylor, B. N. "Guide for the Use of the International System of
 <table>
 <tr>
 <td>
-<a class="glightbox" href="../../../assets/images/amd-cdna-compute-unit.png"><img alt="alt_text" src="../../../assets/images/amd-cdna-compute-unit.png" title="image_tooltip" width=""/></a>
+<a class="glightbox" href="../../../assets/images/amd-cdna-compute-unit.png"><img alt="AMD CDNA1 Compute Unit architecture" src="../../../assets/images/amd-cdna-compute-unit.png" title="AMD CDNA1 Compute Unit architecture" width=""/></a>
 </td>
 </tr>
 <tr>
@@ -803,7 +803,7 @@ Thompson, A. and Taylor, B. N. "Guide for the Use of the International System of
 <table>
 <tr>
 <td>
-<a class="glightbox" href="../../../assets/images/amd-cdna1-mi100.png"><img alt="alt_text" src="../../../assets/images/amd-cdna1-mi100.png" title="image_tooltip" width=""/></a>
+<a class="glightbox" href="../../../assets/images/amd-cdna1-mi100.png"><img alt="AMD CDNA1 MI100 GPU" src="../../../assets/images/amd-cdna1-mi100.png" title="AMD CDNA1 MI100 GPU" width=""/></a>
 </td>
 </tr>
 <tr>
@@ -817,7 +817,7 @@ Thompson, A. and Taylor, B. N. "Guide for the Use of the International System of
 <table>
 <tr>
 <td>
-<a class="glightbox" href="../../../assets/images/amd-cdna2-mi200.png"><img alt="alt_text" src="../../../assets/images/amd-cdna2-mi200.png" title="image_tooltip" width=""/></a>
+<a class="glightbox" href="../../../assets/images/amd-cdna2-mi200.png"><img alt="AMD CDNA2 MI200 Graphics Compute Die" src="../../../assets/images/amd-cdna2-mi200.png" title="AMD CDNA2 MI200 Graphics Compute Die" width=""/></a>
 </td>
 </tr>
 <tr>
@@ -825,14 +825,25 @@ Thompson, A. and Taylor, B. N. "Guide for the Use of the International System of
    </td>
 </tr>
 </table>
-<p>Figure 6 shows a block diagram of AMD®'s CDNA2 (MI200) Graphics Compute Die. The CDNA2 GCD architecture reduced the number of compute units per GCD from 120 (CDNA1) to 112 (CDNA2). HowevNotable improvements, relative to the CDNA1 architecture include:</p>
+<p>Figure 6 shows a block diagram of AMD®'s CDNA2 (MI200) Graphics Compute Die. The CDNA2 GCD architecture reduced the number of compute units per GCD from 120 (CDNA1) to 112 (CDNA2). Notable improvements, relative to the CDNA1 architecture include:</p>
 <ul>
 <li>CDNA2 Matrix FMAs support FP64 matrix operations (CDNA1 only supported FP32 matrix operations)</li>
 <li>CNDA2 introduced the Packed FP32 instructions, wich can execute two component vector instructions on FP32 data types for FMA, FADD, and FMUL operations.</li>
 <li>Theoretical peak L2 cache bandwidth is doubled relative to CDNA1 to approximately 6 <span class="arithmatex">\(\frac{TB}{s}\)</span></li>
 <li>Global memory capacity is increased to 64 GB per GCD (relative to CDNA1 32GB)</li>
 </ul>
-<p>Additionally, the MI200 series of GPUs, called a "Multi-Chip Module", consist of two GCD's, giving a total of 224 compute units per GPU. Each GCD is connected through high speed on-die fabric. In practice, one physical MI200 card appears to the operating system as two distinct GPUs capable of executing work.</p>
+<table>
+<tr>
+<td>
+<a class="glightbox" href="../../../assets/images/amd-mi250-mcm.png"><img alt="AMD MI250 multi-chip module" src="../../../assets/images/amd-mi250-mcm.png" title="AMD MI250 multi-chip module" width=""/></a>
+</td>
+</tr>
+<tr>
+<td><strong><span style="text-decoration:underline;">Figure 7</span></strong> : This is a block diagram of the AMD® CDNA™2 MI250 Multi-Chip Module architecture taken from <a href="https://www.amd.com/system/files/documents/amd-cdna2-white-paper.pdf">AMD®'s CDNA™2 Whitepaper</a> .
+   </td>
+</tr>
+</table>
+<p>Additionally, the MI250 and MI250x GPUs, called "Multi-Chip Modules", consist of two GCD's, giving a total of 224 compute units per GPU. Each GCD is connected through high speed on-die fabric. In practice, one physical MI250 card appears to the operating system as two distinct GPUs capable of executing work.</p>
 </article>
 </div>
 </div>
