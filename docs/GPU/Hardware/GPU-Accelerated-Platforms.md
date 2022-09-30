@@ -504,7 +504,7 @@ AMD's CDNA&trade; architectures
   <tr>
    <td>
 
-<img src="../../../assets/images/amd-gpu-architecture-microarchitecture.png" width="" alt="alt_text" title="image_tooltip">
+<img src="../../../assets/images/amd-gpu-architecture-microarchitecture.png" width="" alt="Schematic of AMD GPU architecture" title="Schematic of AMD GPU architecture">
 
    </td>
   </tr>
@@ -527,7 +527,7 @@ For compute operations, each shader engine handles tasks received by the Command
   <tr>
    <td>
 
-<img src="../../../assets/images/amd-cdna-compute-unit.png" width="" alt="alt_text" title="image_tooltip">
+<img src="../../../assets/images/amd-cdna-compute-unit.png" width="" alt="AMD CDNA1 Compute Unit architecture" title="AMD CDNA1 Compute Unit architecture">
 
    </td>
   </tr>
@@ -546,7 +546,7 @@ The view of the GPU hardware presented in Figure 3 is a macro view of the GPU ar
 <table>
   <tr>
    <td>
-   <img src="../../../assets/images/amd-cdna1-mi100.png" width="" alt="alt_text" title="image_tooltip">
+   <img src="../../../assets/images/amd-cdna1-mi100.png" width="" alt="AMD CDNA1 MI100 GPU" title="AMD CDNA1 MI100 GPU">
    </td>
   </tr>
   <tr>
@@ -566,7 +566,7 @@ The architecture of each compute unit is shown in Figure 5. For the MI100 GPU sp
 <table>
   <tr>
    <td>
-   <img src="../../../assets/images/amd-cdna2-mi200.png" width="" alt="alt_text" title="image_tooltip">
+   <img src="../../../assets/images/amd-cdna2-mi200.png" width="" alt="AMD CDNA2 MI200 Graphics Compute Die" title="AMD CDNA2 MI200 Graphics Compute Die">
    </td>
   </tr>
   <tr>
@@ -575,11 +575,23 @@ The architecture of each compute unit is shown in Figure 5. For the MI100 GPU sp
   </tr>
 </table>
 
-Figure 6 shows a block diagram of AMD&reg;'s CDNA2 (MI200) Graphics Compute Die. The CDNA2 GCD architecture reduced the number of compute units per GCD from 120 (CDNA1) to 112 (CDNA2). HowevNotable improvements, relative to the CDNA1 architecture include:
+Figure 6 shows a block diagram of AMD&reg;'s CDNA2 (MI200) Graphics Compute Die. The CDNA2 GCD architecture reduced the number of compute units per GCD from 120 (CDNA1) to 112 (CDNA2). Notable improvements, relative to the CDNA1 architecture include:
 
 * CDNA2 Matrix FMAs support FP64 matrix operations (CDNA1 only supported FP32 matrix operations)
 * CNDA2 introduced the Packed FP32 instructions, wich can execute two component vector instructions on FP32 data types for FMA, FADD, and FMUL operations.
 * Theoretical peak L2 cache bandwidth is doubled relative to CDNA1 to approximately 6 $\frac{TB}{s}$
 * Global memory capacity is increased to 64 GB per GCD (relative to CDNA1 32GB)
 
-Additionally, the MI200 series of GPUs, called a "Multi-Chip Module", consist of two GCD's, giving a total of 224 compute units per GPU. Each GCD is connected through high speed on-die fabric. In practice, one physical MI200 card appears to the operating system as two distinct GPUs capable of executing work.
+<table>
+  <tr>
+   <td>
+   <img src="../../../assets/images/amd-mi250-mcm.png" width="" alt="AMD MI250 multi-chip module" title="AMD MI250 multi-chip module">
+   </td>
+  </tr>
+  <tr>
+   <td><strong><span style="text-decoration:underline;">Figure 7</span></strong> : This is a block diagram of the AMD&reg; CDNA&trade;2 MI250 Multi-Chip Module architecture taken from <a href="https://www.amd.com/system/files/documents/amd-cdna2-white-paper.pdf">AMD&reg;'s CDNA&trade;2 Whitepaper</a> .
+   </td>
+  </tr>
+</table>
+
+Additionally, the MI250 and MI250x GPUs, called "Multi-Chip Modules", consist of two GCD's, giving a total of 224 compute units per GPU. Each GCD is connected through high speed on-die fabric. In practice, one physical MI250 card appears to the operating system as two distinct GPUs capable of executing work.
