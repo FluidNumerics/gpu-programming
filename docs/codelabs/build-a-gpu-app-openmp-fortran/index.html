@@ -25,10 +25,10 @@
                   id="build-a-gpu-app-openmp-fortran"
                   title="Building a GPU accelerated application with OpenMP in Fortran"
                   environment="web"
-                  feedback-link="https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140">
+                  feedback-link="https://docs.google.com/forms/d/e/1FAIpQLScPCM3NJftpR6JlNlRRwb34PfHRls_Dg_vUBtgJwYYkiUfBcQ/viewform?usp=sf_link">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p><strong>Last Updated:</strong> 2022-03-16</p>
+        <p><strong>Last Updated:</strong> 2022-09-28</p>
 <h2 is-upgraded><strong>What you will build</strong></h2>
 <p>In this codelab, you will port a small Fortran application to GPU hardware using OpenMP. You will transition a serial CPU-only mini-application to a portable GPU accelerated application, using OpenMP provided through the AOMP compiler. </p>
 <p>The goal of this codelab is to introduce you to using a few basic OpenMP directives and a development practice that can be applied to porting other applications.</p>
@@ -47,73 +47,6 @@
 <li>ROCm (v4.2 or greater)</li>
 <li>Fortran compiler</li>
 </ul>
-<aside class="special"><p><strong>Note :</strong> If you are attending a Lunch &amp; Learn or other training activity with AMD &amp; Fluid Numerics, you are encouraged to use the AMD Accelerator Cloud to run on AMD MI100 GPUs. The amdflang installation on the OCEAN cluster does not have bitcodes for Nvidia GPUs currently and you may encounter errors at compile time.</p>
-</aside>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="(Recommended) Start an Interactive Session on the AMD Accelerator Cloud" duration="5">
-        <p>If you plan on using the AMD Accelerator Cloud for a portion of this tutorial, you will need to start an interactive session on a compute node to complete this codelab.</p>
-<p>The AMD Accelerator Cloud comes with the Slurm job scheduler and a set of compute partitions that provide you access to a variety compute platforms. This section will walk you through how to log in to the AMD Accelerator Cloud and start an interactive session on a compute node with a MI100 GPU. </p>
-<aside class="warning"><p><strong>NOTE : </strong>Prior to completing these steps, make sure that you have completed the onboarding process for the AMD Accelerator Cloud. Instructions to login to the cluster should have been provided to you during onboarding.</p>
-</aside>
-<ol type="1" start="1">
-<li>Once you are connected to the AMD Accelerator Cloud login node, you can use srun to start an interactive session on a node with MI100 GPUs. We recommend that you set a time limit for interactive jobs so that you don&#39;t accidentally leave a reserved node idle.</li>
-</ol>
-<pre>srun -n1 --partition=MI100 --time=1:00:00 --pty /bin/bash</pre>
-<ol type="1" start="2">
-<li>Once your interactive session starts, you can use the rocm-smi command to verify that GPUs are available</li>
-</ol>
-<pre>rocm-smi
-
-
-======================= ROCm System Management Interface =======================
-================================= Concise Info =================================
-GPU  Temp   AvgPwr  SCLK    MCLK     Fan   Perf  PwrCap  VRAM%  GPU%  
-0    33.0c  35.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-1    33.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-2    34.0c  34.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-3    33.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-4    33.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-5    32.0c  38.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-6    33.0c  34.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-7    31.0c  39.0W   300Mhz  1200Mhz  255%  auto  290.0W    0%   0%    
-================================================================================
-============================= End of ROCm SMI Log ==============================</pre>
-<ol type="1" start="3">
-<li>Since the compute nodes on the AMD Accelerator Cloud have multiple GPUs per node, and Slurm&#39;s GRES is not configured, it is recommended that you set the HIP_VISIBLE_DEVICES variable to specify which GPU you will run on. The value for HIP_VISIBLE_DEVICES is an integer between 0 and 7 (inclusive); e.g.</li>
-</ol>
-<pre>export HIP_VISIBLE_DEVICES=3</pre>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="(Optional) Start an Interactive Session on the OCEAN Cluster" duration="5">
-        <aside class="warning"><p><strong>CAUTION : </strong>The amdflang installation on the OCEAN cluster does not have bitcodes for Nvidia GPUs currently and you may encounter errors at compile time. We recommend using the AMD Accelerator Cloud for this codelab at this time.</p>
-</aside>
-<p>If you plan on using the OCEAN cluster for a portion of this tutorial, you will need to start an interactive session on a compute node to complete this codelab.</p>
-<p>The OCEAN cluster comes with the Slurm job scheduler and a set of compute partitions that provide you access to a variety compute platforms. This section will walk you through how to log in to the OCEAN cluster and start an interactive session on a compute node with a GPU.</p>
-<ol type="1" start="1">
-<li>Open your web browser and navigate to <a href="https://shell.cloud.google.com?show=terminal" target="_blank">https://shell.cloud.google.com?show=terminal</a> . This opens up Google Cloud shell and will be your primary access point to get onto the OCEAN cluster.</li>
-</ol>
-<aside class="warning"><p><strong>CAUTION: </strong>You must log in with your amd-user*@ocean.waterchange.org account to access the cluster. See <a href="https://www.oshackathon.org/resources/os-hpc-cluster/onboarding" target="_blank">https://www.oshackathon.org/resources/os-hpc-cluster/onboarding</a> for more details.</p>
-</aside>
-<ol type="1" start="2">
-<li>If you have not aligned an ssh key with your account already, you will need to create an SSH key in the Cloud Shell and attach it to your account. This is easily done using ssh-keygen and the gcloud SDK provided for you in the Cloud Shell. <br><br>Run the commands below; at the prompts, accept the default path to store the ssh key pair and set a password to protect the private key.</li>
-</ol>
-<pre>ssh-keygen -t rsa
-gcloud compute os-login ssh-keys add --key-file=${HOME}/.ssh/id_rsa.pub</pre>
-<ol type="1" start="3">
-<li>Now, ssh to the OCEAN cluster&#39;s login node</li>
-</ol>
-<pre>ssh ocean.waterchange.org</pre>
-<ol type="1" start="4">
-<li>Now that you are in the login node, you can start an interactive session on a compute node.</li>
-</ol>
-<pre>srun -N1 --gres=gpu:1 --partition=v100 --account=amd --qos=amd --pty /bin/bash</pre>
-<aside class="warning"><p><strong>NOTE : </strong>The OCEAN cluster is a cloud-native cluster hosted on Google Cloud Platform. If a compute node is not currently active (denoted by the idle~ state from sinfo), a node will be provisioned automatically on Google Cloud. It may take up to 3 minutes for a node to become active and your interactive session to start.</p>
-</aside>
 
 
       </google-codelab-step>
@@ -149,14 +82,12 @@ gcloud compute os-login ssh-keys add --key-file=${HOME}/.ssh/id_rsa.pub</pre>
 <ol type="1" start="2">
 <li>Build the smoother application. Keep in mind, the compiler is set to gcc by default in the provided makefile.</li>
 </ol>
-<aside class="warning"><p><strong>NOTE : </strong>If you are using the OCEAN cluster, we recommend that you load the gcc@10.3.0 compiler into your path using <code>spack load gcc@10.3.0</code> before running the make command.</p>
-</aside>
 <pre><code>$ cd samples/fortran/smoother/src
 $ make</code></pre>
 <ol type="1" start="3">
-<li>Test run the example. The application takes three arguments. The first two arguments are the number of grid cells in the x and y dimensions. The third argument is the number of times the smoothing operator is applied. Running the example below smooths data on a 1000x1000 grid using 100 sweeps of the Gaussian smoother.</li>
+<li>Test run the example. The application takes three arguments. The first two arguments are the number of grid cells in the x and y dimensions. The third argument is the number of times the smoothing operator is applied. Running the example below smooths data on a 1000x1000 grid using 10 sweeps of the Gaussian smoother.</li>
 </ol>
-<p>$ ./smoother 1000 1000 100</p>
+<p>$ ./smoother 1000 1000 10</p>
 <h2 is-upgraded><strong>Profile the Application</strong></h2>
 <p>Before starting any GPU porting exercise, it is important to profile your application to find hotspots where your application spends most of its time. Further, it is helpful to keep track of the runtime of the routines in your application so that you can later assess whether or not the GPU porting has resulted in improved performance. Ideally, your GPU-Accelerated application should outperform CPU-Only versions of your application when fully subscribed to available CPUs on a compute node.</p>
 <aside class="special"><p><strong>Tip:</strong> To obtain a fair comparison between CPU-Only and GPU-Accelerated versions of your application,  you will want to compare the run-time between fully-subscribed CPU-only routines and the GPU-ported routines. </p>
@@ -215,7 +146,7 @@ $ make</code></pre>
     
       <google-codelab-step label="Update the Makefile to use the amdflang compiler" duration="15">
         <p>Before jumping straight into GPU offloading with OpenMP, you will take an incremental step to change the compiler and verify the application can be compiled and executed with the <code>amdflang</code> compiler. Once this is verified, you will then start the GPU offloading process.</p>
-<p>ROCm comes with compilers ( <code>amdflang</code>, <code>amdclang</code>, and <code>amdclang++</code> ) that support OpenMP 5.0. To enable GPU offloading at compile time, there are a few flags that you need to pass to the compiler.</p>
+<p>ROCm comes with compilers ( <code>amdflang</code>, <code>amdclang</code>, and <code>amdclang++</code> ) that support the OpenMP 4.5 standard or greater. To enable GPU offloading at compile time, there are a few flags that you need to pass to the compiler.</p>
 <pre>amdflang -fopenmp \
          -fopenmp-targets=[target] \
          -Xopenmp-target=[target] \
@@ -248,8 +179,6 @@ FC ?= $(ROCM)/bin/amdflang</code></pre>
 <ol type="1" start="3">
 <li>In ROCm 4.5.0, it is necessary to remove the -g flag from the FFLAGS definition in the Makefile. </li>
 </ol>
-<aside class="warning"><p><strong>Caution : </strong>If you do not remove the <code>-g</code> flag from <code>FFLAGS</code>, the <code>amdflang</code> compiler with crash with a segmentation fault.</p>
-</aside>
 <pre>FFLAGS = -O0</pre>
 <ol type="1" start="4">
 <li>Let&#39;s now work on a section for detecting the GPU architecture. The mygpu utility can be used to detect a GPU, if one is present. The -d flag is used to set the default architecture to fall back to in case a GPU is not present. <br><br>For example,  <code>mygpu -d gfx908</code> will check for a GPU and return gfx908 if one is not found. In the make system, we want to also allow for someone building the code to specify the target architecture, in case they are on a system that does not have a GPU equipped.<br><br>Add the following section of code to your Makefile just beneath the definition of <code>FC</code>. This section sets <code>GPU_ARCH</code> to the output of <code>mygpu -d gfx908</code>,  if it is not set in the user&#39;s environment. The <code>-d gfx908</code> flag indicates that the default GPU architecture will be set to <code>gfx908</code>, if one is not found on the system you are building on.</li>
@@ -272,7 +201,7 @@ endif</code></pre>
 <h2 is-upgraded><strong>Verify the application compiles and runs</strong></h2>
 <p>Now that you have made the necessary modifications to the Makefile, it is time to re-compile and test the application. You also want to make sure that the application output is unchanged.</p>
 <aside class="warning"><p><strong>Note: </strong>On the AMD Accelerator Cloud, you will need to load the ROCm module and set the FC environment variable using the commands below :</p>
-<p><code>module load rocmmod4.5.0</code></p>
+<p><code>module load rocmmod5.0.2</code></p>
 <p><code>export FC=$(which amdflang)</code></p>
 </aside>
 <ol type="1" start="1">
@@ -306,46 +235,6 @@ $ diff smooth-function.txt reference/function.txt</code></pre>
       <google-codelab-step label="Offload Routines to the GPU with OpenMP" duration="20">
         <p>In the <code>smoother</code> application, we have seen that the <code>ApplySmoother</code> routine, called by <code>main</code>, takes up the most time. Within the main iteration loop in <code>main.cpp</code>, the <code>resetF</code> function is called to update the input for <code>smoother</code> for the next iteration.</p>
 <p>You will start by offloading both the <code>ApplySmoother</code> and <code>resetF</code> routines to the GPU using OpenMP directives (also called &#34;pragmas&#34;). In this section you will learn how to offload sections of code to the GPU and how to manage GPU data using OpenMP pragmas. </p>
-<h2 is-upgraded><strong>OMP Target Basics</strong></h2>
-<p>With OpenMP, you can use the <code>omp target</code> directive to mark regions of code that you want the compiler to offload to the GPU. When you open an OpenMP target region, you can use the <strong><code>map</code></strong> directive to indicate variables that you want to copy <strong><code>to</code></strong> the GPU and <strong><code>from</code></strong> the GPU. </p>
-<p>The example below shows how to open and close a target region that will be offloaded to the GPU. Pointers are created for variables <code>arrayIn</code> and <code>arrayOut</code> on the host. The map directives indicates that <code>arrayIn</code> will be copied to the GPU and <code>arrayOut</code> will be copied from the GPU to the CPU at the end of the target region. Note that, since <code>arrayIn</code> and <code>arrayOut</code> are pointers, we must use array section notation to properly map the arrays.</p>
-<pre><code>IMPLICIT NONE
-INTEGER, PARAMETER :: N = 1000
-REAL, ALLOCATABLE :: arrayIn(:)
-REAL, ALLOCATABLE :: arrayOut(:)
-
-ALLOCATE( arrayIn(1:N), arrayOut(1:N) )
-
-! Initialization routines 
-.
-.
-! End Initialization routines
-!$omp target map(to: arrayIn) map(from: arrayOut)
-.
-.
-!$omp end target</code></pre>
-<h2 is-upgraded><strong>OMP Teams &amp; Parallel</strong></h2>
-<p>Within a target region, with no other specifications, a single thread of execution is launched on the GPU. However, GPUs are capable of running thousands of threads simultaneously. Threads on GPUs are scheduled to run on multiple Compute Units (AMD) or Streaming Multiprocessors (Nvidia) in groups of 64 (AMD) or 32 (Nvidia) called Wavefronts (AMD) or Warps (Nvidia). Modern GPUs are capable of executing many Wavefronts/Warps at any given time. </p>
-<p>Before the teams directive was introduced in OpenMP 4.0, parallelization was limited to parallelizing with a single group of threads. Since OpenMP 4.0, the teams directive can be used to express another dimension of parallelism that is appropriate for GPUs.</p>
-<p>The teams directive creates a &#34;league&#34; of teams that have, by default, a single thread. Each team executes instructions concurrently. The parallel directive creates multiple threads within each team. The number of threads can be set with the optional <code>num_threads</code> clause after the parallel directive. On a GPU, the number of threads per team is ideally a multiple of the Wavefront/Warp size (64 or 32 threads).</p>
-<p>This example shows how to parallelize a do-loop with parallel teams, where each team has 256 threads.</p>
-<pre><code>IMPLICIT NONE
-INTEGER, PARAMETER :: N = 1000
-REAL, ALLOCATABLE :: arrayIn(:)
-REAL, ALLOCATABLE :: arrayOut(:)
-
-ALLOCATE( arrayIn(1:N), arrayOut(1:N) )
-
-! Initialization routines 
-.
-.
-! End Initialization routines
-!$omp target map(to: arrayIn) map (from: arrayOut)
-!$omp teams distribute parallel do num_threads(256)
-DO i = 1, N
-  arrayOut(i) = 2.0*arrayIn(i)
-ENDDO
-!$omp end target</code></pre>
 <h2 is-upgraded>Offload ApplySmoother</h2>
 <ol type="1" start="1">
 <li>Open <code>smoother.F90</code> and navigate to the <code>ApplySmoother</code> routine. Open an OpenMP target region before the start of the first loop in <code>ApplySmoother</code> and map the necessary map directives to copy <code>smoother->weights</code> and <code>f</code> to the GPU and <code>smoothF</code> to and from the GPU.</li>
@@ -515,7 +404,10 @@ $ diff smooth-function.txt reference/function.txt</code></pre>
 <h2 is-upgraded><strong>Provide Feedback</strong></h2>
 <p>If you have any questions, comments, or feedback that can help improve this codelab, you can reach out to <a href="mailto:support@fluidnumerics.com" target="_blank">support@fluidnumerics.com</a> </p>
 <h2 is-upgraded><strong>Further reading</strong></h2>
-<p><a href="https://www.openmp.org/wp-content/uploads/openmp-examples-5.0.0.pdf" target="_blank">OpenMP 5.0 Examples Documentation</a></p>
+<ul>
+<li><a href="https://fluidnumerics.github.io/scientific-computing-edu" target="_blank">https://fluidnumerics.github.io/scientific-computing-edu</a> </li>
+<li><a href="https://www.openmp.org/wp-content/uploads/openmp-examples-5.0.0.pdf" target="_blank">OpenMP 5.0 Examples Documentation</a></li>
+</ul>
 
 
       </google-codelab-step>

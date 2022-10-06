@@ -14,7 +14,14 @@ docs_dir: docs
 nav:
   - Home: index.md
   - Portable GPU Programming:
-    - Getting to know your hardware (Part 1): GPU/Hardware-Part1.md
+    - Hardware:
+      - GPU Accelerated Platforms: GPU/Hardware/GPU-Accelerated-Platforms.md
+      - Estimating Performance: GPU/Hardware/Estimating-Performance.md
+    - Codelabs:
+      - Build a GPU Accelerated Application with HIP in C/C++: codelabs/build-a-gpu-app-hip-c/index.html
+      - Build a GPU Accelerated Application with HIPFort in Fortran: codelabs/build-a-gpu-app-hip-fortran/index.html
+      - Build a GPU Accelerated Application with OpenMP in C/C++: codelabs/build-a-gpu-app-openmp-c/index.html
+      - Build a GPU Accelerated Application with OpenMP in Fortran: codelabs/build-a-gpu-app-openmp-fortran/index.html
 
 theme: 
   name: material

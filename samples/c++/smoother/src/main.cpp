@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )  {
 
   // Create the smoother
   smootherInit(&smoothOperator);
-  int buf = (real)(smoothOperator.dim-1)/2.0;
+  int buf = (smoothOperator.dim-1)/2;
 
   // Allocate space for the function we want to smooth
   f  = (real*)malloc( nElements*sizeof(real) );

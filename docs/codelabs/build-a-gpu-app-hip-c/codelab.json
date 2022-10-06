@@ -3,9 +3,9 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2022-05-13T03:14:47Z",
+  "updated": "2022-09-29T16:30:36Z",
   "id": "build-a-gpu-app-hip-c",
-  "duration": 85,
+  "duration": 65,
   "title": "Building a basic GPU accelerated application with HIP in C/C++",
   "authors": "Joseph Schoonover",
   "summary": "This codelab will walk you through the basics of CPU and GPU memory management and GPU kernel launching with HIP in C/C++",
@@ -20,7 +20,7 @@
   "tags": [
     "web"
   ],
-  "feedback": "https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140",
+  "feedback": "https://docs.google.com/forms/d/e/1FAIpQLScPCM3NJftpR6JlNlRRwb34PfHRls_Dg_vUBtgJwYYkiUfBcQ/viewform?usp=sf_link",
   "ga": "TO DO",
   "url": "build-a-gpu-app-hip-c"
 }

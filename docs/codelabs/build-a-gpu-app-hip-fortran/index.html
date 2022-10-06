@@ -25,10 +25,10 @@
                   id="build-a-gpu-app-hip-fortran"
                   title="Building a basic GPU accelerated application with HIP in Fortran"
                   environment="web"
-                  feedback-link="https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140">
+                  feedback-link="https://docs.google.com/forms/d/e/1FAIpQLScPCM3NJftpR6JlNlRRwb34PfHRls_Dg_vUBtgJwYYkiUfBcQ/viewform?usp=sf_link">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p><strong>Last Updated:</strong> 2022-08-16</p>
+        <p><strong>Last Updated:</strong> 2022-09-27</p>
 <h2 is-upgraded><strong>What you will build</strong></h2>
 <p>In this codelab, you will port a small Fortran application to GPU hardware using HIP and HIPFort. You will transition a serial CPU-only mini-application to a portable GPU accelerated application, using HIP and HIPFort. </p>
 <p>The goal of this codelab is to introduce you to using the HIPFort API and a development practice that can be applied to porting other Fortran applications to GPU hardware with HIPFort.</p>
@@ -89,7 +89,7 @@ make</code></pre>
 <ol type="1" start="3">
 <li>Test run the example. The application takes two arguments. The first argument is the number of grid cells, and the second argument is the number of times the smoothing operator is applied.</li>
 </ol>
-<pre>./smoother 1000 1000 100</pre>
+<pre>./smoother 1000 1000 10</pre>
 <h2 is-upgraded><strong>Profile the Application</strong></h2>
 <p>Before starting any GPU porting exercise, it is important to profile your application to find hotspots where your application spends most of its time. Further, it is helpful to keep track of the runtime of the routines in your application so that you can later assess whether or not the GPU porting has resulted in improved performance. Ideally, your GPU-Accelerated application should outperform CPU-Only versions of your application when fully subscribed to available CPUs on a compute node.</p>
 <aside class="special"><p><strong>Tip:</strong> To obtain a fair comparison between CPU-Only and GPU-Accelerated versions of your application,  you will want to compare the run-time between fully-subscribed CPU-only routines and the GPU-ported routines. </p>
@@ -164,7 +164,7 @@ $ mv function.txt smooth-function.txt ./reference/</code></pre>
 <p>In this section, you will learn how to allocate memory on the GPU and copy data between the host and device using hipfort. You&#39;ll start by inserting calls to allocate and deallocate device memory with hipMalloc and hipFree. Once this is working, you&#39;ll then copy data between the CPU and GPU with hipMemcpy.</p>
 <h3 is-upgraded><strong>Allocating Device Memory</strong></h3>
 <ol type="1" start="1">
-<li>Add <code>USE</code> statements for <code>hipfort</code>, <code>hipfort_check</code>, and <code>ISO_C_BINDING</code> at the top of <code>main.F90</code>. We use ISO_C_BINDING because you will need to declare C-Pointers that you will use to reference memory on the GPU.</li>
+<li>Add <code>USE</code> statements for <code>hipfort</code>, <code>hipfort_check</code>, and <code>ISO_C_BINDING</code> at the top of <code>main.F90</code>. We use <code>ISO_C_BINDING</code> because you will need to make use of certain intrinsics to map between Fortran and C pointers.</li>
 </ol>
 <pre><code>PROGRAM main
   
@@ -193,7 +193,7 @@ IMPLICIT NONE</code></pre>
     INTEGER :: i, j, iter
 </code></pre>
 <ol type="1" start="3">
-<li>Next, insert calls to <code>hipMalloc</code> wrapped inside of <code>hipCheck</code> to allocate space for <code>f_dev</code>, <code>smoothF_dev</code>, and <code>weights_dev</code>. The hipmalloc routine has an argument called &#34;mold&#34; that you can use to pass the host array to set the size of the device arary. Because of this, you will want to insert these calls <em>after</em> the ALLOCATE statements for <code>f</code>, <code>smoothF</code>, and <code>weights</code>.<br></li>
+<li>Next, insert calls to <code>hipMalloc</code> wrapped inside of <code>hipCheck</code> to allocate space for <code>f_dev</code>, <code>smoothF_dev</code>, and <code>weights_dev</code>. The hipmalloc routine has an argument called <code>mold</code> that you can use to pass the host array to set the size of the device arary. Because of this, you will want to insert these calls <em>after</em> the ALLOCATE statements for <code>f</code>, <code>smoothF</code>, and <code>weights</code>.<br></li>
 </ol>
 <aside class="special"><p><strong>Note: </strong><code>hipCheck</code> is subroutine provided by the <a href="https://github.com/ROCmSoftwarePlatform/hipfort" target="_blank">hipfort</a> library that will check the error code that is returned by the enclosed HIP API call.</p>
 </aside>
@@ -224,7 +224,7 @@ FFLAGS=-O0 -g -hipfort-compiler $(HIPFORT_COMPILER)</code></pre>
 <ol type="1" start="7">
 <li>Run <code>smoother</code> with the same input parameters as you did in the previous section and verify the output is unchanged. We use the diff command line utility to compare the output files and the reference files. If there are no differences, diff will produce no output.</li>
 </ol>
-<pre><code>$ ./smoother 1000 1000 100
+<pre><code>$ ./smoother 1000 1000 10
 $ diff function.txt reference/function.txt
 $ diff smooth-function.txt reference.txt</code></pre>
 <ol type="1" start="8">
@@ -276,28 +276,6 @@ $ cat results.hip_stats.csv
 hipMemcpy,201,696108877,3463228,99.94123584828755
 hipMalloc,3,216944,72314,0.031146925698335683
 hipFree,3,192359,64119,0.02761722601411495</code></pre>
-<p><br>For Nvidia platforms, use <code>nvprof</code>. At this stage, you should see three calls to <code>cudaMalloc</code>, three calls to <code>cudaFree</code>,  201 calls to <code>cudaMemcpy</code> with 100 calls for <code>DeviceToHost</code>, and 101 calls for <code>HostToDevice</code>.</p>
-<pre><code>$ nvprof ./smoother 1000 1000 100
- Info : nX =         1000
- Info : nY =         1000
- Info : nIter =          100
-==74347== NVPROF is profiling process 74347, command: ./smoother 1000 1000 100
-==74347== Profiling application: ./smoother 1000 1000 100
-==74347== Profiling result:
-            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
- GPU activities:   54.03%  44.247ms       100  442.47us  427.58us  555.39us  [CUDA memcpy DtoH]
-                   45.97%  37.645ms       101  372.72us  1.4720us  467.10us  [CUDA memcpy HtoD]
-      API calls:   63.95%  171.63ms         3  57.210ms  100.12us  171.43ms  cudaMalloc
-                   35.63%  95.610ms       201  475.67us  34.390us  676.19us  cudaMemcpy
-                    0.18%  491.33us         3  163.78us  146.94us  172.58us  cudaFree
-                    0.15%  407.74us       101  4.0370us     142ns  242.63us  cuDeviceGetAttribute
-                    0.06%  166.19us         1  166.19us  166.19us  166.19us  cuDeviceTotalMem
-                    0.02%  64.694us         1  64.694us  64.694us  64.694us  cuDeviceGetName
-                    0.00%  2.4970us         1  2.4970us  2.4970us  2.4970us  cuDeviceGetPCIBusId
-                    0.00%  1.0260us         3     342ns     186ns     625ns  cuDeviceGetCount
-                    0.00%     601ns         2     300ns     149ns     452ns  cuDeviceGet
-                    0.00%     288ns         1     288ns     288ns     288ns  cuDeviceGetUuid
-</code></pre>
 <aside class="warning"><p><strong>Caution: </strong>Copying smoothF_dev to <code>smoothF</code> will produce an incorrect result until the <code>ApplySmoother</code> routine is offloaded to the GPU, which we will complete in the next section. This happens because <code>smoothF_dev</code> currently contains uninitialized data that we use to update <code>smoothF</code>.</p>
 </aside>
 <h2 is-upgraded><strong>Next steps</strong></h2>
@@ -331,7 +309,7 @@ hipFree,3,192359,64119,0.02761722601411495</code></pre>
       ENDDO
     ENDDO
 END SUBROUTINE ApplySmoother</code></pre>
-<p>The outer loops, over i and j, are tightly nested loops over a 2-D grid. The size of these loops are nY-2*nW and nX-2*nW. The values of nX and nY are determined by the user through the first two command line arguments (we have been using 1000 for), and <code>nW</code> is 2 (see the declarations in <code>main.F90</code>). Within the i and j loops, we carry out a reduction operation for smLocal and then assign the value to each element of smoothF.</p>
+<p>The outer loops, over i and j, are tightly nested loops over a 2-D grid. The size of these loops are <code>nY-2*nW</code> and nX-2*nW. The values of nX and nY are determined by the user through the first two command line arguments (we have been using 1000 for), and <code>nW</code> is 2 (see the declarations in <code>main.F90</code>). Within the i and j loops, we carry out a reduction operation for smLocal and then assign the value to each element of smoothF.</p>
 <p>In the ApplySmoother algorithm, the order in which we execute the i and j loops does not matter. Further, the size of each loop is O(1000) for the example we&#39;re working with. A good strategy for offloading this routine to the GPU is to have each GPU thread execute the instructions within the i and j loops. Ideally, then we want each thread to execute something the following</p>
 <pre><code>    real smLocal = 0.0;
     for( int jj=-nW; jj &lt;= nW; jj++ ){
@@ -564,6 +542,7 @@ CALL hipCheck(hipMemcpy(C_LOC(smoothF), C_LOC(smoothF_dev), hipMemcpyDeviceToHos
 <p>If you have any questions, comments, or feedback that can help improve this codelab, you can reach out to <a href="mailto:support@fluidnumerics.com" target="_blank">support@fluidnumerics.com</a> </p>
 <h2 is-upgraded>Further reading</h2>
 <ul>
+<li><a href="https://fluidnumerics.github.io/scientific-computing-edu" target="_blank">https://fluidnumerics.github.io/scientific-computing-edu</a> </li>
 <li><a href="https://rocmdocs.amd.com/en/latest/Programming_Guides/HIP-GUIDE.html" target="_blank">HIP Programming Guide</a></li>
 <li><a href="https://rocmdocs.amd.com/en/latest/Programming_Guides/Programming-Guides.html#hip-documentation" target="_blank">HIP Documentation</a></li>
 <li><a href="https://rocmdocs.amd.com/en/latest/" target="_blank">About AMD ROCm</a></li>
