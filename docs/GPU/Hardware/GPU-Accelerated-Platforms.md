@@ -595,3 +595,13 @@ Figure 6 shows a block diagram of AMD&reg;'s CDNA2 (MI200) Graphics Compute Die.
 </table>
 
 Additionally, the MI250 and MI250x GPUs, called "Multi-Chip Modules", consist of two GCD's, giving a total of 224 compute units per GPU. Each GCD is connected through high speed on-die fabric. In practice, one physical MI250 card appears to the operating system as two distinct GPUs capable of executing work.
+
+## Multi-GPU Systems
+On most modern high performance computing platforms, you will encounter multiple CPU sockets and multiple GPUs. This introduces a zoo of combinations for connecting GPUs to CPUs that have direct consequences for your application performance. Let's first look at a conceptual diagram of one possible system
+
+### Frontier
+
+### Setonix
+
+### Oram
+

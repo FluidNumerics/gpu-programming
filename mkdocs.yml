@@ -17,6 +17,29 @@ nav:
     - Hardware:
       - GPU Accelerated Platforms: GPU/Hardware/GPU-Accelerated-Platforms.md
       - Estimating Performance: GPU/Hardware/Estimating-Performance.md
+    - OpenMP GPU Offloading: 
+      - Basics: GPU/OpenMP/Basics.md
+    - HIP and HIPFort: 
+      - Basics: GPU/HIP/Basics.md
+    - Benchmarking your hardware:
+      - PCI: Benchmarks/PCI.md
+      - Memory: Benchmarks/Memory.md
+      - Compute: Benchmarks/Compute.md
+      - Multi-GPU Communications: Benchmarks/MPI_GPU.md
+    - Performance Topics:
+      - Coalesced Memory Addressing: Performance/Coalesced.md
+      - Shared Memory Usage: Performance/SharedMemory.md
+      - Occupancy: Performance/Occupancy.md 
+      - Asynchronous Operations: Performance/Asynchronous.md
+    - Multi-GPU Topics:
+      - Task Affinity: MultiGPU/Affinity.md
+      - GPU Direct Communications: MultiGPU/GPUDirect.md
+    - Profiling Applications:
+      - Basics : Profiling/index.md
+      - Profiling with rocprof: Profiling/rocprof.md
+    - For System Administrators:
+      - Build amdclang/flang with AMD and Nvidia bitcodes: SysAdmin/AMDClangFlang.md
+      - Installing OpenMPI with AMD GPU Support: SysAdmin/OpenMPIAMDGPU.md
     - Codelabs:
       - Build a GPU Accelerated Application with HIP in C/C++: codelabs/build-a-gpu-app-hip-c/index.html
       - Build a GPU Accelerated Application with HIPFort in Fortran: codelabs/build-a-gpu-app-hip-fortran/index.html
