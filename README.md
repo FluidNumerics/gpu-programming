@@ -27,13 +27,3 @@ Sample code (under the [samples/](./samples) directory of this repository) are l
 * [Codelab tutorial : Building a GPU accelerated application with HIP in Fortran](https://fluidnumerics.github.io/scientific-computing-edu/codelabs/build-a-gpu-app-hip-fortran/index.html#0)
 * [Codelab tutorial : Building a GPU accelerated application with HIP in C/C++](https://fluidnumerics.github.io/scientific-computing-edu/codelabs/build-a-gpu-app-hip-c/index.html#0)
 
-
-## Getting Support
-
-**[Fluid Numerics RSE Support](https://octoskelo.atlassian.net/servicedesk/customer/portal/2/group/46/create/142)**
-
-Request support on scientific computing and parallel programming from Fluid Numerics. This support is only available to individuals attending training events with Fluid Numerics.
-
-**[Report mistakes in the codelabs](https://octoskelo.atlassian.net/servicedesk/customer/portal/1/create/140)**
-
-If you find a mistake in one of the codelabs, you can post an issue to our community support channel.
