@@ -9,7 +9,7 @@
 <meta content="Fluid Numerics" name="author"/>
 <link href="../../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.3.1, mkdocs-material-8.5.1" name="generator"/>
-<title>OpenMP GPU Offloading Basics in Fortran - Scientific Computing (edu)</title>
+<title>Basics - Scientific Computing (edu)</title>
 <link href="../../../assets/stylesheets/main.2e8b5541.min.css" rel="stylesheet"/>
 <link href="../../../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -23,7 +23,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#openmp-gpu-offloading-basics-in-fortran">
+<a class="md-skip" href="#hip-and-hipfort-basics">
           Skip to content
         </a>
 </div>
@@ -47,7 +47,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              OpenMP GPU Offloading Basics in Fortran
+              Basics
             
           </span>
 </div>
@@ -104,8 +104,8 @@
         Home
       </a>
 </li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
 <label class="md-nav__link" for="__nav_2">
           Portable GPU Programming
           <span class="md-nav__icon md-icon"></span>
@@ -144,11 +144,197 @@
 <li class="md-nav__item md-nav__item--nested">
 <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" id="__nav_2_2" type="checkbox"/>
 <label class="md-nav__link" for="__nav_2_2">
+          OpenMP GPU Offloading
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="OpenMP GPU Offloading" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+          OpenMP GPU Offloading
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../OpenMP/Basics/">
+        Basics
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" id="__nav_2_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_3">
+          HIP and HIPFort
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="HIP and HIPFort" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+          HIP and HIPFort
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Basics
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_4" id="__nav_2_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_4">
+          Benchmarking your hardware
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Benchmarking your hardware" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+          Benchmarking your hardware
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Benchmarks/PCI/">
+        PCI
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Benchmarks/Memory/">
+        Memory
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Benchmarks/Compute/">
+        Compute
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Benchmarks/MPI_GPU/">
+        Multi-GPU Communications
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_5" id="__nav_2_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_5">
+          Performance Topics
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Performance Topics" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_5">
+<span class="md-nav__icon md-icon"></span>
+          Performance Topics
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Performance/Coalesced/">
+        Coalesced Memory Addressing
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Performance/SharedMemory/">
+        Shared Memory Usage
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Performance/Occupancy/">
+        Occupancy
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Performance/Asynchronous/">
+        Asynchronous Operations
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_6" id="__nav_2_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_6">
+          Multi-GPU Topics
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Multi-GPU Topics" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_6">
+<span class="md-nav__icon md-icon"></span>
+          Multi-GPU Topics
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../MultiGPU/Affinity/">
+        Task Affinity
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../MultiGPU/GPUDirect/">
+        GPU Direct Communications
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_7" id="__nav_2_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_7">
+          Profiling Applications
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Profiling Applications" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_7">
+<span class="md-nav__icon md-icon"></span>
+          Profiling Applications
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Profiling/">
+        Basics
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Profiling/rocprof/">
+        Profiling with rocprof
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_8" id="__nav_2_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_8">
+          For System Administrators
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="For System Administrators" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_8">
+<span class="md-nav__icon md-icon"></span>
+          For System Administrators
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../SysAdmin/AMDClangFlang/">
+        Build amdclang/flang with AMD and Nvidia bitcodes
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../SysAdmin/OpenMPIAMDGPU/">
+        Installing OpenMPI with AMD GPU Support
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_9" id="__nav_2_9" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_9">
           Codelabs
           <span class="md-nav__icon md-icon"></span>
 </label>
 <nav aria-label="Codelabs" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_2">
+<label class="md-nav__title" for="__nav_2_9">
 <span class="md-nav__icon md-icon"></span>
           Codelabs
         </label>
@@ -188,79 +374,49 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#openmp-target-basics">
-    OpenMP Target Basics
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#openmp-omp-teams-parallel">
-    OpenMP OMP Teams &amp; Parallel
-  </a>
-</li>
-</ul>
 </nav>
 </div>
 </div>
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/fluidnumerics/scientific-computing-edu/edit/main/docs/mkdocs/GPU/OpenMP/GPU-Offloading-Fortran.md" title="Edit this page">
+<a class="md-content__button md-icon" href="https://github.com/fluidnumerics/scientific-computing-edu/edit/main/docs/mkdocs/GPU/HIP/Basics.md" title="Edit this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
-<h1 id="openmp-gpu-offloading-basics-in-fortran">OpenMP GPU Offloading Basics in Fortran</h1>
-<h2 id="openmp-target-basics">OpenMP Target Basics</h2>
-<p>With OpenMP, you can use the omp target directive to mark regions of code that you want the compiler to offload to the GPU. When you open an OpenMP target region, you can use the map directive to indicate variables that you want to copy to the GPU and from the GPU. </p>
-<p>The example below shows how to open and close a target region that will be offloaded to the GPU. Pointers are created for variables arrayIn and arrayOut on the host. The map directives indicates that arrayIn will be copied to the GPU and arrayOut will be copied from the GPU to the CPU at the end of the target region. Note that, since arrayIn and arrayOut are pointers, we must use array section notation to properly map the arrays.</p>
-<pre><code class="language-fortran">IMPLICIT NONE
-INTEGER, PARAMETER :: N = 1000
-REAL, ALLOCATABLE :: arrayIn(:)
-REAL, ALLOCATABLE :: arrayOut(:)
-
-ALLOCATE( arrayIn(1:N), arrayOut(1:N) )
-
-! Initialization routines 
-.
-.
-! End Initialization routines
-!$omp target map(to: arrayIn) map(from: arrayOut)
-.
-.
-!$omp end target
-</code></pre>
-<h2 id="openmp-omp-teams-parallel">OpenMP OMP Teams &amp; Parallel</h2>
-<p>Within a target region, with no other specifications, a single thread of execution is launched on the GPU. However, GPUs are capable of running thousands of threads simultaneously. Threads on GPUs are scheduled to run on multiple Compute Units (AMD) or Streaming Multiprocessors (Nvidia) in groups of 64 (AMD) or 32 (Nvidia) called Wavefronts (AMD) or Warps (Nvidia). Modern GPUs are capable of executing many Wavefronts/Warps at any given time. </p>
-<p>Before the teams directive was introduced in OpenMP 4.0, parallelization was limited to parallelizing with a single group of threads. Since OpenMP 4.0, the teams directive can be used to express another dimension of parallelism that is appropriate for GPUs.</p>
-<p>The teams directive creates a “league” of teams that have, by default, a single thread. Each team executes instructions concurrently. The parallel directive creates multiple threads within each team. The number of threads can be set with the optional <code>num_threads</code> clause after the parallel directive. On a GPU, the number of threads per team is ideally a multiple of the Wavefront/Warp size (64 or 32 threads).</p>
-<p>This example shows how to parallelize a do-loop with parallel teams, where each team has 256 threads.</p>
-<pre><code class="language-fortran">IMPLICIT NONE
-INTEGER, PARAMETER :: N = 1000
-REAL, ALLOCATABLE :: arrayIn(:)
-REAL, ALLOCATABLE :: arrayOut(:)
-
-ALLOCATE( arrayIn(1:N), arrayOut(1:N) )
-
-! Initialization routines 
-.
-.
-! End Initialization routines
-!$omp target map(to: arrayIn) map (from: arrayOut)
-!$omp teams distribute parallel do num_threads(256)
-DO i = 1, N
-  arrayOut(i) = 2.0*arrayIn(i)
-ENDDO
-!$omp end target
-</code></pre>
+<h1 id="hip-and-hipfort-basics">HIP and HIPFort Basics</h1>
 </article>
 </div>
 </div>
 </main>
 <footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Basics" class="md-footer__link md-footer__link--prev" href="../../OpenMP/Basics/" rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Previous
+              </span>
+              Basics
+            </div>
+</div>
+</a>
+<a aria-label="Next: PCI" class="md-footer__link md-footer__link--next" href="../../../Benchmarks/PCI/" rel="next">
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Next
+              </span>
+              PCI
+            </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"></path></svg>
+</div>
+</a>
+</nav>
 <div class="md-footer-meta md-typeset">
 <div class="md-footer-meta__inner md-grid">
 <div class="md-copyright">

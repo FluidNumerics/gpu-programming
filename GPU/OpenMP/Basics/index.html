@@ -1,0 +1,673 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Educational materials for scientific and parallel computing" name="description"/>
+<meta content="Fluid Numerics" name="author"/>
+<link href="../../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.5.1" name="generator"/>
+<title>Basics - Scientific Computing (edu)</title>
+<link href="../../../assets/stylesheets/main.2e8b5541.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>html.glightbox-open { overflow: initial; height: 100%; }</style><script src="../../../assets/javascripts/glightbox.min.js"></script></head>
+<body data-md-color-accent="cyan" data-md-color-primary="black" data-md-color-scheme="slate" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#openmp-basics">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Scientific Computing (edu)" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Scientific Computing (edu)">
+<img alt="logo" src="../../../assets/images/logo-fluid-numerics.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Scientific Computing (edu)
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Basics
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="cyan" data-md-color-media="" data-md-color-primary="black" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="cyan" data-md-color-media="" data-md-color-primary="black" data-md-color-scheme="default" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+</form>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/scientific-computing-edu" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub/fluidnumerics/scientific-computing-edu
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Scientific Computing (edu)" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Scientific Computing (edu)">
+<img alt="logo" src="../../../assets/images/logo-fluid-numerics.png"/>
+</a>
+    Scientific Computing (edu)
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/scientific-computing-edu" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub/fluidnumerics/scientific-computing-edu
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2">
+          Portable GPU Programming
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Portable GPU Programming" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+          Portable GPU Programming
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" id="__nav_2_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_1">
+          Hardware
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Hardware" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_1">
+<span class="md-nav__icon md-icon"></span>
+          Hardware
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Hardware/GPU-Accelerated-Platforms/">
+        GPU Accelerated Platforms
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Hardware/Estimating-Performance/">
+        Estimating Performance
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" id="__nav_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_2">
+          OpenMP GPU Offloading
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="OpenMP GPU Offloading" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+          OpenMP GPU Offloading
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Basics
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Basics
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#offloading-compute-to-gpus">
+    Offloading Compute to GPUs
+  </a>
+<nav aria-label="Offloading Compute to GPUs" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#target-regions">
+    Target Regions
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#teams-distribute-parallel">
+    Teams Distribute Parallel
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-regions">
+    Data Regions
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#compiling-applications">
+    Compiling Applications
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#try-it-yourself">
+    Try it yourself
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" id="__nav_2_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_3">
+          HIP and HIPFort
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="HIP and HIPFort" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+          HIP and HIPFort
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../HIP/Basics/">
+        Basics
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_4" id="__nav_2_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_4">
+          Benchmarking your hardware
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Benchmarking your hardware" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+          Benchmarking your hardware
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Benchmarks/PCI/">
+        PCI
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Benchmarks/Memory/">
+        Memory
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Benchmarks/Compute/">
+        Compute
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Benchmarks/MPI_GPU/">
+        Multi-GPU Communications
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_5" id="__nav_2_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_5">
+          Performance Topics
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Performance Topics" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_5">
+<span class="md-nav__icon md-icon"></span>
+          Performance Topics
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Performance/Coalesced/">
+        Coalesced Memory Addressing
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Performance/SharedMemory/">
+        Shared Memory Usage
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Performance/Occupancy/">
+        Occupancy
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Performance/Asynchronous/">
+        Asynchronous Operations
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_6" id="__nav_2_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_6">
+          Multi-GPU Topics
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Multi-GPU Topics" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_6">
+<span class="md-nav__icon md-icon"></span>
+          Multi-GPU Topics
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../MultiGPU/Affinity/">
+        Task Affinity
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../MultiGPU/GPUDirect/">
+        GPU Direct Communications
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_7" id="__nav_2_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_7">
+          Profiling Applications
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Profiling Applications" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_7">
+<span class="md-nav__icon md-icon"></span>
+          Profiling Applications
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Profiling/">
+        Basics
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../Profiling/rocprof/">
+        Profiling with rocprof
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_8" id="__nav_2_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_8">
+          For System Administrators
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="For System Administrators" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_8">
+<span class="md-nav__icon md-icon"></span>
+          For System Administrators
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../SysAdmin/AMDClangFlang/">
+        Build amdclang/flang with AMD and Nvidia bitcodes
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../SysAdmin/OpenMPIAMDGPU/">
+        Installing OpenMPI with AMD GPU Support
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_9" id="__nav_2_9" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_9">
+          Codelabs
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Codelabs" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_9">
+<span class="md-nav__icon md-icon"></span>
+          Codelabs
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../codelabs/build-a-gpu-app-hip-c/">
+        Build a GPU Accelerated Application with HIP in C/C++
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../codelabs/build-a-gpu-app-hip-fortran/">
+        Build a GPU Accelerated Application with HIPFort in Fortran
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../codelabs/build-a-gpu-app-openmp-c/">
+        Build a GPU Accelerated Application with OpenMP in C/C++
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../codelabs/build-a-gpu-app-openmp-fortran/">
+        Build a GPU Accelerated Application with OpenMP in Fortran
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#offloading-compute-to-gpus">
+    Offloading Compute to GPUs
+  </a>
+<nav aria-label="Offloading Compute to GPUs" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#target-regions">
+    Target Regions
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#teams-distribute-parallel">
+    Teams Distribute Parallel
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-regions">
+    Data Regions
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#compiling-applications">
+    Compiling Applications
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#try-it-yourself">
+    Try it yourself
+  </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/fluidnumerics/scientific-computing-edu/edit/main/docs/mkdocs/GPU/OpenMP/Basics.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
+</a>
+<h1 id="openmp-basics">OpenMP Basics</h1>
+<p>The <a href="htttps://openmp.org">OpenMP</a> 4 standard introduced directives for offloading regions of code to GPU hardware. This includes directives for parallelizing loop structures as well as those for managing device memory. Additionally, the OpenMP API provides methods for managing devices. With the OpenMP 5 standard, the OpenMP API is expanded to provide more explicit control over host and device pointer management, which allows for interoperability with HIP, CUDA, and GPU accelerated libraries. Although the OpenMP standard has progressed into version 5 (as of 2022), implementations within compilers varies; for example see <a href="https://clang.llvm.org/docs/OpenMPSupport.html">LLVM Clang/Flang OpenMP supported features</a>.</p>
+<p>In this section, you will learn </p>
+<ul>
+<li>How to offload regions of code to GPU Accelerators with OpenMP <code>target</code> directives</li>
+<li>How to parallelize for/do loops with OpenMP <code>teams</code></li>
+<li>How to use data regions to minimize memory copies between CPU and GPU</li>
+<li>How to compile Fortran and C/C++ applications with <code>amdflang</code> and <code>amdclang</code>.</li>
+</ul>
+<h2 id="offloading-compute-to-gpus">Offloading Compute to GPUs</h2>
+<h3 id="target-regions">Target Regions</h3>
+<p>With OpenMP, you can use the <code>omp target</code> directive to mark regions of code that you want the compiler to offload to the GPU. When you open a target region a target task is created on the GPU and with no other directives, all code within the target region is run in serial on a single thread. Since GPUs have a distinct memory space in comparison to host CPUs, you also need to hint to the compiler what data needs to be copied to and from the GPUs when opening a target region; this is done using the <code>map</code> directive.</p>
+<p>The examples below show how to use the <code>target</code> and <code>map</code> directives in Fortran and C/C++ in a simple matrix-vector multiply method.</p>
+<pre><code class="language-fortran">INTEGER, PARAMETER :: N=1000
+REAL :: axloc
+REAL, ALLOCATABLE, A(:,:), Ax(:), x(:)
+
+ALLOCATE(A(1:N,1:N), Ax(1:N), x(1:N))
+
+! Initialize values
+x = 1.0
+A = 1.0
+
+!$omp target map(to:A,x) map(from:Ax)
+DO i = 1, N
+ axloc = 0.0
+ DO r = 1, N
+   axloc = axloc+A(r,i)*x(r)
+ ENDDO
+ Ax(i) = axloc
+ENDDO
+!$omp end target
+
+DEALLOCATE(A,Ax,x)
+</code></pre>
+<pre><code class="language-c">int N=1000;
+float *A, *Ax, *x;
+
+malloc(A, sizeof(float)*N*N);
+malloc(Ax, sizeof(float)*N);
+malloc(x, sizeof(float)*N);
+
+// Initialize values
+for( int i = 0; i &lt; N; i++ ){
+  x[i] = 1.0;
+  for( int j = 0; j &lt; N; j++ ){
+    A[j+i*N] = 1.0;
+  }
+}
+
+float axloc = 0.0;
+#pragma omp target map(to:A,x) map(from:Ax)
+{ 
+  for( int i = 0; i &lt; N; i++ ){
+    axloc = 0.0;
+    for( int r = 0; r &lt; N; r++) {
+      axloc += A[r+N*i]*x[r];
+    }
+    Ax[i] = axloc;
+  }
+}
+
+free(A);
+free(Ax);
+free(x);
+</code></pre>
+<p>In these examples,</p>
+<ul>
+<li>OpenMP directives begin with <code>!$omp</code> in Fortran and <code>#pragma omp</code> in C/C++.</li>
+<li>In Fortran, the OpenMP target region is closed using the <code>!$omp end target</code> directive.</li>
+<li>In C/C++, the OpenMP target region is enclosed with brackets <code>{</code> and <code>}</code> to indicate clearly the region that is offloaded to the GPU.</li>
+<li>The arrays <code>A</code> and <code>x</code> are mapped to the GPU using the <code>map(to:A,x)</code> directive. The <code>to</code> modifier allows us to eliminate an unnecessary copy back to the CPU at the end of the target region, since <code>A</code> and <code>x</code> are not updated in the code included in the target region.</li>
+<li>The <code>Ax</code> array if mapped from the GPU at the end of the target region using the <code>map(from:Ax)</code> directive. The <code>from</code> modifier eliminates and unnecessary copy to the GPU at the beginning of the target region, since <code>Ax</code> is only written to in the code included in the target region.</li>
+<li>Scalar values, like <code>axloc</code> and the loop iterators are automatically thread private and copied to the GPU, if necessary. Because of this, you do not need to explicitly include scalar values in <code>map</code> directives.</li>
+</ul>
+<h3 id="teams-distribute-parallel">Teams Distribute Parallel</h3>
+<p>Within a target region, with no other directives, a single thread of execution is launched on the GPU. However, GPUs are capable of running thousands of threads simultaneously. Before the teams directive was introduced in OpenMP 4.0, parallelization was limited to parallelizing with a single group of threads. Since OpenMP 4.0, the teams directive can be used to express another dimension of parallelism that is appropriate for GPUs.</p>
+<p>The <code>teams</code> directive creates a “league” of teams that each have a single thread by default. OpenMP teams execute instructions concurrently. Following a <code>teams</code> directive with a <code>distribute</code> will cause future instructions, such as <code>for</code> or <code>do</code> loops to be distributed across the teams.</p>
+<p>The <code>parallel</code> directive creates multiple threads within each team and the number of threads can be set with the optional <code>num_threads</code> clause after the parallel directive. On a GPU, the number of threads per team is ideally a multiple of the Wavefront or Warp size (64 threads on AMD GPUs or 32 threads on Nvidia GPUs).</p>
+<p>When working with applications that have tightly nested loops, you can increase the amount of exposed parallelism by using the <code>collapse(n)</code> directive, where <code>n</code> is the number of loops to collapse. Loop collapsing is ideal when you have tightly nested loops with instructions that do not have dependencies between iterations.</p>
+<p>The examples below show how we would parallelize the matrix-vector multiply from the previous example. </p>
+<pre><code class="language-fortran">INTEGER, PARAMETER :: N=1000
+REAL :: axloc
+REAL, ALLOCATABLE, A(:,:), Ax(:), x(:)
+
+ALLOCATE(A(1:N,1:N), Ax(1:N), x(1:N))
+
+! Initialize values
+x = 1.0
+A = 1.0
+
+!$omp target map(to:A,x) map(from:Ax)
+!$omp teams distribute parallel for num_threads(256)
+DO i = 1, N
+ axloc = 0.0
+ DO r = 1, N
+   axloc = axloc+A(r,i)*x(r)
+ ENDDO
+ Ax(i) = axloc
+ENDDO
+!$omp end target
+
+DEALLOCATE(A,Ax,x)
+</code></pre>
+<pre><code class="language-c">int N=1000;
+float *A, *Ax, *x;
+
+malloc(A, sizeof(float)*N*N);
+malloc(Ax, sizeof(float)*N);
+malloc(x, sizeof(float)*N);
+
+// Initialize values
+for( int i = 0; i &lt; N; i++ ){
+  x[i] = 1.0;
+  for( int j = 0; j &lt; N; j++ ){
+    A[j+i*N] = 1.0;
+  }
+}
+
+float axloc = 0.0;
+#pragma omp target map(to:A,x) map(from:Ax)
+{ 
+  #pragma omp teams distribute parallel for num_threads(256)
+  for( int i = 0; i &lt; N; i++ ){
+    axloc = 0.0;
+    for( int r = 0; r &lt; N; r++) {
+      axloc += A[r+N*i]*x[r];
+    }
+    Ax[i] = axloc;
+  }
+}
+
+free(A);
+free(Ax);
+free(x);
+</code></pre>
+<p>In this example, we only parallelize the outer loop with the <code>teams distribute parallel for</code> compound directive. The inner loop is a reduction and is left serialized in this example. For large enough loops, the <code>reduce</code> can be beneficial and may improve the runtime by exposing more parallelism. The number of threads per team here is set to 256 using the <code>num_threads</code> modifier. When parallelizing your own codes, you should consider varying this value between your GPUs warp or wavefront size and 1024 (the upper bound for threads per team on current GPUs) and measuring kernel runtime.</p>
+<h2 id="data-regions">Data Regions</h2>
+<h2 id="compiling-applications">Compiling Applications</h2>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<p>To accompany these notes, we have created hands-on codelabs that walk you through porting a mini application to the GPU using OpenMP. You will offload two kernels using <code>target</code> and <code>teams distribute parallel</code> directives. From here, you will learn how to use the <code>rocprof</code> profiler to create hotspot and trace profiles of the application to identify memory copies as a bottleneck for performance. From here, you will use OpenMP data regions to minimize memory copies to reduce the application's runtime.</p>
+<ul>
+<li><a href="../../../codelabs/build-a-gpu-app-openmp-fortran/">Porting a Fortran mini-application to GPUs with OpenMP</a></li>
+<li><a href="../../../codelabs/build-a-gpu-app-openmp-c/">Porting a C/C++ mini-application to GPUs with OpenMP</a></li>
+</ul>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Estimating Performance" class="md-footer__link md-footer__link--prev" href="../../Hardware/Estimating-Performance/" rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Previous
+              </span>
+              Estimating Performance
+            </div>
+</div>
+</a>
+<a aria-label="Next: Basics" class="md-footer__link md-footer__link--next" href="../../HIP/Basics/" rel="next">
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Next
+              </span>
+              Basics
+            </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+<script src="../../../assets/javascripts/bundle.d691e9de.min.js"></script>
+<script src="../../../javascripts/mathjax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "width": "100%", "height": "auto", "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom"});})</script></body>
+</html>
