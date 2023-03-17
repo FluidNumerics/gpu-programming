@@ -8,9 +8,9 @@
 <meta content="Educational materials for scientific and parallel computing" name="description"/>
 <meta content="Fluid Numerics" name="author"/>
 <link href="../../../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.3.1, mkdocs-material-8.5.1" name="generator"/>
+<meta content="mkdocs-1.4.0, mkdocs-material-8.5.3" name="generator"/>
 <title>Basics - Scientific Computing (edu)</title>
-<link href="../../../assets/stylesheets/main.2e8b5541.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/main.7a952b86.min.css" rel="stylesheet"/>
 <link href="../../../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
@@ -138,6 +138,11 @@
         Estimating Performance
       </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Hardware/GPU-Specifications/">
+        GPU Specifications Table
+      </a>
+</li>
 </ul>
 </nav>
 </li>
@@ -175,9 +180,97 @@
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Basics
+          <span class="md-nav__icon md-icon"></span>
+</label>
 <a class="md-nav__link md-nav__link--active" href="./">
         Basics
       </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#managing-memory">
+    Managing Memory
+  </a>
+<nav aria-label="Managing Memory" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#allocate-memory">
+    Allocate memory
+  </a>
+<nav aria-label="Allocate memory" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#optional-arguments-in-fortran">
+    Optional arguments in Fortran
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deallocate-memory">
+    Deallocate memory
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#copying-memory">
+    Copying memory
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#writing-kernels">
+    Writing Kernels
+  </a>
+<nav aria-label="Writing Kernels" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#syntax">
+    Syntax
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#working-with-many-threads">
+    Working with many threads
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-array-addition">
+    Example : Array Addition
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#launching-kernels">
+    Launching Kernels
+  </a>
+<nav aria-label="Launching Kernels" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-array-addition-continued">
+    Example : Array Addition (Continued)
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#launching-kernels-from-fortran">
+    Launching kernels from Fortran
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -374,6 +467,88 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#managing-memory">
+    Managing Memory
+  </a>
+<nav aria-label="Managing Memory" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#allocate-memory">
+    Allocate memory
+  </a>
+<nav aria-label="Allocate memory" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#optional-arguments-in-fortran">
+    Optional arguments in Fortran
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deallocate-memory">
+    Deallocate memory
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#copying-memory">
+    Copying memory
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#writing-kernels">
+    Writing Kernels
+  </a>
+<nav aria-label="Writing Kernels" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#syntax">
+    Syntax
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#working-with-many-threads">
+    Working with many threads
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-array-addition">
+    Example : Array Addition
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#launching-kernels">
+    Launching Kernels
+  </a>
+<nav aria-label="Launching Kernels" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-array-addition-continued">
+    Example : Array Addition (Continued)
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#launching-kernels-from-fortran">
+    Launching kernels from Fortran
+  </a>
+</li>
+</ul>
 </nav>
 </div>
 </div>
@@ -384,6 +559,383 @@
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
 <h1 id="hip-and-hipfort-basics">HIP and HIPFort Basics</h1>
+<p>As with every GPU programming API, we need to know how to</p>
+<ol>
+<li>Allocate and de-allocate GPU memory</li>
+<li>Copy memory from host-to-device and device-to-host</li>
+<li>Expose algorithm parallelism to the GPU hardware</li>
+<li>Execute code on the GPU.</li>
+</ol>
+<p>Memory Management with HIP and HIPFort is handled by using the HIP and HIPFort APIs. Computational kernels (functions) are written using C syntax. HIP intrinsics allow you to identify individual threads executing the kernel so that you can assign per-thread instructions; this provides the necessary ingredients for exposing application parallelism. Kernels are scheduled to run on the GPU using the HIP API or CUDA-style "chevron syntax". This section covers these basics of GPU programming with HIP and HIPFort.</p>
+<h2 id="managing-memory">Managing Memory</h2>
+<p>When working on GPU accelerated platforms, recall that the CPU and GPU have distinct memory spaces. This implies that your software must somehow manage host (CPU) and device (GPU) pointers to data. The HIP API provides functions that can be used to allocate memory, deallocate memory, and copy memory between the host and device.</p>
+<h3 id="allocate-memory">Allocate memory</h3>
+<p>To allocate memory on the GPU, you can use the <code>hipMalloc</code> call.</p>
+<table>
+<tr>
+<td>
+<strong><span style="text-decoration:underline;">C/C++</span></strong>
+<pre><code>#include &lt;hip/hip_runtime.h&gt;
+
+hipMalloc( ptr, size );
+</code></pre>
+</td>
+</tr>
+<tr>
+<td>Allocate device memory in C/C++. As input, hipMalloc expects a pointer and the number of bytes to allocate, in that order.
+   </td>
+</tr>
+<tr>
+<td>
+<strong><span style="text-decoration:underline;">Fortran</span></strong>
+<pre><code>USE hipfort 
+
+ierr = hipMalloc( ptr, size )
+</code></pre>
+</td>
+</tr>
+<tr>
+<td> Allocate device memory in Fortran. As input, hipMalloc expects a pointer (either of `TYPE(C_PTR)` or a Fortran `POINTER`) and the number of bytes to allocate, in that order. The output of hipMalloc is an integer exit code.
+   </td>
+</tr>
+</table>
+<h4 id="optional-arguments-in-fortran">Optional arguments in Fortran</h4>
+<p>Since Fortran allows for multi-dimensional arrays that most Fortran programmers leverage in their application, it can become cumbersome to pollute your code with boilerplate calculations for <code>size</code> in calls to <code>hipMalloc</code>. To help keep your code tidy, <code>hipMalloc</code> in <code>hipfort</code> provides optional parameters : <code>mold</code> and <code>source</code>. These arguments expect to receive a Fortran <code>POINTER</code> that references host memory. The amount of memory to allocate on the GPU is then determined based on the amount of memory held by the host pointer. </p>
+<p>When the <code>mold</code> argument is provided, memory is simply allocated on the GPU. </p>
+<pre><code class="language-fortran">USE hipfort 
+
+IMPLICIT NONE
+
+INTEGER, PARAMETER :: N = 100
+INTEGER, PARAMETER :: M = 500
+REAL,POINTER :: a_cpu(:,:)
+REAL,POINTER :: a_gpu(:,:)
+INTEGER :: ierr
+
+ALLOCATE(a_cpu(1:N,1:M))
+
+
+! Allocate the gpu counterpart of a_cpu
+ierr = hipMalloc( a_gpu, mold = a_cpu )
+</code></pre>
+<p>If you specify the <code>source</code>, memory is allocated on the GPU <em>and</em> the contents of the host pointer are copied to the GPU.</p>
+<pre><code class="language-fortran">USE hipfort 
+
+IMPLICIT NONE
+
+INTEGER, PARAMETER :: N = 100
+INTEGER, PARAMETER :: M = 500
+REAL,POINTER :: a_cpu(:,:)
+REAL,POINTER :: a_gpu(:,:)
+INTEGER :: ierr
+
+ALLOCATE(a_cpu(1:N,1:M))
+
+a_cpu = 0.0
+
+! Allocate the gpu counterpart of a_cpu and copy
+! the contents of a_cpu to the GPU
+ierr = hipMalloc( a_gpu, source = a_cpu )
+</code></pre>
+<h3 id="deallocate-memory">Deallocate memory</h3>
+<p>To deallocate memory on the GPU, you can use the <code>hipFree</code> call.</p>
+<table>
+<tr>
+<td>
+<strong><span style="text-decoration:underline;">C/C++</span></strong>
+<pre><code>#include &lt;hip/hip_runtime.h&gt;
+
+hipFree( ptr );
+</code></pre>
+</td>
+</tr>
+<tr>
+<td> Deallocate device memory in C/C++. As input, hipFree expects a pointer referencing memory previously allocated on the GPU.
+   </td>
+</tr>
+<tr>
+<td>
+<strong><span style="text-decoration:underline;">Fortran</span></strong>
+<pre><code>USE hipfort 
+
+ierr = hipFree( ptr )
+</code></pre>
+</td>
+</tr>
+<tr>
+<td>Deallocate device memory in Fortran. As input, hipMalloc expects a pointer referencing memory previously allocated on the GPU. The output of hipFree is an integer exit code.
+   </td>
+</tr>
+</table>
+<h3 id="copying-memory">Copying memory</h3>
+<p>Because distinct pointers are used to reference memory held on the host or device, it is possible that host and device pointers have different data. For example, if data is allocated on both the host and device and you read data from a file into the host pointer, then the device pointer points to memory that does not contain the same data as the host pointer. To run a kernel on the GPU that uses this data, you would need to copy data from the host pointer to the device pointer. </p>
+<p>In general, it is your responsibility to explcitly copy data between the host and device when data is needed on either the host or device. To copy data, you can use the <code>hipMemcpy</code> function </p>
+<table>
+<tr>
+<td>
+<strong><span style="text-decoration:underline;">C/C++</span></strong>
+<pre><code>#include &lt;hip/hip_runtime.h&gt;
+
+hipMemcpy( destination, source, size, enum );
+</code></pre>
+</td>
+</tr>
+<tr>
+<td> Copy data between the host and device in C/C++. As input, `hipMemcpy` expects a pointer to the destination address, a pointer to the source address, the amount of data (in bytes) that you want to copy, and an enumerator indicating directionality. The enumerator is `hipMemcpyHostToDevice` or `hipMemcpyDeviceToHost`.
+   </td>
+</tr>
+<tr>
+<td>
+<strong><span style="text-decoration:underline;">Fortran</span></strong>
+<pre><code class="language-fortran">USE hipfort 
+
+ierr = hipMemcpy( destination, source, size, enum )
+</code></pre>
+</td>
+</tr>
+<tr>
+<td> Copy data between the host and device in C/C++. As input, `hipMemcpy` expects a pointer to the destination address, a pointer to the source address, the amount of data (in bytes) that you want to copy, and an enumerator indicating directionality. The enumerator is `hipMemcpyHostToDevice` or `hipMemcpyDeviceToHost`.
+   </td>
+</tr>
+</table>
+<h2 id="writing-kernels">Writing Kernels</h2>
+<h3 id="syntax">Syntax</h3>
+<p>A HIP kernel is a <code>__global__ void</code> function written using C syntax. All array arguments are usually passed by reference and scalar values are often passed by value. The <code>__global__</code> declaration specifier indicates that the HIP kernel can be called from either the host or the device and it executes on the device. </p>
+<p>In general, the decalaration of a HIP kernel will look like</p>
+<pre><code class="language-c">#include &lt;hip/hip_runtime.h&gt;
+
+// This kernel can be called from the host or another GPU kernel
+__global__ void myfunc( args ){
+
+}
+</code></pre>
+<p>You can also use a <code>__device__ void</code> function, which is a HIP kernel that can only be called from the device and it executes on the device.</p>
+<pre><code class="language-c">#include &lt;hip/hip_runtime.h&gt;
+
+// This kernel can only be called from another GPU kernel
+__device__ void myfunc( args ){
+
+}
+</code></pre>
+<h3 id="working-with-many-threads">Working with many threads</h3>
+<p>GPUs are capable of executing thousands of threads simultaneously. Recall that AMD GPU hardware organizes components into many compute units, each of which process groups of threads (wavefronts) each clock cycle. The HIP programming model describes threads using a similar hierarchy. Specifically, threads are organized into blocks of SIMT threads that form a computational grid. Blocks are limited in size, typically to 1024 threads per block.</p>
+<table>
+<tr>
+<td>
+<a class="glightbox" href="../../../assets/images/gpu-threads.png"><img alt="alt_text" src="../../../assets/images/gpu-threads.png" title="Schematic showing GPU threads grouped into blocks" width=""/></a>
+</td>
+</tr>
+<tr>
+<td><strong><span style="text-decoration:underline;">Figure 1</span></strong> : A conceptual diagram depicting the grouping of threads into blocks.
+   </td>
+</tr>
+</table>
+<p>For convenience, blocks and grids can be defined in 1D, 2D, or 3D. This is a particularly useful feature that can simplify exposing parallelism of applications with loops and tightly nested loops. When writing a GPU kernel, you are given access to intrinsics that allow you to calculate thread addresses. Typically memory addressing is calculated from thread addresses so that you can expose parallelism in your application. </p>
+<p>You can obtain the local thread id (the thread id within a block) using the <code>threadIdx.x</code> intrinsic. If you are using multi-dimensional blocks, you can also use <code>threadIdx.y</code> and <code>threadIdx.z</code> .</p>
+<pre><code class="language-c">#include &lt;hip/hip_runtime.h&gt;
+
+__global__ void myfunc( args ){
+  size_t i = threadIdx.x;
+  size_t j = threadIdx.y;
+  size_t k = threadIdx.z;
+}
+</code></pre>
+<p>You can obtain the block id using the <code>blockIdx.x</code> intrinsic; similarly, the <code>blockIdx.y</code> and <code>blockIdx.z</code> can be used for multi-dimensional grids.</p>
+<pre><code class="language-c">#include &lt;hip/hip_runtime.h&gt;
+
+__global__ void myfunc( args ){
+   size_t bidx = blockIdx.x;
+   size_t bidy = blockIdx.y;
+   size_t bidz = blockIdx.z;
+}
+</code></pre>
+<p>In addition to intrinsics for thread and block Id’s, you can also obtain block and grid dimensions.</p>
+<pre><code class="language-c">#include &lt;hip/hip_runtime.h&gt;
+
+__global__ void myfunc( args ){
+   size_t bdimx = blockDim.x;
+   size_t bdimy = blockDim.y;
+   size_t bdimz = blockDim.z;
+
+   size_t gdimx = gridDim.x;
+   size_t gdimy = gridDim.y;
+   size_t gdimz = gridDim.z;
+}
+</code></pre>
+<h3 id="example-array-addition">Example : Array Addition</h3>
+<p>Let's take a look at a simple example, starting with the host-side code</p>
+<pre><code class="language-c">float *a, *b, *c;
+int N=1000;
+a = (float*)malloc(N*sizeof(float));
+b = (float*)malloc(N*sizeof(float));
+c = (float*)malloc(N*sizeof(float));
+
+...
+
+for(int i=0; i&lt;N; i++){
+  c[i] = a[i] + b[i];
+}
+
+free(a);
+free(b);
+free(c);
+</code></pre>
+<p>In this very simple example, we have three arrays <code>a</code>, <code>b</code>, and <code>c</code> that are all of size <code>N</code>. Once the arrays are allocated and initialized (initialization occurs in the <code>...</code> space), each element of <code>a</code> is added to each element of <code>b</code> and the result is stored in each element of <code>c</code>. On the host, this operation is expressed in a <code>for</code> loop, with <code>i</code> varying from <code>0</code> up to <code>N-1</code>, in unit increments.</p>
+<p>On the GPU, we can execute multiple levels of the loop concurrently. When we launch a GPU kernel, many GPU threads will concurrently run the HIP kernel and each GPU thread is given its own value for <code>threadIdx.x</code> and <code>blockIdx.x</code>. Using these intrinsics, along with the number of threads within each block (<code>blockDim.x</code>), we can calculate a unique "global" thread ID for each GPU thread</p>
+<pre><code class="language-c">  size_t tid = threadIdx.x + blockIdx.x*blockDim.x;
+</code></pre>
+<p>The <code>threadIdx.x</code> gives us the "local thread ID", which varies between 0 and <code>blockDim.x-1</code>. The <code>blockIdx.x</code> varies between 0 and the number of blocks (minus one), so that the maximum unique thread ID is <code>gridDim.x-1</code>. It's possible that the size of the array <code>N</code> is greater than the maximum unique thread ID. In this case, each thread still needs to execute a <code>for</code> loop for our array addition problem. For example, if <code>N=1000</code> and we have 100 total threads (<code>gridDim.x=100</code>), then </p>
+<ul>
+<li>thread ID 0 can compute <code>c[0] = a[0]+b[0]</code>,</li>
+<li>thread ID 1 can compute <code>c[1] = a[1]+b[1]</code>,</li>
+<li>...</li>
+<li>thread ID 99 can compute <code>c[99] = a[99]+b[99]</code>,</li>
+</ul>
+<p>Once we reach the 100th entry of the array, we can return back to assigning more work to thread 0</p>
+<ul>
+<li>thread ID 0 can compute <code>c[100] = a[100]+b[100]</code>,</li>
+<li>thread ID 1 can compute <code>c[101] = a[101]+b[101]</code>,</li>
+<li>...</li>
+<li>thread ID 99 can compute <code>c[199] = a[199]+b[199]</code>,</li>
+</ul>
+<p>If we continue this pattern, we see that</p>
+<ul>
+<li>thread ID 0 computes elements <code>(0,100,200,300,...,900)</code></li>
+<li>thread ID 1 computes elements <code>(1,101,201,301,...,901)</code></li>
+<li>...</li>
+<li>thread ID 99 computes elements <code>(99,199,299,399,...,999)</code></li>
+</ul>
+<p>In general, each thread computes a subset of the array sums. Each thread starts with the array element corresponding to its thread ID and strides in step sizes corresponding to the total number of threads. This can be summarized in the following kernel</p>
+<pre><code class="language-c">#include &lt;hip/hip_runtime.h&gt;
+
+__global__ void vecadd(float *a, float *b, float *c, int N){
+
+size_t tid = threadIdx.x + blockIdx.x*blockDim.x;
+size_t stride = gridDim.x;
+
+for(int i = tid; i &lt; N; i += stride){ 
+  c[i] = a[i] + b[i];
+}
+</code></pre>
+<h2 id="launching-kernels">Launching Kernels</h2>
+<p>Up to this point, we've describe how to write kernels and you may be asking how we launch kernels and how we can specify the number of threads per block and the number of blocks. Here, we'll talk specifically about how to launch <code>__global__</code> kernels that are launched from the CPU and run on the GPU.</p>
+<p>HIP allows you to launch kernels using the CUDA “chevron syntax” to specify the number of threads per block and the number of blocks.</p>
+<pre><code>#include &lt;hip/hip_runtime.h&gt;
+
+myfunc&lt;&lt;&lt;BlockPerGrid, ThreadPerBlock&gt;&gt;&gt;( args );
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The chevron syntax also supports optional parameters that specify the <a href="https://developer.download.nvidia.com/CUDA/training/StreamsAndConcurrencyWebinar.pdf">GPU stream</a> (for ansynchronous kernel launches), and the amount of shared memory to allocate per block. Learning when and how to use these optional parameters will be discussed in a later section.</p>
+</div>
+<p>Remember, when a kernel is launched on the GPU it is executed by many threads running in parallel. Threads are organized into groups called "thread-blocks" or simply "blocks" and blocks are organized into a "grid". Threads within the same block are active on the GPU at the same time, share the same compute unit, and can synchronize operations and communicate through shared memory. </p>
+<p>Under the hood, blocks are executed in discrete "wavefronts" (AMD) or "warps" (Nvidia). A wavefront/warp is a fixed size group of threads that execute in lockstep; they run the same instructions and follow the same control-flow path in a <a href="https://en.wikipedia.org/wiki/Flynn%27s_taxonomy#Array_processor">Same-Instruction-Multiple-Thread (SIMT)</a> fashion.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On AMD GPUs, wavefronts consist of 64 SIMT threads and up to 16 wavefronts (1024 threads) are allowed per block.</p>
+<p>On Nvidia GPUs, warps consist of 32 SIMT threads and up to 32 warps (1024 threads) are allowed per block</p>
+</div>
+<h3 id="example-array-addition-continued">Example : Array Addition (Continued)</h3>
+<p>For the array addition example, we now have the necessary ingredients to move our host operations to the GPU. First, we will add in declarations for device pointers for <code>a</code>, <code>b</code>, and <code>c</code>. </p>
+<pre><code class="language-c"> float* a_dev, b_dev, c_dev;
+ hipMalloc(a_dev, N*sizeof(float));
+ hipMalloc(b_dev, N*sizeof(float));
+ hipMalloc(c_dev, N*sizeof(float));
+</code></pre>
+<p>Next, we'll add calls to <code>hipMemcpy</code> to move data held by <code>a</code> and <code>b</code> to their corresponding device pointers before launching the <code>vecAdd</code> HIP kernel. </p>
+<pre><code class="language-c"> hipMemcpy(a_dev, a, N*sizeof(float), hipMemcpyHostToDevice);
+ hipMemcpy(b_dev, b, N*sizeof(float), hipMemcpyHostToDevice);
+</code></pre>
+<p>Then, we'll launch the HIP kernel and copy the device data for <code>c</code> from the GPU. Here, we'll hard-code the threads per block to 256 (4 wavefronts) and calculate the number of blocks so that the max thread ID is greater than or equal to <code>N</code></p>
+<pre><code class="language-c"> dim3 threads = (256,1,1);
+ dim3 blocks  = (N/256+1,1,1);
+ vecadd&lt;&lt;&lt; blocks, threads &gt;&gt;&gt;( a_dev, b_dev, c_dev, N );
+ hipMemcpy(c, c_dev, N*sizeof(float), hipMemcpyDeviceToHost);
+</code></pre>
+<p>Putting all of this together and adding in clean up of device memory, the GPU accelerated version of this code looks like the following</p>
+<pre><code class="language-c">float *a, *b, *c;
+int N=1000;
+a = (float*)malloc(N*sizeof(float));
+b = (float*)malloc(N*sizeof(float));
+c = (float*)malloc(N*sizeof(float));
+
+// Allocate device memory
+float* a_dev, b_dev, c_dev;
+hipMalloc(a_dev, N*sizeof(float));
+hipMalloc(b_dev, N*sizeof(float));
+hipMalloc(c_dev, N*sizeof(float));
+
+// Host array initialization
+...
+
+// Copy host data to the device
+hipMemcpy(a_dev, a, N*sizeof(float), hipMemcpyHostToDevice);
+hipMemcpy(b_dev, b, N*sizeof(float), hipMemcpyHostToDevice);
+
+// Launch the kernel
+dim3 threads = (256,1,1);
+dim3 blocks  = (N/256+1,1,1);
+
+vecadd&lt;&lt;&lt; blocks, threads &gt;&gt;&gt;( a_dev, b_dev, c_dev, N );
+
+// Copy device data for c back to the host
+hipMemcpy(c, c_dev, N*sizeof(float), hipMemcpyDeviceToHost);
+
+
+free(a);
+free(b);
+free(c);
+
+hipFree(a_dev);
+hipFree(b_dev);
+hipFree(c_dev);
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Try it yourself in our codelab</p>
+<p><a href="../../../codelabs/build-a-gpu-app-hip-c/#0">Building a basic GPU accelerated application with HIP in C/C++</a></p>
+</div>
+<h2 id="launching-kernels-from-fortran">Launching kernels from Fortran</h2>
+<p>The ISO C Binding module provides the necessary components to enable Fortran-C interoperability. To call HIP kernels in Fortran, you will need to do the following
+Write the GPU accelerated HIP kernel in C++.
+Write a wrapper routine in C++ that launches the HIP kernel.
+Define a subroutine interface block in Fortran that binds to the wrapper routine in C++.</p>
+<p>Example
+As an example, suppose that you want to offload the following Fortran subroutine to the GPU with HIP.</p>
+<p>SUBROUTINE VecAdd( a, b, c, N )
+  IMPLICIT NONE
+  INTEGER, INTENT(in) :: N
+  REAL, INTENT(in) :: a(1:N), b(1:N)
+  REAL, INTENT(out) :: c(1:N)</p>
+<pre><code>DO i = 1, N
+  c(i) = a(i) + b(i)
+ENDDO
+</code></pre>
+<p>END SUBROUTINE VecAdd</p>
+<p>To offload to the GPU, you will first need to write the equivalent HIP kernel in C++,
+<strong>global</strong> void VecAdd_HIP(float <em>a, float </em>b, float <em>c, int N) {
+  int i = threadIdx.x + blockIdx.x</em>blockDim.x;
+  if (i&lt;N) {
+    c[i] = a[i] + b[i];
+  }
+}</p>
+<p>Then, you will write a wrapper routine in C++ that launches this kernel
+extern “C”
+{
+  void VecAdd_HIPWrapper(float <strong>a, float </strong>b, float <em><em>c, int N) {
+    VecAdd_HIP&lt;&lt;<dim3(n 0="" 0,="" 64+1,1,1),="" dim3(64,1,1),="">&gt;&gt;(</dim3(n></em>a, </em>b, *c, N); 
+  }
+}</p>
+<p>In your Fortran source code, usually a module, you will add a subroutine interface block to expose the C++ wrapper routine to Fortran
+INTERFACE
+  SUBROUTINE VecAdd_HIPWrapper(a, b, c, N) bind(c,name="VecAdd_HIPWrapper")
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+      TYPE(c_ptr) :: a, b, c
+      INTEGER, VALUE :: N
+  END SUBROUTINE VecAdd_HIPWrapper
+END INTERFACE</p>
+<p>Once these three components are defined, you can then launch the GPU accelerated kernel from Fortran by simply calling VecAdd_HIPWrapper.</p>
+<p>In the next section of this codelab, you will use these three steps to offload the ApplySmoother routine to the GPU.</p>
 </article>
 </div>
 </div>
@@ -434,8 +986,8 @@
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
-<script src="../../../assets/javascripts/bundle.d691e9de.min.js"></script>
+<script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+<script src="../../../assets/javascripts/bundle.37e9125f.min.js"></script>
 <script src="../../../javascripts/mathjax.js"></script>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
