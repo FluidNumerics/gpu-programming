@@ -17,6 +17,7 @@ nav:
     - Hardware:
       - GPU Accelerated Platforms: GPU/Hardware/GPU-Accelerated-Platforms.md
       - Estimating Performance: GPU/Hardware/Estimating-Performance.md
+      - GPU Specifications Table: GPU/Hardware/GPU-Specifications.md
     - OpenMP GPU Offloading: 
       - Basics: GPU/OpenMP/Basics.md
     - HIP and HIPFort: 
