@@ -401,7 +401,7 @@ To assess the potential performance of compute hardware, there are three recomme
 2. Verify reported specifications using back-of-the-envelope calculations and system utilities.
 3. Run standard micro-benchmarks to exercise key hardware components.
 
-In the next few sections, you will learn more about each of these steps. For now, we will simply provide ballpark estimates for peak bandwidth and FLOPS for various hardware components that you will later be able to prove.
+The first two approaches provide theoretical peaks that are likely not attainable by real applications for sustained periods of time. Because of this, micro-benchmarks are often used to characterize hardware performance in a way that is meaningful for your application. In the next few sections, you will learn more about each of these steps. For now, we will simply provide ballpark estimates for peak bandwidth and FLOPS for various hardware components that you will later be able to prove.
 
 
 <table>
@@ -471,7 +471,7 @@ In the next few sections, you will learn more about each of these steps. For now
 </table>
 
 
-In Figure 1, the CPU is connected to CPU RAM over a memory bus and to the GPU over a PCI Bus. The GPU is connected to GPU RAM through its own memory bus. Table 2 summarizes estimates of current theoretical peak bandwidth for moving data between the various hardware components in Figure 1. In general, GPUs have the potential to access memory at a higher rate than CPUs because the memory clock frequency on GPUs is higher than the memory clock frequency on CPUs and the memory bus on GPUs is wider. 
+In Figure 1, the CPU is connected to CPU RAM over a memory bus and to the GPU over a PCI Bus. The GPU is connected to GPU RAM through its own memory bus. Table 2 summarizes "order-of-magnitude" estimates of current theoretical peak bandwidth for moving data between the various hardware components in Figure 1. In general, GPUs have the potential to access memory at a higher rate than CPUs because the memory clock frequency on GPUs is higher than the memory clock frequency on CPUs and the memory bus on GPUs is wider. 
 
 The PCIe switch is the least performant component of GPU accelerated systems and is typically the source of much agony when initially porting an application to the GPU. In the porting process, there is often a significant amount of data being transferred between the CPU and GPU. Although individual kernels may show significant performance gains, overall runtime can stagnate or become much worse. Because of this, it is critical to migrate as much of the application as possible to the GPU in order to minimize data transfers between the host and device.
 
@@ -488,15 +488,14 @@ GPU hardware is designed to provide large core counts relative to CPU architectu
 In this section, we'll present conceptual models for AMD&reg; and Nvidia&reg; GPU hardware, present the ISA for current high performance GPUs, and discuss a few specific high performance GPU models from each vendor.
 
 ### AMD&reg;
-Advanced Micro-Devices (AMD&reg;) is a commercial hardware vendor that designs, manufactures, and licenses (for manufacturing) GPUs. When discussing GPUs from AMD&reg;, there are two ends of the spectrum to consider :
+Advanced Micro-Devices (AMD&reg;) is a commercial hardware vendor that designs, manufactures, and licenses (for manufacturing) GPUs. Since the early 2010s, AMD GPUs are based on the Graphics Core Next (GCN&trade;) instruction set architecture. When discussing AMD&reg; GCN&trade; GPUs, there are two ends of the spectrum to consider :
 
 1. GPUs designed for gaming ( “RDNA&trade;” GPUs )
 2. GPUs designed for high performance computing ( “CDNA&trade;” GPUs )
 
-While both classes of GPUs are designed for general purpose computing, the RDNA&trade; class of GPUs are built to optimize frames/second for popular gaming applications, while the CDNA&trade; class of GPUs are built to optimize FLOPS in scientific computing. 
+While both classes of GPUs are designed for general purpose computing and are built on the GCN&trade; architecture, the RDNA&trade; class of GPUs are built to optimize frames/second for popular gaming applications, while the CDNA&trade; class of GPUs are built to optimize FLOPS in scientific computing. 
 
-AMD's CDNA&trade; architectures
-*Discuss Graphics Core Next (GCN) architecture and the relationship to CDNA&trade; and RDNA&trade;*
+
 
 #### CDNA&trade; (Conceptual)
 
