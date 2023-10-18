@@ -5,11 +5,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<meta content="Educational materials for scientific and parallel computing" name="description"/>
+<meta content="Educational materials for programming GPUs using platform portable paradigms" name="description"/>
 <meta content="Fluid Numerics" name="author"/>
 <link href="../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.4.0, mkdocs-material-8.5.3" name="generator"/>
-<title>GPU Direct Communications - Scientific Computing (edu)</title>
+<title>GPU Direct Communications - Portable GPU Programming</title>
 <link href="../../assets/stylesheets/main.7a952b86.min.css" rel="stylesheet"/>
 <link href="../../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -23,12 +23,15 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
+<a class="md-skip" href="#gpu-aware-mpi-amd-gpus">
+          Skip to content
+        </a>
 </div>
 <div data-md-component="announce">
 </div>
 <header class="md-header" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
-<a aria-label="Scientific Computing (edu)" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Scientific Computing (edu)">
+<a aria-label="Portable GPU Programming" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Portable GPU Programming">
 <img alt="logo" src="../../assets/images/logo-fluid-numerics.png"/>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
@@ -38,7 +41,7 @@
 <div class="md-header__ellipsis">
 <div class="md-header__topic">
 <span class="md-ellipsis">
-            Scientific Computing (edu)
+            Portable GPU Programming
           </span>
 </div>
 <div class="md-header__topic" data-md-component="header-topic">
@@ -61,12 +64,12 @@
 </label>
 </form>
 <div class="md-header__source">
-<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/scientific-computing-edu" title="Go to repository">
+<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/gpu-programming" title="Go to repository">
 <div class="md-source__icon md-icon">
 <svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
 </div>
 <div class="md-source__repository">
-    GitHub/fluidnumerics/scientific-computing-edu
+    GitHub/fluidnumerics/gpu-programming
   </div>
 </a>
 </div>
@@ -80,18 +83,18 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
-<a aria-label="Scientific Computing (edu)" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Scientific Computing (edu)">
+<a aria-label="Portable GPU Programming" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Portable GPU Programming">
 <img alt="logo" src="../../assets/images/logo-fluid-numerics.png"/>
 </a>
-    Scientific Computing (edu)
+    Portable GPU Programming
   </label>
 <div class="md-nav__source">
-<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/scientific-computing-edu" title="Go to repository">
+<a class="md-source" data-md-component="source" href="https://github.com/fluidnumerics/gpu-programming" title="Go to repository">
 <div class="md-source__icon md-icon">
 <svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
 </div>
 <div class="md-source__repository">
-    GitHub/fluidnumerics/scientific-computing-edu
+    GitHub/fluidnumerics/gpu-programming
   </div>
 </a>
 </div>
@@ -101,26 +104,14 @@
         Home
       </a>
 </li>
-<li class="md-nav__item md-nav__item--active md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2">
-          Portable GPU Programming
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Portable GPU Programming" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_2">
-<span class="md-nav__icon md-icon"></span>
-          Portable GPU Programming
-        </label>
-<ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" id="__nav_2_1" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2_1">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2">
           Hardware
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Hardware" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_1">
+<nav aria-label="Hardware" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
 <span class="md-nav__icon md-icon"></span>
           Hardware
         </label>
@@ -144,13 +135,13 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" id="__nav_2_2" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2_2">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3">
           OpenMP GPU Offloading
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="OpenMP GPU Offloading" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_2">
+<nav aria-label="OpenMP GPU Offloading" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
 <span class="md-nav__icon md-icon"></span>
           OpenMP GPU Offloading
         </label>
@@ -164,13 +155,13 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" id="__nav_2_3" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2_3">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4">
           HIP and HIPFort
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="HIP and HIPFort" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_3">
+<nav aria-label="HIP and HIPFort" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
 <span class="md-nav__icon md-icon"></span>
           HIP and HIPFort
         </label>
@@ -184,13 +175,13 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_4" id="__nav_2_4" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2_4">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5">
           Benchmarking your hardware
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Benchmarking your hardware" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_4">
+<nav aria-label="Benchmarking your hardware" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
 <span class="md-nav__icon md-icon"></span>
           Benchmarking your hardware
         </label>
@@ -219,13 +210,13 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_5" id="__nav_2_5" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2_5">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6">
           Performance Topics
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Performance Topics" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_5">
+<nav aria-label="Performance Topics" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
 <span class="md-nav__icon md-icon"></span>
           Performance Topics
         </label>
@@ -254,13 +245,13 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_6" id="__nav_2_6" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2_6">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7">
           Multi-GPU Topics
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Multi-GPU Topics" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_6">
+<nav aria-label="Multi-GPU Topics" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
 <span class="md-nav__icon md-icon"></span>
           Multi-GPU Topics
         </label>
@@ -272,21 +263,73 @@
 </li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          GPU Direct Communications
+          <span class="md-nav__icon md-icon"></span>
+</label>
 <a class="md-nav__link md-nav__link--active" href="./">
         GPU Direct Communications
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#openmpi">
+    OpenMPI
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#mvapich2">
+    MVAPICH2
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cray-mpich">
+    CRAY MPICH
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" id="__nav_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_8">
+          Debugging Applications
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Debugging Applications" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_8">
+<span class="md-nav__icon md-icon"></span>
+          Debugging Applications
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Debugging/index.md">
+        Basics
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../Debugging/rocgdb/">
+        Debugging with roc-gdb
       </a>
 </li>
 </ul>
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_7" id="__nav_2_7" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2_7">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" id="__nav_9" type="checkbox"/>
+<label class="md-nav__link" for="__nav_9">
           Profiling Applications
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Profiling Applications" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_7">
+<nav aria-label="Profiling Applications" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_9">
 <span class="md-nav__icon md-icon"></span>
           Profiling Applications
         </label>
@@ -305,13 +348,13 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_8" id="__nav_2_8" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2_8">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" id="__nav_10" type="checkbox"/>
+<label class="md-nav__link" for="__nav_10">
           For System Administrators
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="For System Administrators" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_8">
+<nav aria-label="For System Administrators" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_10">
 <span class="md-nav__icon md-icon"></span>
           For System Administrators
         </label>
@@ -330,13 +373,38 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_9" id="__nav_2_9" type="checkbox"/>
-<label class="md-nav__link" for="__nav_2_9">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11" id="__nav_11" type="checkbox"/>
+<label class="md-nav__link" for="__nav_11">
+          Mentored Sprints
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Mentored Sprints" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_11">
+<span class="md-nav__icon md-icon"></span>
+          Mentored Sprints
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../MentoredSprints/About/">
+        About
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../MentoredSprints/EmPrism/report/">
+        Emergent Phenomena Revealed in Subatomic Matter (EmPRiSM)
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" id="__nav_12" type="checkbox"/>
+<label class="md-nav__link" for="__nav_12">
           Codelabs
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Codelabs" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_2_9">
+<nav aria-label="Codelabs" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_12">
 <span class="md-nav__icon md-icon"></span>
           Codelabs
         </label>
@@ -366,9 +434,6 @@
 </li>
 </ul>
 </nav>
-</li>
-</ul>
-</nav>
 </div>
 </div>
 </div>
@@ -376,16 +441,68 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#openmpi">
+    OpenMPI
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#mvapich2">
+    MVAPICH2
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cray-mpich">
+    CRAY MPICH
+  </a>
+</li>
+</ul>
 </nav>
 </div>
 </div>
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/fluidnumerics/scientific-computing-edu/edit/main/docs/mkdocs/MultiGPU/GPUDirect.md" title="Edit this page">
+<a class="md-content__button md-icon" href="https://github.com/fluidnumerics/gpu-programming/edit/main/docs/mkdocs/MultiGPU/GPUDirect.md" title="Edit this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
-<h1>GPU Direct Communications</h1>
+<h1 id="gpu-aware-mpi-amd-gpus">GPU Aware MPI &amp; AMD GPUs</h1>
+<p>Ultimately, when an MPI+HIP application is run, we need to be able to determine whether or not we can use device pointers in MPI API calls. When using device pointers, we expect that, under the hood, the MPI library we are using will handle direct communications between GPUs. If GPU Aware MPI support is not available for the target system, we need to manually copy data from device to host, exchange information using host data, and then copy the exchanged data back to the device. </p>
+<p>Application developers vary in their preference in how this is implemented. Some will opt to bake in the GPU-Aware MPI approach or the less scalable alternative at build time, while others want to be able to determine which approach is allowable at runtime. When deciding at build time, developers will often resort to pre-processing, conditionally including code based on the values of CPP flags. During runtime, developers will need to rely on library methods to check for GPU-awareness in their MPI installation.
+CUDA-Aware MPI for Nvidia GPUs is available in almost all MPI implementations, including OpenMPI, MPICH, and MVAPICH. ROCm-Aware MPI for AMD GPUs, on the other hand, is not in the mainstream currently. Below, we document the GPU-aware (both CUDA and ROCm) support in popular MPI flavors, covering available CPP flags and API calls, which can help detect GPU aware support for a given MPI  installation. </p>
+<h2 id="openmpi">OpenMPI</h2>
+<p><a href="https://www.open-mpi.org/faq/?category=runcuda">CUDA Aware MPI</a></p>
+<p>To find if OpenMPI is built with CUDA-Aware Support</p>
+<pre><code>ompi_info --parsable --all | grep mpi_built_with_cuda_support:value
+mca:mpi:base:param:mpi_built_with_cuda_support:value:true
+</code></pre>
+<p>At compile time, you can check for CUDA Aware Support using the <code>MPIX_CUDA_AWARE_SUPPORT</code> CPP flag</p>
+<pre><code>#if defined(MPIX_CUDA_AWARE_SUPPORT) &amp;&amp; MPIX_CUDA_AWARE_SUPPORT
+</code></pre>
+<p>At runtime, you can check for CUDA Aware support using the <code>MPIX_Query_cuda_support()</code> API call.</p>
+<p><a href="https://github.com/openucx/ucx/wiki/Build-and-run-ROCM-UCX-OpenMPI">OpenUCX + OpenMPI installations</a> provide support for ROCm Aware OpenMPI
+Currently, OpenMPI does not have documentation on CPP flags or API calls for detecting ROCm Aware Support</p>
+<h2 id="mvapich2">MVAPICH2</h2>
+<p>Support for AMD GPUs since MVAPICH2-GDR-2.3.5 ( See <a href="http://mvapich.cse.ohio-state.edu/userguide/gdr/">MVAPICH2-GDR-2.3.7</a>) </p>
+<p><a href="http://mvapich.cse.ohio-state.edu/userguide/gdr/#_running_applications">At runtime, user’s must set one of the following environment variables</a></p>
+<ul>
+<li>For AMD GPU Support <code>export MV2_USE_ROCM=1</code></li>
+<li>For Nvidia GPU Support <code>export MV2_USE_CUDA=1</code></li>
+</ul>
+<p><a href="http://mvapich.cse.ohio-state.edu/userguide/gdr/#_compile_time_and_run_time_check_for_cuda_aware_support">At compile time, you can check for CUDA Aware Support using the <code>MPIX_CUDA_AWARE_SUPPORT</code> CPP flag</a></p>
+<pre><code>#if defined(MPIX_CUDA_AWARE_SUPPORT) &amp;&amp; MPIX_CUDA_AWARE_SUPPORT
+</code></pre>
+<p><a href="http://mvapich.cse.ohio-state.edu/userguide/gdr/#_compile_time_and_run_time_check_for_cuda_aware_support">At runtime, you can check for CUDA Aware support using the <code>MPIX_Query_cuda_support()</code> API call</a></p>
+<h2 id="cray-mpich">CRAY MPICH</h2>
+<p><a href="https://vimeo.com/554872977">Cray-MPICH GPU Aware Support (Video)</a> + <a href="https://www.olcf.ornl.gov/wp-content/uploads/2021/04/HPE-Cray-MPI-Update-nfr-presented.pdf">Slides</a>
+Set the following environment variable at runtime to enable GPU aware support</p>
+<pre><code>MPICH_GPU_SUPPORT_ENABLED=1
+</code></pre>
 </article>
 </div>
 </div>
@@ -405,13 +522,13 @@
             </div>
 </div>
 </a>
-<a aria-label="Next: Basics" class="md-footer__link md-footer__link--next" href="../../Profiling/" rel="next">
+<a aria-label="Next: Debugging with roc-gdb" class="md-footer__link md-footer__link--next" href="../../Debugging/rocgdb/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              Basics
+              Debugging with roc-gdb
             </div>
 </div>
 <div class="md-footer__button md-icon">
