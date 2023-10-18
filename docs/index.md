@@ -28,6 +28,7 @@ Below is a complete list of the hands-on codelabs we currently have published :
 
 ## Acknowledgements
 
-We are extremely grateful for funding & support from the following organizations and individuals:
+We are extremely grateful for support and collaboration from the following organizations :
 
-* **Advanced Micro-Devices (AMD)** - Portable GPU Programming
+* [**Pawsey Suprcomputing Centre**](https://pawsey.org.au/)
+* **Advanced Micro-Devices (AMD)**
