@@ -1096,7 +1096,7 @@ Figure 19 shows the best hotspot profiles on Topaz, Mulan, and Setonix. The “b
 <table>
   <tr>
    <td>
-   
+
 <img src="../img/image40.png" width="" alt="alt_text" title="image_tooltip">
 
    </td>
@@ -1116,7 +1116,7 @@ Figure 19 shows the best hotspot profiles on Topaz, Mulan, and Setonix. The “b
 
 “The smallest unit of scheduled work for the CU to run is called a wave, and each wave contains 64 threads. Each of the four SIMDs in the CU can schedule up to 10 concurrent waves. The CU may suspend a wave, and execute another wave, while waiting for memory operations to complete. This helps to hide latency and maximize use of the CU’s compute resources.” - [source](https://gpuopen.com/learn/optimizing-gpu-occupancy-resource-usage-large-thread-groups/)
 
-![alt_text](../img/image31.png "image_tooltip")
+![alt_text](./img/image31.png "image_tooltip")
 
 Each CDNA Compute Unit has four SIMD units, each with a 128 KB Vector Register File (512 KB per CU; 128,000 32-bit Vector General Purpose Registers [VGPRs] ), and the MI100 GPU has 120 Compute Units. The CDNA1 Compute Unit has 64 KB LDS memory and 16 KB L1 Cache - [source](https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf)
 
@@ -1124,13 +1124,13 @@ Since each CU can have 40 wavefronts in flight at any time (10 per SIMD Unit, 4 
 
 The figure below shows the register usage on the V100 GPUs for the EOCloverFBCGPU from the nvidia visual profiler; on the right we see (highlighted) that 76 registers per thread are used on the V100 GPU.
 
-![alt_text](../img/image53.png "image_tooltip")
+![alt_text](./img/image53.png "image_tooltip")
 
 
 The figure below, from a talk given at ORNL, details the theoretical occupancy based on register usage on the CDNA2 (MI200 series) GPUs.
 
 
-![alt_text](../img/image36.png "image_tooltip")
+![alt_text](./img/image36.png "image_tooltip")
 - [source](https://www.olcf.ornl.gov/wp-content/uploads/Intro_Register_pressure_ORNL_20220812_2083.pdf)
 
 We can view the number of registers per thread (among other details) by passing the -save-temps flag to hipcc.
